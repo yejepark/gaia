@@ -11,3 +11,36 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 50px;
+}
+
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 2.5rem;
+}
+
+.main-nav li {
+  align-items: center;
+}
+
+.main-nav a {
+  text-decoration: none;
+}
+
+#posts-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin: 2rem;
+  border-top: 2px solid #ccc;
+}
+
+#posts-layout nav {
+  border-left: 2px solid #ccc;
+  padding-right: 2rem;
+}
