@@ -23,7 +23,7 @@ const ASSET_TYPE = {
 const assets = [
   {
     id: 'a1',
-    address: "서울시 강남구 도곡로43길 21",
+    address_road: "서울시 강남구 도곡로43길 21",
     features: ["주인직매물", "탁 트인 뷰", "올 리모델링", "갭투자 가능", "입주 협의 가능"],
     area_supply: "154.96",
     area_usage: "121.54",
@@ -55,7 +55,8 @@ const assets = [
   }, 
   {
     id: 'c1',
-    address: "서울시 강남구 언주로 313",
+    address_road: "서울시 강남구 언주로 313",
+    address_legal: "서울특별시 강남구 역삼동 779-9",
     features: ['주인직매물', '무권리', '강남세브란스 사거리 인근의 대로변 코너 상가'],
     area_contract: "35.73",
     area_usage: "35.04",
@@ -98,7 +99,8 @@ const assets = [
   },
   {
     id: 'c2',
-    address: "서울시 강남구 도곡로 243",
+    address_road: "서울시 강남구 도곡로 243",
+    address_legal: "서울특별시 강남구 역삼동 785-22",
     features: ['무권리', '대로변', '1층', '코너자리'],
     area_contract: "71.79",
     area_usage: "71.79",
@@ -137,12 +139,13 @@ const assets = [
   },
   {
     id: "c3",
-    address: "서울 강남구 남부순환로378길 12",
+    address_road: "서울 강남구 남부순환로378길 12",
+    address_legal: "서울특별시 강남구 도곡동 419-3",
     area_usage: "49.59",
     floor: "1",
     deposit: "2000만",
     rent_monthly: "220만",
-    premium: "1억5000만원",
+    premium: "1억5000만",
     maintenance_cost: "50만",
     parking: "가능",
     date_created: "2023-05-18",

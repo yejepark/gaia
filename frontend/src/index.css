@@ -6,7 +6,6 @@
   font-style: normal;
 }
 
-
 html {
   box-sizing: border-box;
 }
@@ -132,20 +131,106 @@ header {
   overflow: hidden;
 
   & .img-container {
+    position: relative;
     display: flex;
     align-items: center;
-    max-height: 200px;
+    height: 200px;
     overflow: hidden;
 
     & img {
+      position: relative;
       width: 100%;
+      min-height: 200px;
       object-fit: cover;
     }
+
+    & .arrow {
+      width: 30px;
+      padding: 5px;
+    }
+
+    & .arrow-container {
+      display: none;
+    }
+
+    &:hover {        
+      & .arrow-container {
+        height: 100%;
+        display: flex;
+        align-items: center;
+
+        position: absolute;
+        z-index: 1;
+
+        drop-shadow: 0px 10px 5px black;
+
+        &.left {
+          left: 0px;
+          transform: rotate(180deg);
+          -webkit-filter: drop-shadow( 0px -3px 2px rgba(0, 0, 0, .7));
+          filter: drop-shadow( 0px -3px 2px rgba(0, 0, 0, .7));
+        }
+        
+        &.right { 
+          right: 0px; 
+          -webkit-filter: drop-shadow( 0px 3px 2px rgba(0, 0, 0, .7));
+          filter: drop-shadow( 0px 3px 2px rgba(0, 0, 0, .7));
+        }
+      }
+    }
+
+
+
   }
 
   & .data-container {
     height: 85px;
+    width: 100%;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+
+    display: flex;
+    flex-direction: column;
+
+    font-weight: 300;
+  
+    & span {
+      font-size: 1rem;
+      font-weight: bold; 
+    }
+
+    & .renting-cost {
+      display: flex;
+      gap: 12px;
+    }
+
+    & .geo {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+
+      & span {
+        font-weight: normal;
+      }
+
+      & .m-area {
+        display: none;
+      }
+
+      & .asset-area {
+        padding: 0 3px;
+        border: .5px solid;
+        border-radius: 4px;
+      }
+
+      & .asset-area:hover {
+        & .m-area { display: inline; }
+        & .default-area { display: none; }
+      }
+
+    }
+
   }
   
 }
-
