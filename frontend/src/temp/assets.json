@@ -1,0 +1,171 @@
+[
+  {
+    "id": "a1",
+    "address_road": "서울시 강남구 도곡로43길 21",
+    "features": [
+      "주인직매물",
+      "탁 트인 뷰",
+      "올 리모델링",
+      "갭투자 가능",
+      "입주 협의 가능"
+    ],
+    "area_supply": "154.96",
+    "area_usage": "121.54",
+    "floor": "저",
+    "floor_total": "34",
+    "room_count": "4",
+    "bath_count": "2",
+    "maintenance_cost": "35만",
+    "maintenance_includes": [
+      "전기료",
+      "수도"
+    ],
+    "deposit": "",
+    "rent_monthly": "",
+    "price": "36억",
+    "price_per_pyeong": "7679만",
+    "direction": "남동향(거실기준)",
+    "entrance_type": "복합식",
+    "heat_type": "지역난방",
+    "heat_fuel": "열병합",
+    "date_available": "2024-05-31",
+    "parking_total": "626",
+    "parking_per_house": "1.34",
+    "same_size_count": "32",
+    "building_usage": "공동주택",
+    "detail": "",
+    "broker_id": "b1",
+    "date_created": "2024-03-12",
+    "asset_type": 1,
+    "trade_type": 1,
+    "latlng": [
+      "37.4957277729688",
+      "127.047011616273"
+    ]
+  },
+  {
+    "id": "c1",
+    "address_road": "서울시 강남구 언주로 313",
+    "address_legal": "서울특별시 강남구 역삼동 779-9",
+    "features": [
+      "주인직매물",
+      "무권리",
+      "강남세브란스 사거리 인근의 대로변 코너 상가"
+    ],
+    "area_contract": "35.73",
+    "area_usage": "35.04",
+    "floor": "1",
+    "floor_total": "3",
+    "date_available": "즉시",
+    "premium": "0",
+    "maintenance_cost": "9.9만",
+    "deposit": "1억",
+    "rent_monthly": "350만",
+    "direction": "남동향(주된출입구기준)",
+    "business_type": "공실",
+    "business_recommended": "",
+    "parking": "불가능",
+    "parking_total": "",
+    "heat_type": "개별난방",
+    "heat_fuel": "",
+    "use_area": "",
+    "building_usage": "제2종 근린생활시설",
+    "main_structure": "",
+    "date_of_usage_approval": "1980-06-28",
+    "detail": "",
+    "broker_id": "b1",
+    "date_created": "2024-03-12",
+    "asset_type": 9,
+    "trade_type": 3,
+    "pic_urls": [
+      "/c1/0b212a4c6cb3ec90010e9bea3eb6a29b.jpeg",
+      "/c1/0e8d51d1ebcc149ef3eb606bd09a2d9f.jpeg",
+      "/c1/1bf3c0ba48abdfe9644f0c252f63b6fb.jpeg",
+      "/c1/5fee434fb2f4f0129ccffdbd6df7f5fa.jpeg",
+      "/c1/7f61ebf72ae1392a4e66325ab23cf276.jpeg",
+      "/c1/56340af1b741e118ac364d75c5e851f0.jpeg",
+      "/c1/232128f82749c8052b8df091c4649b04.jpeg",
+      "/c1/7351572e4256fa0e2a88d34ddebb83fc.jpeg",
+      "/c1/ef96300cd48d70d4fb3910e7cb08dd44.jpeg",
+      "/c1/f3885105443704cc922e74d6c83ed5dd.jpeg"
+    ],
+    "latlng": [
+      "37.4956299175852",
+      "127.045648565273"
+    ]
+  },
+  {
+    "id": "c2",
+    "address_road": "서울시 강남구 도곡로 243",
+    "address_legal": "서울특별시 강남구 역삼동 785-22",
+    "features": [
+      "무권리",
+      "대로변",
+      "1층",
+      "코너자리"
+    ],
+    "area_contract": "71.79",
+    "area_usage": "71.79",
+    "floor": "1",
+    "floor_total": "3",
+    "date_available": "즉시",
+    "premium": "0",
+    "maintenance_cost": "30만",
+    "deposit": "5000만",
+    "rent_monthly": "450만",
+    "direction": "남향(주된출입구기준)",
+    "business_type": "",
+    "business_recommended": "",
+    "parking": "가능",
+    "parking_total": "3",
+    "heat_type": "개별냉난방",
+    "heat_fuel": "전기",
+    "use_area": "",
+    "building_usage": "제2종 근린생활시설",
+    "main_structure": "",
+    "date_of_usage_approval": "1992-08-12",
+    "detail": "",
+    "broker_id": "b2",
+    "date_created": "2024-03-15",
+    "asset_type": 9,
+    "trade_type": 3,
+    "pic_urls": [
+      "/c2/202402131142162_19126_wt.jpg",
+      "/c2/2024021311414373_19126_wt.jpg",
+      "/c2/2024021311414395_19126_wt.jpg",
+      "/c2/2024021311421604_19126_wt.jpg",
+      "/c2/2024021311421635_19126_wt.jpg",
+      "/c2/2024021311421684_19126_wt.jpg"
+    ],
+    "latlng": [
+      "37.4939862232215",
+      "127.045147296529"
+    ]
+  },
+  {
+    "id": "c3",
+    "address_road": "서울 강남구 남부순환로378길 12",
+    "address_legal": "서울특별시 강남구 도곡동 419-3",
+    "area_usage": "49.59",
+    "floor": "1",
+    "deposit": "2000만",
+    "rent_monthly": "220만",
+    "premium": "1억5000만",
+    "maintenance_cost": "50만",
+    "parking": "가능",
+    "date_created": "2023-05-18",
+    "business_type": "외식업|한식",
+    "business_name": "본죽&비빔밥 매봉역점",
+    "pic_urls": [
+      "/c3/1693753038_4eb8eecf806e95267870bb650278d6fb.jpg",
+      "/c3/1693753038_5ee452124f65bf77bd86ac72600bad9f.jpg",
+      "/c3/1693753038_60ad9232047b0e928b22102aa9e3f473.jpg",
+      "/c3/1693753038_aa54aeb1dcf49f2f614d329531ce7318.jpg",
+      "/c3/1693753038_aaec2009243e25d46f8dab25fdd13d7f.jpg"
+    ],
+    "latlng": [
+      "37.485422501853",
+      "127.045860235286"
+    ]
+  }
+]

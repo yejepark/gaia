@@ -1,0 +1,29 @@
+
+.main-nav {
+    height: 100px;
+    padding: 20px 50px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-nav>ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+.main-nav>ul a {
+    padding: 8px;
+    text-decoration: none;
+    color: black;
+    border: 0;
+    background: none;
+    transition: border-radius 0.4s, background-color 0.4s;
+
+    &:hover {
+        border-radius: 16px;
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+}

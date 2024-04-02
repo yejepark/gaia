@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 
 import classes from './CardItem.module.css'
 
-const imageServer = "http://127.0.0.1:8080/pictures";
+const imageServer = "http://127.0.0.1:8080";
 // cd to the directory: frontend/src/temp
-// run: npx http-server -o pictures/ --cors
+// run: npx http-server --cors
 
 function Arrow() {
     return (
@@ -44,7 +44,7 @@ function CardItem({ data, dataIdx }) {
     if (urls && urls.length > 0) {
         urls.forEach((url, imgIdx) => {
             let key = dataIdx + '-' + imgIdx;
-            imgElements.push(<img id={'pic-' + key} key={key} src={imageServer+url}/>)
+            imgElements.push(<img id={'pic-' + key} key={key} src={imageServer+ '/pictures' + url}/>)
         })
     }
 

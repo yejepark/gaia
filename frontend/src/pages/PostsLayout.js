@@ -1,17 +1,18 @@
-import { Outlet, useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 import KakaoMap from '../components/Map';
-import CardItem from '../components/CardItem'
-import assets from '../temp/assets'
+import CardContainer from '../components/CardContainer';
 
-const positions = assets.map(data => data.latlng);
+const jsonServer = "http://127.0.0.1:8080";
+// cd to the directory: frontend/src/temp
+// run: npx http-server --cors
 
 function PostsLayout() {
 
-    console.log(assets)
+	let assets = useLoaderData();
 
-    let cards = assets.map((data, dataIdx) => <CardItem key={dataIdx} data={data} dataIdx={dataIdx} />);
+	let positions = assets.map(data => data.latlng);
 
     return (
         <div id='posts-layout'>
@@ -19,12 +20,16 @@ function PostsLayout() {
 				<KakaoMap markerPositions={positions}/>
 			</main>
 			<nav>
-				<div className='card-container'>
-					{cards}
-				</div>
+				<CardContainer assets={assets}/>
 			</nav>
 		</div>
     );
 }
 
 export default PostsLayout;
+
+export async function loader() {
+	let res = await fetch(jsonServer + '/assets.json');
+	let data = await res.json();
+	return data;
+}
