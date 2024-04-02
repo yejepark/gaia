@@ -34,60 +34,6 @@ header {
     border-bottom: 2px solid #ccc;
 }
 
-
-#posts-layout {
-    --map-height: calc(100vh - 102px);
-
-    width: 100vw;
-    height: var(--map-height);
-
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-
-}
-
-#posts-layout>nav {
-    height: 100%;
-
-    border-left: 2px solid #ccc;
-    box-shadow: 0px 10px 10px gray;
-    z-index: 1;
-
-    overflow: scroll;
-}
-
-@media (max-width: 900px) {
-    #posts-layout>main {
-        display: none;
-    }
-}
-
-@media (min-width: 900px) {
-    #posts-layout>main {
-        flex-grow: 1;
-
-        &>#map-container {
-            width: 100%;
-            height: var(--map-height);
-        }
-    }
-}
-
-@media (min-width: 900px) {
-    #posts-layout>nav {
-        width: 340px;
-    }
-}
-
-@media (min-width: 1200px) {
-    #posts-layout>nav {
-        width: 680px;
-    }
-}
-
-
 .diamond-shape {
     fill: red;
 }

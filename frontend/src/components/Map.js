@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 
+import classes from './Map.module.css';
+
 const { kakao } = window;
 
 const DiamondHtml = `<svg class="diamond-container" viewBox="-50 -20 200 220" xmlns="http://www.w3.org/2000/svg">
@@ -85,7 +87,7 @@ function KakaoMap({ assets }) {
         }
     }, [kakaoMap, assets]);
 
-    return <div id="map-container" ref={container} />;
+    return <div className={classes["map-container"]} ref={container} />;
 }
 
 export default KakaoMap;
