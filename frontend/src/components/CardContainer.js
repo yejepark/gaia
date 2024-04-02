@@ -2,10 +2,10 @@ import CardItem from './CardItem';
 
 import classes from './CardContainer.module.css';
 
-function CardContainer({assets}) {
+function CardContainer({ assets }) {
 
     let cards = assets.map((data, dataIdx) =>
-        <CardItem key={dataIdx} data={data} dataIdx={dataIdx}/>
+        <CardItem key={dataIdx} data={data} />
     );
 
     return (
@@ -16,4 +16,3 @@ function CardContainer({assets}) {
 }
 
 export default CardContainer;
-

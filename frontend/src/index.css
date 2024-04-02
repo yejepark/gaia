@@ -86,3 +86,20 @@ header {
         width: 680px;
     }
 }
+
+
+.diamond-shape {
+    fill: red;
+}
+
+.diamond-container {
+    width: 37px;
+
+    &.large .diamond-shape {
+        fill: blue;
+    }
+
+    &.large g {
+        transform: scale(1.15) translate(-2%, -12%);
+    }
+}

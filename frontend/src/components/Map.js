@@ -2,42 +2,32 @@ import React, { useEffect, useState, useRef } from "react";
 
 const { kakao } = window;
 
-function getDiamondHtml(width = 37, fillColor = 'red') {
-    return `<svg width=${width} viewBox="-50 -20 200 220" xmlns="http://www.w3.org/2000/svg">
-			<defs>
-				 <radialGradient id="gradientDefinition"  cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-			      <stop stop-color="gray" offset="0%" stop-opacity="0.9" />
-			      <stop stop-color="white" offset="100%" stop-opacity="0" />
-			    </radialGradient>
-		    </defs>
-		    <g>
-		  		<polygon fill='${fillColor}' stroke="white" stroke-width="10" points="50 4 96 70 50 196 4 70"></polygon>
-		  		<polyline fill='none' stroke='white' stroke-width='8' points="50 4 40 75 50 196"></polyline>
-		  		<polyline fill='none' stroke='white' stroke-width='8' points="4 70 40 75 96 70"></polyline>
-		  		<ellipse cx="50" cy="190" rx="90" ry="25" stroke="white" stroke-width="1" stroke-dasharray="1 1 1 1" style="fill:url(#gradientDefinition)" />
-		  	</g>
-	</svg>`
-}
+const DiamondHtml = `<svg class="diamond-container" viewBox="-50 -20 200 220" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+         <radialGradient id="gradientDefinition"  cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+          <stop stop-color="gray" offset="0%" stop-opacity="0.9" />
+          <stop stop-color="white" offset="100%" stop-opacity="0" />
+        </radialGradient>
+    </defs>
+    <g>
+        <polygon class="diamond-shape" stroke="white" stroke-width="10" points="50 4 96 70 50 196 4 70"></polygon>
+        <polyline fill='none' stroke='white' stroke-width='8' points="50 4 40 75 50 196"></polyline>
+        <polyline fill='none' stroke='white' stroke-width='8' points="4 70 40 75 96 70"></polyline>
+        <ellipse cx="50" cy="190" rx="90" ry="25" stroke="white" stroke-width="1" stroke-dasharray="1 1 1 1" style="fill:url(#gradientDefinition)" />
+    </g>
+</svg>`
 
-function makeCustomMarkers(positions, kakaoMap) {
-    let redDiamondHtml = getDiamondHtml();
+function makeCustomMarkers(positions, dataIds, kakaoMap) {
 
-    return positions.map(pos => {
+    return positions.map((pos, idx) => {
 
         let content = document.createElement('div');
-        content.innerHTML = redDiamondHtml;
-        content.addEventListener('mouseover',
-            function() { 
-            	this.querySelector('polygon').setAttribute('fill', 'blue');
-            	let gEl = this.querySelector('g');
-            	gEl.setAttribute('transform', 'scale(1.25) translate(-10 -35)');
-            });
-        content.addEventListener('mouseout',
-            function() { 
-            	this.querySelector('polygon').setAttribute('fill', 'red');
-            	let gEl = this.querySelector('g');
-            	gEl.setAttribute('transform', '');
-        	});
+
+        content.id = dataIds[idx];
+
+        content.innerHTML = DiamondHtml;
+        content.addEventListener('mouseover', function() { this.firstChild.classList.add('large'); });
+        content.addEventListener('mouseout', function() { this.firstChild.classList.remove('large'); });
 
         return new kakao.maps.CustomOverlay({
             map: kakaoMap,
@@ -50,7 +40,7 @@ function makeCustomMarkers(positions, kakaoMap) {
     });
 }
 
-function KakaoMap({ markerPositions = [] }) {
+function KakaoMap({ assets }) {
     const [kakaoMap, setKakaoMap] = useState(null);
     const [markers, setMarkers] = useState([]);
 
@@ -70,19 +60,19 @@ function KakaoMap({ markerPositions = [] }) {
     }, [container]);
 
     useEffect(() => {
-
-        // console.log(markerPositions);
-
         if (kakaoMap === null) {
             return;
         }
 
-        const positions = markerPositions.map(pos => new kakao.maps.LatLng(...pos));
+        let dataIds = assets.map(data => `marker-${data.id}`);
+
+        let latlngs = assets.map(data => data.latlng);
+        let positions = latlngs.map(pos => new kakao.maps.LatLng(...pos));
 
         setMarkers((markers) => {
             markers.forEach(marker => marker.setMap(null)); // clear prev markers
 
-            return makeCustomMarkers(positions, kakaoMap); // return new markers
+            return makeCustomMarkers(positions, dataIds, kakaoMap); // return new markers
         });
 
         if (positions.length > 0) {
@@ -93,7 +83,7 @@ function KakaoMap({ markerPositions = [] }) {
 
             kakaoMap.setBounds(bounds);
         }
-    }, [kakaoMap, markerPositions]);
+    }, [kakaoMap, assets]);
 
     return <div id="map-container" ref={container} />;
 }

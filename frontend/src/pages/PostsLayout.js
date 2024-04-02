@@ -10,17 +10,15 @@ const jsonServer = "http://127.0.0.1:8080";
 
 function PostsLayout() {
 
-	let assets = useLoaderData();
-
-	let positions = assets.map(data => data.latlng);
+    let assets = useLoaderData();
 
     return (
         <div id='posts-layout'>
 			<main>
-				<KakaoMap markerPositions={positions}/>
+				<KakaoMap assets={assets} />
 			</main>
 			<nav>
-				<CardContainer assets={assets}/>
+				<CardContainer assets={assets} />
 			</nav>
 		</div>
     );
@@ -29,7 +27,7 @@ function PostsLayout() {
 export default PostsLayout;
 
 export async function loader() {
-	let res = await fetch(jsonServer + '/assets.json');
-	let data = await res.json();
-	return data;
+    let res = await fetch(jsonServer + '/assets.json');
+    let data = await res.json();
+    return data;
 }

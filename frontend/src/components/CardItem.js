@@ -9,21 +9,22 @@ const imageServer = "http://127.0.0.1:8080";
 function Arrow() {
     return (
         <svg className={classes.arrow} viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-	  		<polyline fill="none" stroke="white" strokeWidth="20" points="4 4 92 98 4 196"></polyline>
-		</svg>
+            <polyline fill="none" stroke="white" strokeWidth="20" points="4 4 92 98 4 196"></polyline>
+        </svg>
     )
 }
 
-function CardItem({ data, dataIdx }) {
+function CardItem({ data }) {
 
     let [imgPos, setImgPos] = useState(0);
 
     let urls = data.pic_urls;
 
-    let cardId = 'card-' + dataIdx;
+    let cardId = 'card-' + data.id;
 
     function cardClickHandler(event) {
         console.log('card', event.target);
+        event.stopPropagation();
     }
 
     function leftClickHandler(event) {
@@ -40,10 +41,24 @@ function CardItem({ data, dataIdx }) {
         event.stopPropagation();
     }
 
+    function mouseOverHandler(event) {
+        let markerId = 'marker-' + event.currentTarget.id.split('-')[1];
+        let marker = document.querySelector('#' + markerId);
+        if (marker) { marker.firstChild.classList.add('large'); }
+        event.stopPropagation();
+    }
+
+    function mouseOutHandler(event) {
+        let markerId = 'marker-' + event.currentTarget.id.split('-')[1];
+        let marker = document.querySelector('#' + markerId);
+        if (marker) { marker.firstChild.classList.remove('large'); }
+        event.stopPropagation();
+    }
+
     let imgElements = [];
     if (urls && urls.length > 0) {
         urls.forEach((url, imgIdx) => {
-            let key = dataIdx + '-' + imgIdx;
+            let key = data.id + '-' + imgIdx;
             imgElements.push(<img id={'pic-' + key} key={key} src={imageServer+ '/pictures' + url}/>)
         })
     }
@@ -58,28 +73,28 @@ function CardItem({ data, dataIdx }) {
     }, [imgPos]);
 
     if (imgElements.length > 0) return (
-        <div id={cardId} key={data.id} className={classes['card-item']} onClick={cardClickHandler}>
-			<div className={classes['img-container']}>
-				<div className={classes['arrow-container'] + ' ' + classes.left} onClick={leftClickHandler}><Arrow /></div>
-				<div className={classes['img-carousel']}>{imgElements}</div>
-				<div className={classes['arrow-container'] + ' ' + classes.right} onClick={rightClickHandler}><Arrow /></div>
-			</div>
-			<div className={classes['data-container']}>
-				<div className={classes['renting-cost']}> 
-					<div className={classes['asset-deposit']}>보증금 <span>{data.deposit}</span>원</div>
-					<div className={classes['asset-rent-monthly']}>월세 <span>{data.rent_monthly}</span>원</div>
-				</div>
-				<div className={classes['asset-premium']}>권리금 <span>{data.premium}</span>원</div>
-				<div className={classes.geo}>
-					<div className={classes['asset-address']}>{data.address_legal}</div>
+        <div id={cardId} className={classes['card-item']} onClick={cardClickHandler} onMouseOver={mouseOverHandler} onMouseOut={mouseOutHandler}>
+            <div className={classes['img-container']}>
+                <div className={classes['arrow-container'] + ' ' + classes.left} onClick={leftClickHandler}><Arrow /></div>
+                <div className={classes['img-carousel']}>{imgElements}</div>
+                <div className={classes['arrow-container'] + ' ' + classes.right} onClick={rightClickHandler}><Arrow /></div>
+            </div>
+            <div className={classes['data-container']}>
+                <div className={classes['renting-cost']}> 
+                    <div className={classes['asset-deposit']}>보증금 <span>{data.deposit}</span>원</div>
+                    <div className={classes['asset-rent-monthly']}>월세 <span>{data.rent_monthly}</span>원</div>
+                </div>
+                <div className={classes['asset-premium']}>권리금 <span>{data.premium}</span>원</div>
+                <div className={classes.geo}>
+                    <div className={classes['asset-address']}>{data.address_legal}</div>
 
-					<div className={classes['asset-area']}>
-						<div className={classes['m-area']}><span>{data.area_usage}</span>m<sup>2</sup></div>
-						<div className={classes['default-area']}><span>{Math.round(data.area_usage/3.3*10) / 10}</span>평</div>
-					</div>
-				</div>
-			</div>
-		</div>
+                    <div className={classes['asset-area']}>
+                        <div className={classes['m-area']}><span>{data.area_usage}</span>m<sup>2</sup></div>
+                        <div className={classes['default-area']}><span>{Math.round(data.area_usage/3.3*10) / 10}</span>평</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
 
