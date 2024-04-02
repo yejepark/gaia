@@ -1,0 +1,128 @@
+
+.card-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    margin: 3px 4px;
+    box-shadow: 0px 1px 4px gray;
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    & *::-moz-selection {
+      background: transparent;
+    }
+
+    & *::selection {
+      background: transparent;
+    }
+}
+
+.img-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 200px;
+    overflow: hidden;
+}
+
+.img-carousel {
+    position: relative;
+    display: flex;
+    transition: transform 0.2s;
+
+    &>img {
+        width: 100%;
+        min-height: 200px;
+        object-fit: cover;
+    }
+}
+
+.img-container>.arrow-container {
+    position: absolute;
+
+    height: 100%;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+
+    &.left {
+        left: 0px;
+        transform: rotate(180deg);
+        -webkit-filter: drop-shadow(0px -3px 2px rgba(0, 0, 0, .7));
+        filter: drop-shadow(0px -3px 2px rgba(0, 0, 0, .7));
+    }
+
+    &.right {
+        right: 0px;
+        -webkit-filter: drop-shadow(0px 3px 2px rgba(0, 0, 0, .7));
+        filter: drop-shadow(0px 3px 2px rgba(0, 0, 0, .7));
+    }
+}
+
+.arrow-container>.arrow {
+    width: 70px;
+    padding: 0px 10px 0px 30px;
+    stroke-opacity: 0;
+}
+
+.card-item:hover {
+    & .arrow {
+        stroke-opacity: 0.7;
+    }
+}
+
+
+.data-container {
+    height: 85px;
+    width: 100%;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+
+    display: flex;
+    flex-direction: column;
+
+    font-weight: 300;
+
+    & span {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    &>.renting-cost {
+        display: flex;
+        gap: 12px;
+    }
+
+    &>.geo {
+        display: flex;
+        gap: 12px;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.asset-area {
+    padding: 0 3px;
+    border: .5px solid;
+    border-radius: 4px;
+
+    & span {
+        font-weight: normal;
+    }
+
+    &>.m-area {
+        display: none;
+    }
+}
+
+.asset-area:hover {
+    &>.m-area {
+        display: inline;
+    }
+
+    &>.default-area {
+        display: none;
+    }
+}
