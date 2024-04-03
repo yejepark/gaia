@@ -19,7 +19,7 @@ function PostsLayout() {
 			<main>
 				<KakaoMap assets={assets} />
 			</main>
-			<nav>
+			<nav id="cardNav">
 				<CardContainer assets={assets} />
 			</nav>
 		</div>

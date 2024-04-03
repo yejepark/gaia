@@ -73,7 +73,7 @@ function CardItem({ data }) {
     }, [imgPos]);
 
     if (imgElements.length > 0) return (
-        <div id={cardId} className={classes['card-item']} onClick={cardClickHandler} onMouseOver={mouseOverHandler} onMouseOut={mouseOutHandler}>
+        <div id={cardId} tabIndex='0' className={classes['card-item']} onClick={cardClickHandler} onMouseOver={mouseOverHandler} onMouseOut={mouseOutHandler}>
             <div className={classes['img-container']}>
                 <div className={classes['arrow-container'] + ' ' + classes.left} onClick={leftClickHandler}><Arrow /></div>
                 <div className={classes['img-carousel']}>{imgElements}</div>

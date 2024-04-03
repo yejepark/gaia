@@ -20,16 +20,28 @@ const DiamondHtml = `<svg class="diamond-container" viewBox="-50 -20 200 220" xm
 </svg>`
 
 function makeCustomMarkers(positions, dataIds, kakaoMap) {
+    let nav = document.getElementById("cardNav");
+    let cardContainer = nav.firstChild;
+    let baseOffset = nav.offsetTop + parseInt(getComputedStyle(cardContainer).marginTop);
 
     return positions.map((pos, idx) => {
 
         let content = document.createElement('div');
-
+        content.innerHTML = DiamondHtml;
         content.id = dataIds[idx];
 
-        content.innerHTML = DiamondHtml;
+        let id = content.id.split('-')[1];
+        let cardId = `card-${id}`;
+        let card = document.getElementById(cardId);
+
         content.addEventListener('mouseover', function() { this.firstChild.classList.add('large'); });
         content.addEventListener('mouseout', function() { this.firstChild.classList.remove('large'); });
+        content.addEventListener('click', function(event) {
+            if (card) {
+                card.focus({ preventScroll: true });
+                nav.scrollTo({ top: card.offsetTop - baseOffset, behavior: 'smooth' });
+            }
+        })
 
         return new kakao.maps.CustomOverlay({
             map: kakaoMap,
