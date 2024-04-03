@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 
+import { debounce } from '../utilities/methods';
 import classes from './Map.module.css';
 
 const { kakao } = window;
@@ -55,12 +56,27 @@ function makeCustomMarkers(positions, dataIds, kakaoMap) {
 }
 
 function KakaoMap({ assets }) {
-    const [kakaoMap, setKakaoMap] = useState(null);
-    const [markers, setMarkers] = useState([]);
+    let [kakaoMap, setKakaoMap] = useState(null);
+    let [markers, setMarkers] = useState([]);
+    let [positions, setPositions] = useState([]);
 
-    const container = useRef();
+    let container = useRef();
+    
+    // console.log('1', container.current)
+
+    function centerMap(positions) {
+        if (positions.length > 0) {
+            const bounds = positions.reduce(
+                (bds, latlng) => bds.extend(latlng),
+                new kakao.maps.LatLngBounds()
+            );
+            kakaoMap.setBounds(bounds);
+        }
+    }
 
     useEffect(() => {
+        // console.log('in setKakaoMap');
+
         const center = new kakao.maps.LatLng(37.4995, 127.0263);
         const options = {
             center,
@@ -69,35 +85,36 @@ function KakaoMap({ assets }) {
         const map = new kakao.maps.Map(container.current, options);
         setKakaoMap(map);
 
-        // console.log(container.current)
+    }, []);
 
-    }, [container]);
+    // console.log('2', container.current)
 
     useEffect(() => {
-        if (kakaoMap === null) {
-            return;
-        }
+        // console.log('in setBounds');
+
+        if (kakaoMap === null) { return; }
 
         let dataIds = assets.map(data => `marker-${data.id}`);
-
         let latlngs = assets.map(data => data.latlng);
-        let positions = latlngs.map(pos => new kakao.maps.LatLng(...pos));
+        let newPositions = latlngs.map(pos => new kakao.maps.LatLng(...pos));
+        setPositions(newPositions);
 
         setMarkers((markers) => {
-            markers.forEach(marker => marker.setMap(null)); // clear prev markers
-
-            return makeCustomMarkers(positions, dataIds, kakaoMap); // return new markers
+            markers.forEach(marker => marker.setMap(null)); // clear previous markers
+            return makeCustomMarkers(newPositions, dataIds, kakaoMap); // return new markers
         });
 
-        if (positions.length > 0) {
-            const bounds = positions.reduce(
-                (bds, latlng) => bds.extend(latlng),
-                new kakao.maps.LatLngBounds()
-            );
-
-            kakaoMap.setBounds(bounds);
-        }
+        centerMap(newPositions);
+        
     }, [kakaoMap, assets]);
+
+    // useEffect(() => {
+    //     if (positions.length > 0) {
+    //         let resizeHandler = debounce((event) => { centerMap(positions); } , 200);
+    //         window.addEventListener('resize', resizeHandler);
+    //         return () => { window.removeEventListener('resize', resizeHandler); }    
+    //     }
+    // }, [positions]);
 
     return <div className={classes["map-container"]} ref={container} />;
 }

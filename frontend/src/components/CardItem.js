@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import classes from './CardItem.module.css'
+import { debounce } from '../utilities/methods';
 
 const imageServer = "http://127.0.0.1:8080";
 // cd to the directory: frontend/src/temp
@@ -21,6 +22,7 @@ function CardItem({ data }) {
     let urls = data.pic_urls;
 
     let cardId = 'card-' + data.id;
+    let imgCarousel;
 
     function cardClickHandler(event) {
         console.log('card', event.target);
@@ -43,14 +45,14 @@ function CardItem({ data }) {
 
     function mouseOverHandler(event) {
         let markerId = 'marker-' + event.currentTarget.id.split('-')[1];
-        let marker = document.querySelector('#' + markerId);
+        let marker = document.getElementById(markerId);
         if (marker) { marker.firstChild.classList.add('large'); }
         event.stopPropagation();
     }
 
     function mouseOutHandler(event) {
         let markerId = 'marker-' + event.currentTarget.id.split('-')[1];
-        let marker = document.querySelector('#' + markerId);
+        let marker = document.getElementById(markerId);
         if (marker) { marker.firstChild.classList.remove('large'); }
         event.stopPropagation();
     }
@@ -64,12 +66,22 @@ function CardItem({ data }) {
     }
 
     useEffect(() => {
-        let imgCarousel = document.querySelector(`#${cardId} .${classes['img-carousel']}`);
-        // console.log(imgCarousel);
-        if (imgCarousel) {
+        if (!imgCarousel) { imgCarousel = document.querySelector('#' + cardId + ' .' + classes['img-carousel']); }
+        if (imgCarousel) { 
             let width = imgCarousel.firstChild.getBoundingClientRect().width;
-            imgCarousel.style.transform = `translate(${-width*imgPos}px)`
+            imgCarousel.style.transform = `translate(${-width*imgPos}px)`;
         }
+    }, [imgPos]);
+
+    useEffect(() => {
+        if (imgCarousel) {
+            let resizeHandler = debounce((event) => {
+                let width = imgCarousel.firstChild.getBoundingClientRect().width;
+                imgCarousel.style.transform = `translate(${-width*imgPos}px)`;
+            }, 200);
+            window.addEventListener('resize', resizeHandler);
+            return () => { window.removeEventListener('resize', resizeHandler); }
+        };
     }, [imgPos]);
 
     if (imgElements.length > 0) return (
