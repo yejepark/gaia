@@ -15,3 +15,69 @@
         }
     }
 }
+
+.container-header {
+    height: fit-content;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    padding: 12px 0 0 8px;
+    border: none;
+}
+
+.title {
+    font-weight: 500;
+    padding-left: 5px;
+}
+
+.result {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding-right: 14px;
+
+    font-size: 0.85rem;
+    padding-left: 5px;
+}
+
+.sort {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    background: white;
+    
+    font-weight: 600;
+    letter-spacing: 0.1rem;
+    
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+    padding: 3px 10px;
+}
+
+
+.arrow-container {
+    position: relative;
+}
+
+.arrow {
+    position: relative;
+
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+
+    bottom: 2px;
+    transform: rotate(45deg);
+
+    &.up {
+        top: 2px;
+        transform: rotate(-135deg);
+    }
+}

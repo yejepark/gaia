@@ -8,15 +8,18 @@ function MainNavigation() {
 		<nav className={classes["main-nav"]}>
 			<ul>
 				<li>
-					<NavLink end to="/">홈</NavLink>
+					<NavLink end to="/posts">매물찾기</NavLink>
 				</li>
 				<li>
-					<NavLink end to="/posts">매물</NavLink>
+					<NavLink end to="/posts">중개사찾기</NavLink>
 				</li>
 			</ul>
 			<ul>
+				<NavLink end to="/">홈</NavLink>
+			</ul>
+			<ul>
 				<li>
-					<NavLink end to='/newidea'>아이디어작성</NavLink>
+					<NavLink end to='/newidea'>블로그작성</NavLink>
 				</li>
 				<li>
 					<NavLink end to='/newprod'>매물작성</NavLink>

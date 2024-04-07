@@ -25,7 +25,8 @@ const DiamondHtml = `<div class="diamond-container">
 function makeCustomMarkers(positions, dataIds, kakaoMap) {
     let nav = document.getElementById("cardNav");
     let cardContainer = nav.firstChild;
-    let baseOffset = nav.offsetTop + parseInt(getComputedStyle(cardContainer).marginTop);
+    let baseOffset = nav.offsetTop + parseInt(getComputedStyle(cardContainer).marginTop) + 10;
+    // console.log(baseOffset)
 
     return positions.map((pos, idx) => {
 
