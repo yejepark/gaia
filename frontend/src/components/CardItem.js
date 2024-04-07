@@ -29,6 +29,7 @@ function CardItem({ data }) {
         event.stopPropagation();
     }
 
+    // Actions for clicking arrows on a card:
     function leftClickHandler(event) {
         if (imgPos > 0) {
             setImgPos(imgPos - 1)
@@ -43,6 +44,7 @@ function CardItem({ data }) {
         event.stopPropagation();
     }
 
+    // Make the marker larger when a mouse is over a corresponding card:
     function mouseOverHandler(event) {
         let markerId = 'marker-' + event.currentTarget.id.split('-')[1];
         let marker = document.getElementById(markerId);
@@ -65,6 +67,7 @@ function CardItem({ data }) {
         })
     }
 
+    // Slide images in the image carousel when arrows are clicked:
     useEffect(() => {
         if (!imgCarousel) { imgCarousel = document.querySelector('#' + cardId + ' .' + classes['img-carousel']); }
         if (imgCarousel) { 
@@ -73,16 +76,17 @@ function CardItem({ data }) {
         }
     }, [imgPos]);
 
+    // When the window is resized, reset the image carousel:
     useEffect(() => {
         if (imgCarousel) {
             let resizeHandler = debounce((event) => {
-                let width = imgCarousel.firstChild.getBoundingClientRect().width;
-                imgCarousel.style.transform = `translate(${-width*imgPos}px)`;
+                imgCarousel.style.transform = "translate(0px)";
+                setImgPos(0);
             }, 200);
             window.addEventListener('resize', resizeHandler);
-            return () => { window.removeEventListener('resize', resizeHandler); }
+            return () => { window.removeEventListener('resize', resizeHandler); };
         };
-    }, [imgPos]);
+    }, []);
 
     if (imgElements.length > 0) return (
         <div id={cardId} tabIndex='0' className={classes['card-item']} onClick={cardClickHandler} onMouseOver={mouseOverHandler} onMouseOut={mouseOutHandler}>
@@ -98,7 +102,7 @@ function CardItem({ data }) {
                 </div>
                 <div className={classes['asset-premium']}>권리금 <span>{data.premium}</span>원</div>
                 <div className={classes.geo}>
-                    <div className={classes['asset-address']}>{data.address_legal}</div>
+                    <div className={classes['asset-address']}>{data.address_legal} ({data.floor}층)</div>
 
                     <div className={classes['asset-area']}>
                         <div className={classes['m-area']}><span>{data.area_usage}</span>m<sup>2</sup></div>

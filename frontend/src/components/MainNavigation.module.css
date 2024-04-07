@@ -1,7 +1,7 @@
 
 .main-nav {
-    height: 100px;
-    padding: 20px 50px;
+    width: 100%;
+    padding: 0px 50px;
 
     display: flex;
     justify-content: space-between;

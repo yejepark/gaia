@@ -99,18 +99,23 @@
         font-size: 1rem;
         font-weight: bold;
     }
+}
 
-    &>.renting-cost {
-        display: flex;
-        gap: 12px;
-    }
+.renting-cost {
+    display: flex;
+    gap: 12px;
+}
 
-    &>.geo {
-        display: flex;
-        gap: 12px;
-        justify-content: space-between;
-        align-items: center;
-    }
+.geo {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.asset-address {
+    max-width: 200px;
+    text-wrap: nowrap;
 }
 
 .asset-area {
@@ -118,6 +123,7 @@
     border: .5px solid;
     border-radius: 4px;
     box-shadow: 0px 1px 4px gray;
+    background-color: white;
 
     & span {
         font-weight: normal;
@@ -125,6 +131,10 @@
 
     &>.m-area {
         display: none;
+    }
+
+    &>.default-area{
+        display: inline;
     }
 }
 
