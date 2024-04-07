@@ -15,7 +15,7 @@ function MainNavigation() {
 				</li>
 			</ul>
 			<ul>
-				<NavLink end to="/">홈</NavLink>
+				<NavLink end to="/"><div className={classes.logo}>L<sup>3</sup></div></NavLink>
 			</ul>
 			<ul>
 				<li>

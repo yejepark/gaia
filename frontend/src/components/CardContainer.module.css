@@ -58,6 +58,14 @@
     border-radius: 4px;
 
     padding: 3px 10px;
+
+    &:hover {
+        border-color: var(--focus-color);
+    }
+
+    &:active {
+        background-color: var(--background-active-color);
+    }
 }
 
 
