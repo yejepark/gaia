@@ -48,14 +48,16 @@ function CardItem({ data }) {
     function mouseOverHandler(event) {
         let markerId = 'marker-' + event.currentTarget.id.split('-')[1];
         let marker = document.getElementById(markerId);
-        if (marker) { marker.firstChild.classList.add('large'); }
+        // if (marker) { marker.firstChild.classList.add('large'); }
+        if (marker) { marker.style.setProperty('--tag-background', '#B00000'); }
         event.stopPropagation();
     }
 
     function mouseOutHandler(event) {
         let markerId = 'marker-' + event.currentTarget.id.split('-')[1];
         let marker = document.getElementById(markerId);
-        if (marker) { marker.firstChild.classList.remove('large'); }
+        // if (marker) { marker.firstChild.classList.remove('large'); }
+        if (marker) { marker.style.setProperty('--tag-background', '#4285F4'); }
         event.stopPropagation();
     }
 
@@ -97,8 +99,8 @@ function CardItem({ data }) {
             </div>
             <div className={classes['data-container']}>
                 <div className={classes['renting-cost']}> 
-                    <div className={classes['asset-deposit']}>보증금 <span>{data.deposit}</span>원</div>
-                    <div className={classes['asset-rent-monthly']}>월세 <span>{data.rent_monthly}</span>원</div>
+                    <div className={classes['asset-deposit']}>보증금 <span id="deposit">{data.deposit}</span>원</div>
+                    <div className={classes['asset-rent-monthly']}>월세 <span id="rent">{data.rent_monthly}</span>원</div>
                 </div>
                 <div className={classes['asset-premium']}>권리금 <span>{data.premium}</span>원</div>
                 <div className={classes.geo}>

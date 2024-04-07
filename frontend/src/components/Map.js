@@ -5,22 +5,23 @@ import classes from './Map.module.css';
 
 const { kakao } = window;
 
-const DiamondHtml = `<div class="diamond-container">
-<svg class="diamond-container" viewBox="-50 -20 200 220" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-         <radialGradient id="gradientDefinition"  cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-          <stop stop-color="gray" offset="0%" stop-opacity="0.9" />
-          <stop stop-color="white" offset="100%" stop-opacity="0" />
-        </radialGradient>
-    </defs>
-    <g>
-        <polygon class="diamond-shape" stroke="white" stroke-width="10" points="50 4 96 70 50 196 4 70"></polygon>
-        <polyline fill='none' stroke='white' stroke-width='8' points="50 4 40 75 50 196"></polyline>
-        <polyline fill='none' stroke='white' stroke-width='8' points="4 70 40 75 96 70"></polyline>
-        <ellipse cx="50" cy="190" rx="90" ry="25" stroke="white" stroke-width="1" stroke-dasharray="1 1 1 1" style="fill:url(#gradientDefinition)" />
-    </g>
-</svg>
-`
+// const DiamondHtml = `<div class="diamond-container">
+// <svg class="diamond-container" viewBox="-50 -20 200 220" xmlns="http://www.w3.org/2000/svg">
+//     <defs>
+//          <radialGradient id="gradientDefinition"  cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+//           <stop stop-color="gray" offset="0%" stop-opacity="0.9" />
+//           <stop stop-color="white" offset="100%" stop-opacity="0" />
+//         </radialGradient>
+//     </defs>
+//     <g>
+//         <polygon class="diamond-shape" stroke="white" stroke-width="10" points="50 4 96 70 50 196 4 70"></polygon>
+//         <polyline fill='none' stroke='white' stroke-width='8' points="50 4 40 75 50 196"></polyline>
+//         <polyline fill='none' stroke='white' stroke-width='8' points="4 70 40 75 96 70"></polyline>
+//         <ellipse cx="50" cy="190" rx="90" ry="25" stroke="white" stroke-width="1" stroke-dasharray="1 1 1 1" style="fill:url(#gradientDefinition)" />
+//     </g>
+// </svg>
+// `
+
 
 function makeCustomMarkers(positions, dataIds, kakaoMap) {
     let nav = document.getElementById("cardNav");
@@ -31,15 +32,26 @@ function makeCustomMarkers(positions, dataIds, kakaoMap) {
     return positions.map((pos, idx) => {
 
         let content = document.createElement('div');
-        content.innerHTML = DiamondHtml;
+
+        // content.innerHTML = DiamondHtml;
+
         content.id = dataIds[idx];
 
         let id = content.id.split('-')[1];
         let cardId = `card-${id}`;
         let card = document.getElementById(cardId);
 
-        content.addEventListener('mouseover', function() { this.firstChild.classList.add('large'); });
-        content.addEventListener('mouseout', function() { this.firstChild.classList.remove('large'); });
+        if (card) {
+            content.className = classes["price-tag"];
+            content.textContent = card.querySelector('#rent').textContent;
+        }
+
+        content.addEventListener('mouseover', function() { this.style.setProperty('--tag-background', '#B00000'); });
+        content.addEventListener('mouseout', function() { this.style.setProperty('--tag-background', '#4285F4'); });
+
+        // content.addEventListener('mouseover', function() { this.firstChild.classList.add('large'); });
+        // content.addEventListener('mouseout', function() { this.firstChild.classList.remove('large'); });
+
         content.addEventListener('click', function(event) {
             if (card) {
                 card.focus({ preventScroll: true });
@@ -106,7 +118,7 @@ function KakaoMap({ assets }) {
         });
 
         centerMap(newPositions);
-        
+
     }, [kakaoMap, assets]);
 
     // useEffect(() => {

@@ -46,6 +46,7 @@ header {
     display: flex;
 }
 
+/*
 .diamond-shape {
     fill: red;
 }
@@ -61,3 +62,4 @@ header {
         transform: scale(1.15) translate(-2%, -12%);
     }
 }
+*/
