@@ -24,7 +24,10 @@ function MainNavigation() {
 					<NavLink end to='/newidea'>블로그작성</NavLink>
 				</li>
 				<li>
-					<NavLink end to='/newprod'>매물작성</NavLink>
+					<NavLink end to='/newprod'>중개사매물작성</NavLink>
+				</li>
+				<li>
+					<NavLink end to='/newprod'>직거래매물작성</NavLink>
 				</li>
 				<li>
 					<NavLink end to='/account'>내계정</NavLink>

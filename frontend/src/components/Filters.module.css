@@ -13,11 +13,51 @@
     text-wrap: nowrap;
 }
 
+
+.filters :where(input[type='radio'], input[type="checkbox"]) {
+    appearance: none;
+    background-color: var(--background-color);
+    margin: 0;
+    width: 1.4em;
+    height: 1.4em;
+    border: 1px solid currentColor;
+    display: inline-grid;
+    place-content: center;
+}
+
+.filters input[type='radio'] {
+    border-radius: 50%;
+
+    &::before {
+        border-radius: 50%;
+    }
+}
+
+.filters input[type='checkbox'] {
+    border-radius: 4px;
+}
+
+.filters :where(input[type='radio'], input[type='checkbox'])::before {
+    display: block;
+    content: '';
+    width: 0.8em;
+    height: 0.8em;
+}
+
+.filters :where(input[type='radio'], input[type='checkbox']):hover::before {
+    background-color: var(--hover-color);
+}
+
+.filters :where(input[type='radio'], input[type='checkbox']):checked::before {
+    background-color: var(--focus-color);
+}
+
+
 .search-container {
     height: 80%;
     width: 280px;
 
-    padding: 5px 8px 5px 10px;
+    padding: 9px 8px 5px 10px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
 
@@ -64,22 +104,42 @@
 
     z-index: var(--dialog-z-index);
 
-    width: fit-content;
-    padding: 1.1rem 1.5rem 1.1rem 1.2rem;
+    width: 250px;
+/*    padding: 1.1rem 1.5rem 1.1rem 1.2rem;*/
+    padding: .5rem 0.5rem;
     border-radius: 8px;
     box-shadow: 0 5px 10px gray;
 
     display: flex;
     flex-direction: column;
-    gap: 20px;
 
     font-size: 1.15rem;
 
     & label {
+        padding: 10px;
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 0.65rem;
     }
+
+    & label+label {
+         border-top: 1px solid var(--border-color);
+    }
+
+    & label:hover span {
+        color: var(--focus-color);
+    }
+}
+
+.space-use-dialog {
+    font-size: 0.9rem;
+}
+
+.list {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .backdrop {
@@ -122,6 +182,11 @@
     }
 
     &:active {
+        background-color: var(--background-active-color);
+    }
+
+    &.active {
+        border-color: var(--focus-color);
         background-color: var(--background-active-color);
     }
 }
