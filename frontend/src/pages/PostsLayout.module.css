@@ -1,10 +1,4 @@
 .posts-layout-parent {
-    --filters-height: 47px;
-
-    --focus-color: #aa68ff;  /* bright indigo */
-    --background-color: white;
-    --background-active-color: #f3eaff; /* brighter indigo */
-
     display: flex;
     flex-direction: column;
 }
@@ -25,9 +19,9 @@
 .posts-layout nav {
     height: 100%;
 
-    border-left: 1px solid #ccc;
+    border-left: 1px solid var(--border-color);
     box-shadow: 0px 10px 10px gray;
-    z-index: 1;
+    z-index: var(--posts-layout-z-index);
 
     overflow: scroll;
 }

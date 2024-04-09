@@ -59,12 +59,14 @@ function makeCustomMarkers(positions, dataIds, kakaoMap) {
             }
         })
 
+        // return new kakao.maps.Marker({ map: kakaoMap, position: pos });
+
         return new kakao.maps.CustomOverlay({
             map: kakaoMap,
             position: pos,
             content: content,
             xAnchor: 0.5,
-            yAnchor: 0.8,
+            yAnchor: 1.5,
         });
 
     });

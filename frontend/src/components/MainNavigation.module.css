@@ -1,24 +1,38 @@
-
 .main-nav {
-    --focus-color: #aa68ff;  /* bright indigo */
-
     width: 100%;
-    padding: 0px 50px;
+    padding: 0px 30px;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    &>* {
+        flex-basis: 33%;
+        flex-shrink: 1;
+    }
 }
 
 .main-nav>ul {
     list-style: none;
+
     display: flex;
     gap: 2rem;
+
+    justify-content: center;
+
+    &.left {
+        justify-content: left;
+    }
+
+    &.right {
+        justify-content: right;
+    }
 }
 
 .main-nav>ul a {
     text-decoration: none;
     color: black;
+    text-wrap: nowrap;
 
     &:hover {
         color: var(--focus-color);
@@ -38,6 +52,8 @@
     color: black;
     text-transform: uppercase;
 
+    transition: text-shadow 0.2s;
+
     &>sup {
         position: relative;
         font-size: 30px;
@@ -50,5 +66,5 @@
         background-color: white;
         text-shadow: 2px 3px 4px gray;
     }
-    
+
 }

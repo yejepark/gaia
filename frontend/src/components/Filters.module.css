@@ -5,10 +5,12 @@
     align-items: center;
 
     height: var(--filters-height);
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid var(--border-color);
     padding-left: 5px;
 
     background-color: var(--background-color);
+
+    text-wrap: nowrap;
 }
 
 .search-container {
@@ -16,7 +18,7 @@
     width: 280px;
 
     padding: 5px 8px 5px 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 5px;
 
     background-color: var(--background-color);
@@ -48,36 +50,60 @@
     }
 }
 
-
-/* clears the ‘X’ from Internet Explorer */
-input[type=search]::-ms-clear {
-    display: none;
-    width: 0;
-    height: 0;
-}
-
-input[type=search]::-ms-reveal {
-    display: none;
-    width: 0;
-    height: 0;
-}
-
-/* clears the ‘X’ from Chrome */
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-results-button,
-input[type="search"]::-webkit-search-results-decoration {
-    display: none;
-}
-
-
-.filter {
+.filter-container {
     position: relative;
 
-    width: fit-content;
     height: 75%;
+}
+
+.dialog {
+    position: absolute;
+    top: calc(var(--filters-height) - 8px);
+
+    background-color: var(--background-color);
+
+    z-index: var(--dialog-z-index);
+
+    width: fit-content;
+    padding: 1.1rem 1.5rem 1.1rem 1.2rem;
+    border-radius: 8px;
+    box-shadow: 0 5px 10px gray;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    font-size: 1.15rem;
+
+    & label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+}
+
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: transparent;
+    z-index: var(--backdrop-z-index);
+}
+
+.hidden {
+    transform: translate(-9999px);
+}
+
+.filter {
+    flex-basis: 100%;
+    flex-shrink: 0;
+
+    width: fit-content;
+    height: 100%;
     padding: 0 15px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 5px;
 
     display: flex;
@@ -128,7 +154,7 @@ input[type="search"]::-webkit-search-results-decoration {
     border: 1px solid white;
 
     &:hover {
-        background-color: white;
+        background-color: var(--background-color);
         color: var(--focus-color);
         border: 1px solid var(--focus-color);
     }

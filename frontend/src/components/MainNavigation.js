@@ -6,7 +6,7 @@ function MainNavigation() {
 	return (
 		<>
 		<nav className={classes["main-nav"]}>
-			<ul>
+			<ul className={classes.left}>
 				<li>
 					<NavLink end to="/posts">매물찾기</NavLink>
 				</li>
@@ -15,9 +15,11 @@ function MainNavigation() {
 				</li>
 			</ul>
 			<ul>
-				<NavLink end to="/"><div className={classes.logo}>L<sup>3</sup></div></NavLink>
+				<NavLink end to="/">
+					<div className={classes.logo}>L<sup>3</sup></div>
+				</NavLink>
 			</ul>
-			<ul>
+			<ul className={classes.right}>
 				<li>
 					<NavLink end to='/newidea'>블로그작성</NavLink>
 				</li>

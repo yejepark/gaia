@@ -1,6 +1,4 @@
 .card-item {
-    --focus-shadow : #89CFF0; /* baby blue */
-
     display: flex;
     flex-direction: column;
     align-items: flex-start;
