@@ -1,0 +1,20 @@
+.arrow-container {
+    position: relative;
+}
+
+.arrow {
+    position: relative;
+
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+
+    bottom: 2px;
+    transform: rotate(45deg);
+
+    &.up {
+        top: 2px;
+        transform: rotate(-135deg);
+    }
+}

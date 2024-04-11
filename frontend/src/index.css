@@ -25,6 +25,7 @@ html {
     --posts-layout-z-index: 2;
     --dialog-z-index: 3;
     --backdrop-z-index: 3;
+    --dropdown-z-index: 4;
 
     --focus-color: #aa68ff;
     /* bright indigo */
@@ -34,6 +35,11 @@ html {
     --background-color: white;
     --background-active-color: #f4e4ff;
     /* brighter indigo */
+
+    --map-height: calc(100vh - var(--header-height) - var(--filters-height));
+
+    height: 100vh;
+    width: 100vw;
 }
 
 * {
@@ -60,6 +66,8 @@ header {
     border-bottom: 1px solid #ccc;
 
     height: var(--header-height);
+    width: 100%;
+
     display: flex;
 }
 

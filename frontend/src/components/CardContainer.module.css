@@ -1,5 +1,6 @@
 
 .card-container {
+
     margin: 10px 8px 0 8px;
     display: grid;
 
@@ -17,7 +18,7 @@
 }
 
 .container-header {
-    height: fit-content;
+    height: var(--container-header-height);
     width: 100%;
 
     display: flex;
