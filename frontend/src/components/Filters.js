@@ -13,8 +13,8 @@ function Filters() {
 
     let [listingType, setListingType] = useState('rent');
     let [checkedSpaceUses, setCheckedSpaceUses] = useState([]);
-    let [minRent, setMinRent] = useState(0);
-    let [maxRent, setMaxRent] = useState(-1);
+    let [minRent, setMinRent] = useState('');
+    let [maxRent, setMaxRent] = useState('');
 
     return (
         <div className={classes.filters}>

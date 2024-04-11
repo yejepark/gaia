@@ -51,7 +51,7 @@ function SpaceUseFilter({ checkedSpaceUses, setCheckedSpaceUses }) {
 
 	return (<>
         <button className={classes.filter + btnClass} id="space-use-button" onClick={btnClickHandler}>
-            <div className={classes.list}>{btnLabel}</div>
+            <div className={classes['list-string']}>{btnLabel}</div>
             <UpDown up={dialogOpen}/>
         </button>
 
