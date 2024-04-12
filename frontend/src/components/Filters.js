@@ -7,7 +7,10 @@ import { arrayRange } from '../utilities/methods';
 import UpDown from './UpDown';
 import ListingTypeFilter from './ListingTypeFilter';
 import SpaceUseFilter from './SpaceUseFilter';
-import RentRangeFilter from './RentRangeFilter';
+import RangeFilter from './RangeFilter'
+
+const rentValues = [...arrayRange(0, 300, 20), ...arrayRange(350, 600, 50), ...arrayRange(700, 1000, 100)];
+const areaValues = [...arrayRange(0, 20, 5), ...arrayRange(30, 100, 10), ...arrayRange(200, 400, 100)];
 
 function Filters() {
 
@@ -15,6 +18,8 @@ function Filters() {
     let [checkedSpaceUses, setCheckedSpaceUses] = useState([]);
     let [minRent, setMinRent] = useState('');
     let [maxRent, setMaxRent] = useState('');
+    let [minArea, setMinArea] = useState('');
+    let [maxArea, setMaxArea] = useState('');
 
     return (
         <div className={classes.filters}>
@@ -31,11 +36,11 @@ function Filters() {
             </div>
 
             <div className={classes['filter-container']}>
-                <RentRangeFilter minRent={minRent} setMinRent={setMinRent} maxRent={maxRent} setMaxRent={setMaxRent} />
+                <RangeFilter minValue={minRent} setMinValue={setMinRent} maxValue={maxRent} setMaxValue={setMaxRent} unit={'만'} values={rentValues} btnName={'월세'} />
             </div>
 
             <div className={classes['filter-container']}>
-                <button className={classes.filter} id="use-area">면적 <UpDown /></button>
+                <RangeFilter minValue={minArea} setMinValue={setMinArea} maxValue={maxArea} setMaxValue={setMaxArea} unit={'평'} values={areaValues} btnName={'면적'} />
             </div>
             <div className={classes['filter-container']}>
                 <button className={classes.filter} id="all-filters">모든필터 <UpDown /></button>

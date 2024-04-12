@@ -309,11 +309,11 @@
 }
 
 .tilde {
-    height: 16px;
-    width: 14px;
+    height: 1rem;
+    width: 0.9rem;
 
     background-image: url('./tilde.svg');
     background-repeat: no-repeat;
-    background-size: 14px 14px;
+    background-size: 0.9rem 0.9rem;
     background-position: bottom;
 }

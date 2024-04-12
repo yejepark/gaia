@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
-import UpDown from './UpDown'
+import UpDown from './UpDown';
+import ApplyButton from './ApplyButton';
 
 import classes from './Filters.module.css';
 
@@ -60,6 +61,7 @@ function SpaceUseFilter({ checkedSpaceUses, setCheckedSpaceUses }) {
         <div className={classes['positional-container']}>
             <div className={classes['space-use-dialog'] + ' ' + classes.dialog + dialogOpenClass} id="space-use-dialog">
                 {spaceUseItems}
+                <ApplyButton clickHandler={btnClickHandler} />
             </div>
         </div>
 	</>)
