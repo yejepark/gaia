@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 
 import UpDown from './UpDown';
 import ApplyButton from './ApplyButton';
@@ -50,4 +50,4 @@ function ListingTypeFilter({ listingType, setListingType }) {
     </>)
 }
 
-export default ListingTypeFilter;
+export default memo(ListingTypeFilter);

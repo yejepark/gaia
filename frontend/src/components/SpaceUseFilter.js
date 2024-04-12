@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 
 import UpDown from './UpDown';
 import ApplyButton from './ApplyButton';
@@ -32,19 +32,19 @@ function SpaceUseFilter({ checkedSpaceUses, setCheckedSpaceUses }) {
         if (!checkedSpaceUses.includes(clicked)) {
             setCheckedSpaceUses((prevUses) => [...prevUses, clicked]);
         } else {
-            setCheckedSpaceUses((prevUses) => prevUses.filter((x) => x != clicked));
+            setCheckedSpaceUses((prevUses) => prevUses.filter((x) => x !== clicked));
         }
     }
 	
-	let btnClass = checkedSpaceUses.length == 0 ? '' : ' ' + classes.active;
-    let btnLabel = checkedSpaceUses.length == 0 ? "용도" : checkedSpaceUses.map((x)=>spaceUseMap[x]).join(',');
+	let btnClass = checkedSpaceUses.length === 0 ? '' : ' ' + classes.active;
+    let btnLabel = checkedSpaceUses.length === 0 ? "용도" : checkedSpaceUses.map((x)=>spaceUseMap[x]).join(',');
 
 	let dialogOpenClass = dialogOpen ? '' : ' ' + classes.hidden;
 
     let spaceUseItems = spaceUses.map((spaceUse)=> {
     	return (
 			<label key={spaceUse}>
-	            <input type="checkbox" value={spaceUse} name="space-use" onClick={checkClickHandler}/>
+	            <input type="checkbox" value={spaceUse} name="space-use" onClick={checkClickHandler} checked={checkedSpaceUses.includes(spaceUse)} readOnly/>
 	            <span>{spaceUseMap[spaceUse]}</span>
 	        </label>
 	    );
@@ -67,4 +67,4 @@ function SpaceUseFilter({ checkedSpaceUses, setCheckedSpaceUses }) {
 	</>)
 }
 
-export default SpaceUseFilter;
+export default memo(SpaceUseFilter);

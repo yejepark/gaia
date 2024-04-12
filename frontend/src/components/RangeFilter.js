@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 
 import UpDown from './UpDown';
 import ApplyButton from './ApplyButton';
@@ -34,11 +34,11 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
     let [tempMaxValue, setTempMaxValue] = useState(maxValue);
 
 	function btnClickHandler() {
+        setMinValue(String(tempMinValue));
+        setMaxValue(String(tempMaxValue));
         if (dialogOpen) {
             setMinDropdownOpen(false);
             setMaxDropdownOpen(false);
-            setMinValue(tempMinValue);
-            setMinValue(tempMaxValue);
         }    
         setDialogOpen((isOpen) => { return !isOpen; });
     }
@@ -55,7 +55,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
 
     function minTextChangeHandler(event) {
         let value = textChangeHandler(event);
-        if (value.length == 0) {
+        if (value.length === 0) {
             setTempMinValue('');
             return;
         } 
@@ -68,7 +68,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
 
     function maxTextChangeHandler(event) {
         let value = textChangeHandler(event);
-        if (value.length == 0) {
+        if (value.length === 0) {
             setTempMaxValue('');
             return;
         }
@@ -124,6 +124,8 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
             <span className={classes['dropdown-item']}>제한없음</span>
         </div>
     )
+
+    // console.log(tempMinValue, minValue, tempMaxValue, maxValue);
 
 	return (<>
 		<button className={classes.filter + rangeBtnClass} id="range-button" onClick={btnClickHandler}>
@@ -183,4 +185,4 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
 	</>)
 }
 
-export default RangeFilter;
+export default memo(RangeFilter);

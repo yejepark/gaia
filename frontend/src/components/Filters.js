@@ -7,19 +7,56 @@ import { arrayRange } from '../utilities/methods';
 import UpDown from './UpDown';
 import ListingTypeFilter from './ListingTypeFilter';
 import SpaceUseFilter from './SpaceUseFilter';
-import RangeFilter from './RangeFilter'
+import RangeFilter from './RangeFilter';
 
 const rentValues = [...arrayRange(0, 300, 20), ...arrayRange(350, 600, 50), ...arrayRange(700, 1000, 100)];
 const areaValues = [...arrayRange(0, 20, 5), ...arrayRange(30, 100, 10), ...arrayRange(200, 400, 100)];
 
 function Filters() {
 
-    let [listingType, setListingType] = useState('rent');
-    let [checkedSpaceUses, setCheckedSpaceUses] = useState([]);
-    let [minRent, setMinRent] = useState('');
-    let [maxRent, setMaxRent] = useState('');
-    let [minArea, setMinArea] = useState('');
-    let [maxArea, setMaxArea] = useState('');
+    let storedListingType = sessionStorage.getItem('listingType');
+    let storedCheckedSpaceUses = sessionStorage.getItem('checkedSpaceUses');
+    let storedMinRent = sessionStorage.getItem('minRent');
+    let storedMaxRent = sessionStorage.getItem('maxRent');
+    let storedMinArea = sessionStorage.getItem('minArea');
+    let storedMaxArea = sessionStorage.getItem('maxArea');
+
+    let [listingType, setListingType] = useState( storedListingType ? storedListingType : 'rent' );
+    let [checkedSpaceUses, setCheckedSpaceUses] = useState( storedCheckedSpaceUses ? storedCheckedSpaceUses.split(',') : []);
+    let [minRent, setMinRent] = useState( storedMinRent | '' );
+    let [maxRent, setMaxRent] = useState( storedMaxRent | '' );
+    let [minArea, setMinArea] = useState( storedMinArea | '' );
+    let [maxArea, setMaxArea] = useState( storedMaxArea | '' );
+
+    useEffect(()=>{
+        if (sessionStorage) {
+            // console.log('listing type')
+            sessionStorage.setItem('listingType', listingType);
+        }
+    }, [listingType]);
+
+    useEffect(()=>{
+        // console.log('space use')
+        if (sessionStorage) {
+            sessionStorage.setItem('checkedSpaceUses', checkedSpaceUses);
+        }
+    }, [checkedSpaceUses]);
+
+    useEffect(()=>{
+        // console.log('rent range')
+        if (sessionStorage) {
+            sessionStorage.setItem('minRent', minRent);
+            sessionStorage.setItem('maxRent', maxRent);
+        }
+    }, [minRent, maxRent]);
+
+    useEffect(()=>{
+        // console.log('area range')
+        if (sessionStorage) {
+            sessionStorage.setItem('minArea', minArea);
+            sessionStorage.setItem('maxArea', maxArea);
+        }
+    }, [minArea, maxArea]);
 
     return (
         <div className={classes.filters}>

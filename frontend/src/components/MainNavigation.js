@@ -8,7 +8,7 @@ function MainNavigation() {
 		<nav className={classes["main-nav"]}>
 			<ul className={classes.left}>
 				<li>
-					<NavLink end to="/posts">매물찾기</NavLink>
+					<NavLink end to="/posts">상업용부동산찾기</NavLink>
 				</li>
 				<li>
 					<NavLink end to="/posts">중개사찾기</NavLink>
