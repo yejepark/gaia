@@ -32,6 +32,9 @@ function MainNavigation() {
 				<li>
 					<NavLink end to='/account'>내계정</NavLink>
 				</li>
+				<li>
+					<NavLink end to='/login'>로그인</NavLink>
+				</li>
 			</ul>
 		</nav>
 		</>

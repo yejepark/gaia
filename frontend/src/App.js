@@ -6,6 +6,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from './pages/Root';
 import Welcome from './pages/Welcome'
 import PostsLayout, {loader as postsLoader} from './pages/PostsLayout';
+import Account from './pages/Account';
+import Login from './pages/Login';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +20,16 @@ const router = createBrowserRouter([
         id: 'posts',
         element: <PostsLayout />,
         loader: postsLoader,
+      },
+      { 
+        path: '/account',
+        id: 'account',
+        element: <Account />,
+      },
+      { 
+        path: '/login',
+        id: 'login',
+        element: <Login />,
       }
     ],
   }
