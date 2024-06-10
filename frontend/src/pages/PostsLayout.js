@@ -9,7 +9,7 @@ import classes from './PostsLayout.module.css';
 
 import { debounce } from '../utilities/methods';
 
-const jsonServer = "http://127.0.0.1:8080";
+// const jsonServer = "http://127.0.0.1:8080";
 // cd to the directory: frontend/src/temp
 // run: npx http-server --cors
 
@@ -50,7 +50,9 @@ function PostsLayout() {
 export default PostsLayout;
 
 export async function loader() {
-    let res = await fetch(jsonServer + '/assets.json');
+    // let res = await fetch(jsonServer + '/assets.json');
+    let res = await fetch("http://localhost:8000/sell_posts/list_all")
     let data = await res.json();
-    return data;
+    // return data;
+    return data['sell_posts'];
 }
