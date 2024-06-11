@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import classes from './CardItem.module.css'
-import { debounce } from '../utilities/methods';
+import { debounce, intToUnitStr } from '../utilities/methods';
 
 const imageServer = "http://127.0.0.1:8080";
 // cd to the directory: frontend/src/temp
@@ -99,10 +99,10 @@ function CardItem({ data }) {
             </div>
             <div className={classes['data-container']}>
                 <div className={classes['renting-cost']}> 
-                    <div className={classes['asset-deposit']}>보증금 <span id="deposit">{data.deposit}</span>원</div>
-                    <div className={classes['asset-rent-monthly']}>월세 <span id="rent">{data.rent_monthly}</span>원</div>
+                    <div className={classes['asset-deposit']}>보증금 <span id="deposit">{intToUnitStr(data.deposit)}</span>원</div>
+                    <div className={classes['asset-rent-monthly']}>월세 <span id="rent">{intToUnitStr(data.rent_monthly)}</span>원</div>
                 </div>
-                <div className={classes['asset-premium']}>권리금 <span>{data.premium}</span>원</div>
+                <div className={classes['asset-premium']}>권리금 <span>{intToUnitStr(data.premium)}</span>원</div>
                 <div className={classes.geo}>
                     <div className={classes['asset-address']}>{data.address_legal} ({data.floor}층)</div>
 
