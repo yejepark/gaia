@@ -78,7 +78,7 @@ function NewSellPost() {
 				<AddressInput addressData={addressData} setAddressData={setAddressData} />
 				
 				<div className={"input-title" + removeClass}></div>
-				<input type="text" className={"address-value" + removeClass} id='address-value' placeholder={addressData.address}></input>
+				<input type="text" className={"address-value" + removeClass} id='address-value' placeholder={addressData.address} />
 
 				{/*<div className={"input-title" + removeClass}></div>
 				<div>

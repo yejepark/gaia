@@ -158,7 +158,7 @@
     text-overflow: ellipsis;
 }
 
-.filters :where(.search-container, .min-input, .max-input) {
+.filters :where(.search-container, .dropdown-input) {
     padding: 5px 8px 5px 10px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
@@ -238,8 +238,7 @@
     }
 }
 
-.min-input,
-.max-input {
+.dropdown-input {
     display: flex;
     align-items: center;
 }

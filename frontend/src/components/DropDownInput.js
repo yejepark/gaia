@@ -1,0 +1,100 @@
+import { useState, memo } from 'react';
+
+import UpDown from './UpDown';
+
+import classes from './Filters.module.css';
+
+
+function inputClickHandler(event) {
+    event.stopPropagation();
+    let textInput = event.currentTarget.querySelector('input');
+    if (textInput) {
+        textInput.focus()
+    };
+}
+
+
+function DropDownInput({ localValue, setLocalValue, values, options }) {
+
+    let [dropdownOpen, setDropdownOpen] = useState(false);
+
+    function containerClickHandler(event) {
+        inputClickHandler(event);
+        setDropdownOpen((isOpen) => { return !isOpen; });
+    }
+
+    function textChangeHandler(event, validator = null) {
+        event.stopPropagation();
+
+        let textInputContainer = event.currentTarget;
+        let v = textInputContainer.value;
+
+        if (v.length === 0) {
+            setLocalValue('');
+            return;
+        }
+
+        if (options.validator && !options.validator(v)) {
+       		return;    	
+        }
+
+        if (options.transformer) {
+        	v = options.transformer(v);
+        } 
+
+        setLocalValue(v);       
+    }
+
+    function dropdownClickHandler(event) {
+        event.stopPropagation();
+        let optionEl = event.currentTarget;
+        let v = optionEl.getAttribute('value');
+
+        setLocalValue(v);
+        setDropdownOpen(false);
+    }
+
+
+    let dropdownOpenClass = dropdownOpen ? '' : ' ' + classes.hidden;
+
+    let dropdownItems = values.map((v) => {
+        return (
+            <div key={v} value={v} onClick={dropdownClickHandler}>
+    	       <span className={classes['dropdown-item']}>{v}{options.unit}</span>
+    	    </div>
+        );
+    });
+
+    if (options.extraItems) {
+    	options.extraItems.forEach((item) => {
+    		dropdownItems.push(
+    			<div key={item.key} value={item.value} onClick={dropdownClickHandler}>
+    				<span className={classes['dropdown-item']}>{item.text}</span>
+    			</div>
+    		);
+    	})
+    }
+
+    return (
+        <div className={options.custumClass} onClick={containerClickHandler}>
+            <div className={classes['dropdown-input']}>
+                <input type='text' name='dropdown-input' autoComplete="off"
+                	placeholder={options.placeholder}
+                	onChange={textChangeHandler} 
+                	value={localValue}
+                /> 
+                <UpDown up={dropdownOpen} />
+            </div>
+
+            <div className={classes.backdrop + dropdownOpenClass} onClick={containerClickHandler} id="dropdown-backdrop"></div>
+            
+            <div className={classes['positional-container']}>
+                <div className={classes['dropdown'] + dropdownOpenClass}>
+                    {dropdownItems}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default DropDownInput;
