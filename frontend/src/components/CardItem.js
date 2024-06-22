@@ -65,7 +65,11 @@ function CardItem({ data }) {
     if (urls && urls.length > 0) {
         urls.forEach((url, imgIdx) => {
             let key = data.id + '-' + imgIdx;
-            imgElements.push(<img id={'pic-' + key} key={key} src={imageServer+ '/pictures' + url}/>)
+            if (url.startsWith('http')) {
+                imgElements.push(<img id={'pic-' + key} key={key} src={url}/>)    
+            } else {
+                imgElements.push(<img id={'pic-' + key} key={key} src={imageServer+ '/pictures' + url}/>)    
+            }
         })
     }
 

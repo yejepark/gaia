@@ -5,9 +5,7 @@ import ApplyButton from './ApplyButton';
 
 import classes from './Filters.module.css';
 
-const listingTypes = ['rent', 'trade', 'direct-rent'];
 const listingTypeMap = { rent: '임대', trade: '매매', 'direct-rent': '직거래' };
-
 
 function ListingTypeFilter({ listingType, setListingType }) {
 
@@ -26,7 +24,7 @@ function ListingTypeFilter({ listingType, setListingType }) {
     let btnClass = classes.filter + ' ' + classes.active;
     let dialogOpenClass = dialogOpen ? '' : ' ' + classes.hidden;
 
-    let inputEls = listingTypes.map((type)=> {return (
+    let inputEls = Object.keys(listingTypeMap).map((type)=> {return (
         <label key={type}>
             <input type="radio" value={type} name="listing-type" onClick={radioClickHandler} checked={listingType===type} readOnly/>
             <span>{listingTypeMap[type]} 물건 찾기</span>

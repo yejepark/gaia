@@ -8,6 +8,7 @@ import Welcome from './pages/Welcome'
 import PostsLayout, {loader as postsLoader} from './pages/PostsLayout';
 import Account from './pages/Account';
 import Login from './pages/Login';
+import NewSellPost from './pages/NewSellPost';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
         path: '/login',
         id: 'login',
         element: <Login />,
+      },
+      { 
+        path: '/newSellPost',
+        id: 'newSellPost',
+        element: <NewSellPost />,
       }
     ],
   }
