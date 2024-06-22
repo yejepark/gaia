@@ -1,8 +1,32 @@
-from fastapi import APIRouter, Request, HTTPException, status
+from fastapi import (
+    APIRouter, Request, HTTPException, status,
+    UploadFile, File, Form
+)
 from bson import ObjectId
+from decouple import config
+import requests
+import json
+import asyncio
 
-from models.data_models import SellPost, SellPosts
+import cloudinary
+import cloudinary.uploader
 
+from models.data_models import SellPost, SellPosts, AddressData
+
+CLOUD_NAME = config("CLOUD_NAME", cast=str)
+API_KEY = config("CLOUD_API_KEY", cast=str)
+API_SECRET = config("CLOUD_API_SECRET", cast=str)
+
+GOV_API_SERVICE_KEY = config("GOV_API_SERVICE_KEY", cast=str)
+
+GOV_DATA_URL = "http://apis.data.go.kr/1613000/BldRgstService_v2/getBrTitleInfo"
+
+
+cloudinary.config(
+    cloud_name=CLOUD_NAME,
+    api_key=API_KEY,
+    api_secret=API_SECRET,
+)
 
 router = APIRouter()
 
@@ -32,8 +56,65 @@ async def show_sell_post(id: str, request: Request):
     raise HTTPException(status_code=404, detail=f"sell post {id} not found")
 
 
+async def get_br_title_data(address_data):
+    payload = {
+        "ServiceKey": GOV_API_SERVICE_KEY,
+        "_type": "json",
+        "sigunguCd": address_data.sigunguCode,
+        "bjdongCd": address_data.bcode[5:],
+        "bun": address_data.buildingCode[11:15],
+        "ji": address_data.buildingCode[15:19],
+    }
+    # print(json.dumps(payload, indent=2))
+
+    gov_resp = await asyncio.to_thread(
+        requests.get, GOV_DATA_URL, params=payload
+    )
+    gov_data = json.loads(gov_resp.text)
+
+    if gov_data['response']['header']['resultCode'] != '00':
+        return {}
+
+    br_title = gov_data['response']['body']['items']
+    if len(br_title) == 0:
+        return {}
+
+    return br_title['item']
+
+
 @router.post(
-    "/",
+    "/address_data/create",
+    response_description="Add an address data",
+    response_model=AddressData,
+    status_code=status.HTTP_201_CREATED
+)
+async def create_address_data(address_data: AddressData, request: Request):
+
+    # br_title = await get_br_title_data(address_data)
+
+    existing_data = await request.app.mongodb['address_data'].find_one(
+        {
+            "jibunAddress": address_data.jibunAddress,
+            "roadAddress": address_data.roadAddress,
+        }
+    )
+
+    if existing_data is not None:
+        return existing_data
+
+    br_title = await get_br_title_data(address_data)
+
+    payload = address_data.model_dump(by_alias=True, exclude=['id'])
+    payload.update({'brTitle': br_title})
+    new_data = await request.app.mongodb['address_data'].insert_one(payload)
+    created_data = await request.app.mongodb['address_data'].find_one(
+        {"_id": new_data.inserted_id}
+    )
+    return created_data
+
+
+@router.post(
+    "/create",
     response_description="Add a new sell post",
     response_model=SellPost,
     response_model_by_alias=False,

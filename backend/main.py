@@ -13,7 +13,11 @@ from routers.sell_posts import router as sell_posts_router
 
 DB_URL = config("DB_URL", cast=str)
 DB_NAME = config("DB_NAME", cast=str)
-origins = ["*"]
+
+origins = [
+    "http://localhost:3000",
+    # "*"
+]
 
 
 @asynccontextmanager
