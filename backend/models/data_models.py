@@ -132,6 +132,9 @@ class BrTitle(BaseModel):
     mainAtchGbCd: int
     mainAtchGbCdNm: str
 
+    strctCd: int
+    strctCdNm: str
+
     mainPurpsCd: ForcedStr
     mainPurpsCdNm: str
     etcPurps: str
@@ -158,7 +161,7 @@ class AddressData(BaseModel):
     zonecode: ForcedStr
     latlng: List[str]
 
-    brTitle: Union[BrTitle, List[BrTitle]] | None = None
+    brTitle: List[BrTitle] | None = None
 
     model_config = ConfigDict(
         populate_by_name=True,

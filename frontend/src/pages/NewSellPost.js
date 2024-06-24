@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import SingleChoice from '../components/SingleChoice';
 import AddressInput from '../components/AddressInput';
+import DropDownInput from '../components/DropDownInput';
 
 const buildingUsages = [
     "단독주택", "공동주택", "제1종 근린생활시설", "제2종 근린생활시설",
@@ -39,9 +40,12 @@ function NewSellPost() {
 
     let storedProductType = sessionStorage.getItem('productType');
     let storedAddressData = JSON.parse(sessionStorage.getItem('addressData') || '{}');
+    let storedDongName = sessionStorage.getItem('dongName');
 
     let [productType, setProductType] = useState(storedProductType ? storedProductType : '');
     let [addressData, setAddressData] = useState(storedAddressData ? storedAddressData : {});
+
+    let [dongName, setDongName] = useState(storedDongName ? storedDongName : '');
 
     let hasAddressData = Object.keys(addressData).length > 0;
     let removeClass = hasAddressData ? '' : ' remove';
@@ -62,6 +66,39 @@ function NewSellPost() {
             sessionStorage.setItem('addressData', JSON.stringify(addressData));
         }
     }, [addressData]);
+
+    let addressTopEl, addressDongEl, dongNms;
+    if (hasAddressData) {
+    	addressTopEl = (
+	    	<>
+		    	<div className={"input-title"}></div>
+				<input type="text" 
+					className={"address-value"} id='address-value' 
+					placeholder={'직접입력'} 
+					defaultValue={addressData.address}
+					autoComplete="off"
+				/>
+			</>
+		);
+
+    
+		dongNms = addressData.brTitle.map(item => item.dongNm);
+		let dongNmMaxLen = Math.max(...addressData.brTitle.map(item=>item.dongNm.trim().length));
+		addressDongEl = (
+			<>
+				<div className={"input-title"}></div>
+				<DropDownInput
+                    localValue={dongName} setLocalValue={setDongName} 
+                    values={dongNms} 
+                    options={{
+                    	custumClass: 'dong-input',
+                    	// style: {width: `${dongNmMaxLen+1}rem`}
+                    }}
+                />
+			</>
+		);
+	
+    }
     
     return (
         <div className="body-container"> 
@@ -76,11 +113,13 @@ function NewSellPost() {
 			<div className="input-grid">
 				<div className="input-title">주소</div>
 				<AddressInput addressData={addressData} setAddressData={setAddressData} />
-				
-				<div className={"input-title" + removeClass}></div>
-				<input type="text" className={"address-value" + removeClass} id='address-value' placeholder={addressData.address} />
+				{addressTopEl}
+				{addressDongEl}
 
 				{/*<div className={"input-title" + removeClass}></div>
+				<input type="text" className={"address-value" + removeClass} id='address-value' placeholder={'직접입력'} />*/}
+{/*
+				<div className={"input-title" + removeClass}></div>
 				<div>
 					<input type="text" className={"address-value" + removeClass} id='address-dong' placeholder=''></input>
 					동
@@ -96,8 +135,8 @@ function NewSellPost() {
 				<div>
 					<input type="text" className={"address-value" + removeClass} id='address-room' placeholder=''></input>
 					호
-				</div>*/}
-
+				</div>
+*/}
 				<div className={"input-title" + removeClass}>상세주소</div>
 				<input type="text" className={"address-detail" + removeClass} id="address-detail" placeholder=""></input>
 			</div>

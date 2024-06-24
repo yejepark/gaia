@@ -144,7 +144,7 @@ input[type="search"]::-webkit-search-results-decoration {
     height: 2rem;
 
     & * {
-        font-size: 1rem;
+        font-size: .9rem;
     }
 }
 
@@ -221,4 +221,17 @@ input[type="search"]::-webkit-search-results-decoration {
     background-image: url('./components/close-square.svg');
     background-size: 24px 24px;
     background-repeat: no-repeat;
+}
+
+.dong-input {
+    border: 1px solid;
+    padding: 10px;
+    border-radius: 10px;
+
+    width: fit-content;
+
+    & input {
+        font-size: .9rem;
+        border: none;
+    }
 }

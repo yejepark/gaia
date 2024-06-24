@@ -92,7 +92,7 @@ function AddressInput({ addressData, setAddressData }) {
                 // 우편번호 찾기 화면이 보이기 이전으로 scroll 위치를 되돌린다.
                 // document.body.scrollTop = currentScroll;
 
-                document.getElementById('address-value').value = newData.address;
+                // document.getElementById('address-value').value = newData.address;
 
                 // 커서를 상세주소 필드로 이동한다.
                 document.getElementById('address-detail').focus();

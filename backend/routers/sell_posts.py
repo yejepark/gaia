@@ -11,7 +11,7 @@ import asyncio
 import cloudinary
 import cloudinary.uploader
 
-from models.data_models import SellPost, SellPosts, AddressData
+from models.data_models import SellPost, SellPosts, AddressData, BrTitle
 
 CLOUD_NAME = config("CLOUD_NAME", cast=str)
 API_KEY = config("CLOUD_API_KEY", cast=str)
@@ -56,7 +56,7 @@ async def show_sell_post(id: str, request: Request):
     raise HTTPException(status_code=404, detail=f"sell post {id} not found")
 
 
-async def get_br_title_data(address_data):
+async def get_br_title_data(address_data, mainAtchOnly=True):
     payload = {
         "ServiceKey": GOV_API_SERVICE_KEY,
         "_type": "json",
@@ -64,6 +64,7 @@ async def get_br_title_data(address_data):
         "bjdongCd": address_data.bcode[5:],
         "bun": address_data.buildingCode[11:15],
         "ji": address_data.buildingCode[15:19],
+        "numOfRows": 100
     }
     # print(json.dumps(payload, indent=2))
 
@@ -76,10 +77,18 @@ async def get_br_title_data(address_data):
         return {}
 
     br_title = gov_data['response']['body']['items']
-    if len(br_title) == 0:
+    if len(br_title) == 0 or 'item' not in br_title:
         return {}
 
-    return br_title['item']
+    br_title = br_title['item']
+
+    if isinstance(br_title, dict):
+        return [BrTitle(**br_title).model_dump()]
+
+    if mainAtchOnly:
+        br_title = [item for item in br_title if item['mainAtchGbCd'] == 0]
+
+    return [BrTitle(**item).model_dump() for item in br_title]
 
 
 @router.post(

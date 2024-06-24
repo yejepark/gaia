@@ -76,7 +76,7 @@ function DropDownInput({ localValue, setLocalValue, values, options }) {
     }
 
     return (
-        <div className={options.custumClass} onClick={containerClickHandler}>
+        <div className={options.custumClass} onClick={containerClickHandler} style={options.style}>
             <div className={classes['dropdown-input']}>
                 <input type='text' name='dropdown-input' autoComplete="off"
                 	placeholder={options.placeholder}
