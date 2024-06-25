@@ -35,11 +35,11 @@ function DropDownInput({ localValue, setLocalValue, values, options }) {
         }
 
         if (options.validator && !options.validator(v)) {
-       		return;    	
+               return;        
         }
 
         if (options.transformer) {
-        	v = options.transformer(v);
+            v = options.transformer(v);
         } 
 
         setLocalValue(v);       
@@ -60,28 +60,28 @@ function DropDownInput({ localValue, setLocalValue, values, options }) {
     let dropdownItems = values.map((v) => {
         return (
             <div key={v} value={v} onClick={dropdownClickHandler}>
-    	       <span className={classes['dropdown-item']}>{v}{options.unit}</span>
-    	    </div>
+               <span className={classes['dropdown-item']}>{v}{options.unit}</span>
+            </div>
         );
     });
 
     if (options.extraItems) {
-    	options.extraItems.forEach((item) => {
-    		dropdownItems.push(
-    			<div key={item.key} value={item.value} onClick={dropdownClickHandler}>
-    				<span className={classes['dropdown-item']}>{item.text}</span>
-    			</div>
-    		);
-    	})
+        options.extraItems.forEach((item) => {
+            dropdownItems.push(
+                <div key={item.key} value={item.value} onClick={dropdownClickHandler}>
+                    <span className={classes['dropdown-item']}>{item.text}</span>
+                </div>
+            );
+        })
     }
 
     return (
         <div className={options.custumClass} onClick={containerClickHandler} style={options.style}>
             <div className={classes['dropdown-input']}>
                 <input type='text' name='dropdown-input' autoComplete="off"
-                	placeholder={options.placeholder}
-                	onChange={textChangeHandler} 
-                	value={localValue}
+                    placeholder={options.placeholder}
+                    onChange={textChangeHandler} 
+                    value={localValue}
                 /> 
                 <UpDown up={dropdownOpen} />
             </div>

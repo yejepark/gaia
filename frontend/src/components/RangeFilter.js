@@ -9,11 +9,11 @@ import classes from './Filters.module.css';
 
 function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, values, btnName }) {
 
-	let [dialogOpen, setDialogOpen] = useState(false);
+    let [dialogOpen, setDialogOpen] = useState(false);
     let [tempMinValue, setTempMinValue] = useState(minValue);
     let [tempMaxValue, setTempMaxValue] = useState(maxValue);
 
-	function btnClickHandler() {
+    function btnClickHandler() {
         setMinValue(String(tempMinValue));
         setMaxValue(String(tempMaxValue));
         setDialogOpen((isOpen) => { return !isOpen; });
@@ -32,14 +32,14 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
 
     // console.log('tempMin', tempMinValue, 'min', minValue, ' ~ ', 'tempMax', tempMaxValue, 'max', maxValue);
 
-	return (<>
-		<button className={classes.filter + rangeBtnClass} id="range-button" onClick={btnClickHandler}>
+    return (<>
+        <button className={classes.filter + rangeBtnClass} id="range-button" onClick={btnClickHandler}>
             {btnName}
             {minValueEl}
             {intMinValue > 0 | intMaxValue > 0 ? <i className={classes.tilde}></i> : ''}
             {maxValueEl}
             <UpDown up={dialogOpen}/>
-      	</button>
+          </button>
 
         <div className={classes.backdrop + dialogOpenClass} onClick={btnClickHandler} id="range-backdrop"></div>
 
@@ -80,7 +80,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
                 <ApplyButton clickHandler={btnClickHandler} />
             </div>
         </div>
-	</>)
+    </>)
 }
 
 export default memo(RangeFilter);

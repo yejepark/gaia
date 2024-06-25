@@ -261,7 +261,7 @@
     z-index: var(--dropdown-z-index);
 
     position: absolute;
-    top: 5px;
+    top: 13px;
 
     width: 100%;
     max-height: 11rem;

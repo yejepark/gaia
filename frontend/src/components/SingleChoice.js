@@ -31,7 +31,7 @@ function SingleChoice({ chosen, setChosen, choiceMap, btnLabel }) {
 
     return (<>
         <button className={btnClass} onClick={btnClickHandler} id="choice-button">
-            {chosen ? choiceMap[chosen] : btnLabel}
+            {chosen && choiceMap[chosen] ? choiceMap[chosen] : btnLabel}
             <UpDown up={dialogOpen} />
         </button> 
 

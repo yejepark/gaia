@@ -92,10 +92,16 @@ function AddressInput({ addressData, setAddressData }) {
                 // 우편번호 찾기 화면이 보이기 이전으로 scroll 위치를 되돌린다.
                 // document.body.scrollTop = currentScroll;
 
-                // document.getElementById('address-value').value = newData.address;
+                let addressValueEl = document.getElementById('address-value');
+                if (addressValueEl) {
+                    addressValueEl.value = newData.address;    
+                }
 
                 // 커서를 상세주소 필드로 이동한다.
-                document.getElementById('address-detail').focus();
+                let addressDetailEl = document.getElementById('address-detail');
+                if (addressDetailEl) {
+                    addressDetailEl.focus();    
+                }
             },
 
             // 우편번호 찾기 화면 크기가 조정되었을때 실행할 코드를 작성하는 부분. iframe을 넣은 element의 높이값을 조정한다.
@@ -113,18 +119,18 @@ function AddressInput({ addressData, setAddressData }) {
 
     return (
         <div>
-			<div className="address-container">
-				<div className="address-subcontainer"> 
-					<input type="button" onClick={execDaumPostcode} value="주소입력하기"></input>
-				</div>
-				<div className={"zonecode" + removeClass} id="zonecode">{zonecodeValue}</div>
-			</div>
-			<div className="positional-container">
-				<div id="postcodeWrap" className="postcodeWrap dialog">
-					<div className="btnFoldWrap" onClick={foldDaumPostcode} alt="접기 버튼"></div>
-				</div>
-			</div>
-		</div>
+            <div className="address-container">
+                <div className="address-subcontainer"> 
+                    <input type="button" onClick={execDaumPostcode} value="주소입력하기"></input>
+                </div>
+                <div className={"zonecode" + removeClass} id="zonecode">{zonecodeValue}</div>
+            </div>
+            <div className="positional-container">
+                <div id="postcodeWrap" className="postcodeWrap dialog">
+                    <div className="btnFoldWrap" onClick={foldDaumPostcode} alt="접기 버튼"></div>
+                </div>
+            </div>
+        </div>
     )
 }
 
