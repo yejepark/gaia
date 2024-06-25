@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import classes from './NewSellPost.module.css';
+
 import SingleChoice from '../components/SingleChoice';
 import DropDownInput from '../components/DropDownInput';
 
@@ -78,8 +80,8 @@ function NewSellPost() {
     }, [mainPurpose]);    
 
     return (
-        <div className="body-container"> 
-            <div className="main-container">
+        <div className={classes["body-container"]}> 
+            <div className={classes["main-container"]}>
                 <ProductTypeContainer productType={productType} setProductType={setProductType} productSubType={productSubType} setProductSubType={setProductSubType} />
                 <AddressContainer addressData={addressData} setAddressData={setAddressData} dongName={dongName} setDongName={setDongName} />
                 <ProductInfoContainer addressData={addressData} mainPurpose={mainPurpose} setMainPurpose={setMainPurpose} />

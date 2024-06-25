@@ -1,0 +1,48 @@
+.range-container {
+    width: 300px;
+    display: grid;
+    grid-template-rows: 1fr 1.25fr;
+    grid-template-columns: 4.5fr 1fr 4.5fr;
+    grid-template-areas:
+        "min-header . max-header"
+        "min-input-container dash max-input-container";
+
+    padding: 5px;
+
+    &>.min-header {
+        grid-area: min-header;
+    }
+
+    &>.min-input-container {
+        grid-area: min-input-container;
+    }
+
+    &>.max-header {
+        grid-area: max-header;
+    }
+
+    &>.max-input-container {
+        grid-area: max-input-container;
+    }
+
+    &>.dash {
+        grid-area: dash;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.min-header,
+.max-header,
+.min-input-container,
+.max-input-container {
+    width: 100%;
+}
+
+.min-header,
+.max-header {
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding-left: 2px;
+}

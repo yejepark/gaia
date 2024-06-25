@@ -1,7 +1,8 @@
-// import { useEffect, useState } from 'react';
+import newSellPostClasses from '../pages/NewSellPost.module.css';
+import classes from './AddressContainer.module.css';
 
-import AddressInput from '../components/AddressInput';
-import DropDownInput from '../components/DropDownInput';
+import AddressInput from './AddressInput';
+import DropDownInput from './DropDownInput';
 
 
 function AddressContainer({ addressData, setAddressData, dongName, setDongName }) {
@@ -13,9 +14,9 @@ function AddressContainer({ addressData, setAddressData, dongName, setDongName }
     if (hasAddressData) {
     	addressTopEl = (
 	    	<>
-		    	<div className={"input-title"}></div>
+		    	<div className={newSellPostClasses["input-title"]}></div>
 				<input type="text" 
-					className={"address-value"} id='address-value' 
+					className={classes["address-value"]} id='address-value' 
 					placeholder={'직접입력'} 
 					defaultValue={addressData.address}
 					autoComplete="off"
@@ -31,13 +32,13 @@ function AddressContainer({ addressData, setAddressData, dongName, setDongName }
 			
 			addressDongEl = (
 				<>
-					<div className={"input-title"}>동명칭</div>
+					<div className={newSellPostClasses["input-title"]}>동명칭</div>
 					<DropDownInput
 	                    localValue={dongName} setLocalValue={setDongName} 
 	                    values={dongNms} 
 	                    options={{
 	                    	placeholder: "직접입력",
-	                    	custumClass: 'dong-input',
+	                    	custumClass: classes['dong-input'],
 	                    	// style: {width: `${dongNmMaxLen+5}rem`}
 	                    }}
 	                />
@@ -47,15 +48,15 @@ function AddressContainer({ addressData, setAddressData, dongName, setDongName }
 
 		addressDetailEl = (
 			<>
-				<div className={"input-title"}>상세주소</div>
-				<input type="text" className={"address-detail"} id="address-detail" placeholder="" />
+				<div className={newSellPostClasses["input-title"]}>상세주소</div>
+				<input type="text" className={classes["address-detail"]} id="address-detail" placeholder="" />
 			</>
 		);
 	}
 
 	return (
-		<div className="input-grid">
-			<div className="input-title">주소</div>
+		<div className={newSellPostClasses["input-grid"]}>
+			<div className={newSellPostClasses["input-title"]}>주소</div>
 			<AddressInput addressData={addressData} setAddressData={setAddressData} />
 
 			{addressTopEl}

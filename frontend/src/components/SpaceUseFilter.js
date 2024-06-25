@@ -3,7 +3,8 @@ import { useState, memo } from 'react';
 import UpDown from './UpDown';
 import ApplyButton from './ApplyButton';
 
-import classes from './Filters.module.css';
+import filtersClasses from './Filters.module.css';
+import classes from './SpaceUseFilter.module.css';
 
 const spaceUseMap = {
     office: '사무실',
@@ -36,10 +37,10 @@ function SpaceUseFilter({ checkedSpaceUses, setCheckedSpaceUses }) {
         }
     }
 	
-	let btnClass = checkedSpaceUses.length === 0 ? '' : ' ' + classes.active;
+	let btnClass = checkedSpaceUses.length === 0 ? '' : ' ' + filtersClasses.active;
     let btnLabel = checkedSpaceUses.length === 0 ? "용도" : checkedSpaceUses.map((x)=>spaceUseMap[x]).join(',');
 
-	let dialogOpenClass = dialogOpen ? '' : ' ' + classes.hidden;
+	let dialogOpenClass = dialogOpen ? '' : ' ' + filtersClasses.hidden;
 
     let spaceUseItems = spaceUses.map((spaceUse)=> {
     	return (
@@ -51,15 +52,15 @@ function SpaceUseFilter({ checkedSpaceUses, setCheckedSpaceUses }) {
     });
 
 	return (<>
-        <button className={classes.filter + btnClass} id="space-use-button" onClick={btnClickHandler}>
+        <button className={filtersClasses.filter + btnClass} id="space-use-button" onClick={btnClickHandler}>
             <div className={classes['list-string']}>{btnLabel}</div>
             <UpDown up={dialogOpen}/>
         </button>
 
-        <div className={classes.backdrop + dialogOpenClass} onClick={btnClickHandler} id="space-use-backdrop"></div>
+        <div className={filtersClasses.backdrop + dialogOpenClass} onClick={btnClickHandler} id="space-use-backdrop"></div>
 
-        <div className={classes['positional-container']}>
-            <div className={classes['space-use-dialog'] + ' ' + classes.dialog + dialogOpenClass} id="space-use-dialog">
+        <div className={filtersClasses['positional-container']}>
+            <div className={classes['space-use-dialog'] + ' ' + filtersClasses.dialog + dialogOpenClass} id="space-use-dialog">
                 {spaceUseItems}
                 <ApplyButton clickHandler={btnClickHandler} />
             </div>

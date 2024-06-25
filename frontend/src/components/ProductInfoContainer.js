@@ -1,4 +1,7 @@
-import DropDownInput from '../components/DropDownInput';
+import newSellPostClasses from '../pages/NewSellPost.module.css';
+import classes from './ProductInfoContainer.module.css';
+
+import DropDownInput from './DropDownInput';
 
 const buildingUsages = [
     "단독주택", "공동주택", "제1종근린생활시설", "제2종근린생활시설",
@@ -19,13 +22,13 @@ function ProductInfoContainer({  addressData, mainPurpose, setMainPurpose }) {
 
         addressMainPurposeEl = (
             <>
-                <div className={"input-title"}>건축물 주용도</div>
+                <div className={newSellPostClasses["input-title"]}>건축물 주용도</div>
                 <DropDownInput
                     localValue={mainPurpose} setLocalValue={setMainPurpose} 
                     values={buildingUsages} 
                     options={{
                         placeholder: "직접입력",
-                        custumClass: 'main-purpose-input',
+                        custumClass: classes['main-purpose-input'],
                     }}
                 />
             </>
@@ -33,7 +36,7 @@ function ProductInfoContainer({  addressData, mainPurpose, setMainPurpose }) {
     }
     
     return (
-        <div className="input-grid">
+        <div className={newSellPostClasses["input-grid"]}>
                 {addressMainPurposeEl}
         </div>
     );

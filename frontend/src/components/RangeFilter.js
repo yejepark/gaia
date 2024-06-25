@@ -4,7 +4,8 @@ import UpDown from './UpDown';
 import ApplyButton from './ApplyButton';
 import DropDownInput from './DropDownInput';
 
-import classes from './Filters.module.css';
+import filtersClasses from './Filters.module.css';
+import classes from './RangeFilter.module.css';
 
 
 function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, values, btnName }) {
@@ -19,13 +20,13 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
         setDialogOpen((isOpen) => { return !isOpen; });
     }
 
-    let dialogOpenClass = dialogOpen ? '' : ' ' + classes.hidden;
-    let rangeBtnClass = tempMinValue > 0 | tempMaxValue > 0 ? ' ' + classes.active : '';
+    let dialogOpenClass = dialogOpen ? '' : ' ' + filtersClasses.hidden;
+    let rangeBtnClass = tempMinValue > 0 | tempMaxValue > 0 ? ' ' + filtersClasses.active : '';
   
     let intMinValue = parseInt(tempMinValue);
     let intMaxValue = parseInt(tempMaxValue);
-    let minValueEl = intMinValue > 0 ? <span className={classes['min-value']}>{tempMinValue}{unit}</span>: '';
-    let maxValueEl = intMaxValue > 0 ? <span className={classes['max-value']}>{tempMaxValue}{unit}</span>: '';
+    let minValueEl = intMinValue > 0 ? <span>{tempMinValue}{unit}</span>: '';
+    let maxValueEl = intMaxValue > 0 ? <span>{tempMaxValue}{unit}</span>: '';
 
     let minValues = (intMaxValue > 0) ? values.filter((x) => x<intMaxValue) : values;    
     let maxValues = (intMinValue > 0) ? values.slice(1).filter((x) => x>intMinValue) : values.slice(1);
@@ -33,18 +34,18 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
     // console.log('tempMin', tempMinValue, 'min', minValue, ' ~ ', 'tempMax', tempMaxValue, 'max', maxValue);
 
     return (<>
-        <button className={classes.filter + rangeBtnClass} id="range-button" onClick={btnClickHandler}>
+        <button className={filtersClasses.filter + rangeBtnClass} id="range-button" onClick={btnClickHandler}>
             {btnName}
             {minValueEl}
-            {intMinValue > 0 | intMaxValue > 0 ? <i className={classes.tilde}></i> : ''}
+            {intMinValue > 0 | intMaxValue > 0 ? <i className={filtersClasses.tilde}></i> : ''}
             {maxValueEl}
             <UpDown up={dialogOpen}/>
           </button>
 
-        <div className={classes.backdrop + dialogOpenClass} onClick={btnClickHandler} id="range-backdrop"></div>
+        <div className={filtersClasses.backdrop + dialogOpenClass} onClick={btnClickHandler} id="range-backdrop"></div>
 
-        <div className={classes['positional-container']}>
-            <div className={classes.dialog + dialogOpenClass} id="range-dialog">
+        <div className={filtersClasses['positional-container']}>
+            <div className={filtersClasses.dialog + dialogOpenClass} id="range-dialog">
                 <div className={classes['range-container']}>
 
                     <div className={classes['min-header']}>최소</div>
@@ -60,7 +61,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
                         }}
                     />
 
-                    <div className={classes.dash}>-</div>
+                    <div className={filtersClasses.dash}>-</div>
 
                     <div className={classes['max-header']}>최대</div>
                     <DropDownInput

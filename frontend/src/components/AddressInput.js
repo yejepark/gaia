@@ -1,3 +1,6 @@
+import filtersClasses from './Filters.module.css';
+import classes from './AddressInput.module.css';
+
 let { daum, kakao } = window;
 
 const geocoder = new kakao.maps.services.Geocoder();
@@ -37,12 +40,11 @@ const addressSearch = address => {
 
 function AddressInput({ addressData, setAddressData }) {
 
-    let hasAddressData = Object.keys(addressData).length > 0;
-    let removeClass = hasAddressData ? '' : 'remove'
-
-    let zonecodeValue = '';
+    let hasAddressData = Object.keys(addressData).length > 0;    
+    let zonecodeEl;
     if (hasAddressData) {
-        zonecodeValue = '우편번호: ' + addressData.zonecode;
+        let zonecodeValue = '우편번호: ' + addressData.zonecode;
+        zonecodeEl = <div id="zonecode">{zonecodeValue}</div>
     }
 
     function execDaumPostcode() {
@@ -119,15 +121,15 @@ function AddressInput({ addressData, setAddressData }) {
 
     return (
         <div>
-            <div className="address-container">
-                <div className="address-subcontainer"> 
+            <div className={classes["address-container"]}>
+                <div className={classes["address-subcontainer"]}> 
                     <input type="button" onClick={execDaumPostcode} value="주소입력하기"></input>
                 </div>
-                <div className={"zonecode" + removeClass} id="zonecode">{zonecodeValue}</div>
+                {zonecodeEl}
             </div>
-            <div className="positional-container">
-                <div id="postcodeWrap" className="postcodeWrap dialog">
-                    <div className="btnFoldWrap" onClick={foldDaumPostcode} alt="접기 버튼"></div>
+            <div className={filtersClasses["positional-container"]}>
+                <div id="postcodeWrap" className={classes.postcodeWrap}>
+                    <div className={classes["btnFoldWrap"]} onClick={foldDaumPostcode} alt="접기 버튼"></div>
                 </div>
             </div>
         </div>

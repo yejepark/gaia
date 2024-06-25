@@ -1,0 +1,49 @@
+.address-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+}
+
+.address-subcontainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+
+    &>input {
+        border: 1px solid;
+        border-radius: 10px;
+        font-size: .9rem;
+        padding: 10px;
+    }
+}
+
+.postcodeWrap {
+    display: none;
+    border: 1px solid;
+    width: 500px;
+    height: 300px;
+    margin: 0 0;
+
+    position: absolute;
+    top: 5px;
+    left: 0;
+}
+
+
+.btnFoldWrap {
+    cursor: pointer;
+    position: absolute;
+    right: -24px;
+    top: -3px;
+    z-index: 1;
+
+    width: 24px;
+    height: 24px;
+
+    background-image: url('./close-square.svg');
+    background-size: 24px 24px;
+    background-repeat: no-repeat;
+}

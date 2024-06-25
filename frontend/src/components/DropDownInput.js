@@ -2,7 +2,8 @@ import { useState, memo } from 'react';
 
 import UpDown from './UpDown';
 
-import classes from './Filters.module.css';
+import filtersClasses from './Filters.module.css';
+import classes from './DropDownInput.module.css';
 
 
 function inputClickHandler(event) {
@@ -55,7 +56,7 @@ function DropDownInput({ localValue, setLocalValue, values, options }) {
     }
 
 
-    let dropdownOpenClass = dropdownOpen ? '' : ' ' + classes.hidden;
+    let dropdownOpenClass = dropdownOpen ? '' : ' ' + filtersClasses.hidden;
 
     let dropdownItems = values.map((v) => {
         return (
@@ -86,9 +87,9 @@ function DropDownInput({ localValue, setLocalValue, values, options }) {
                 <UpDown up={dropdownOpen} />
             </div>
 
-            <div className={classes.backdrop + dropdownOpenClass} onClick={containerClickHandler} id="dropdown-backdrop"></div>
+            <div className={filtersClasses.backdrop + dropdownOpenClass} onClick={containerClickHandler} id="dropdown-backdrop"></div>
             
-            <div className={classes['positional-container']}>
+            <div className={filtersClasses['positional-container']}>
                 <div className={classes['dropdown'] + dropdownOpenClass}>
                     {dropdownItems}
                 </div>

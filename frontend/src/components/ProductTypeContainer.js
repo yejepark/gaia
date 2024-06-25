@@ -1,4 +1,6 @@
-import SingleChoice from '../components/SingleChoice';
+import newSellPostClasses from '../pages/NewSellPost.module.css';
+
+import SingleChoice from './SingleChoice';
 
 const sanggaTypeMap = {
     danjiMall: "단지내상가", 
@@ -61,8 +63,8 @@ function ProductTypeContainer({ productType, setProductType, productSubType, set
 
     productTypeEl = (
         <>
-            <div className="input-title">매물 종류</div> 
-               <div className='input-container'>
+            <div className={newSellPostClasses["input-title"]}>매물 종류</div> 
+               <div className={newSellPostClasses['input-container']}>
                    <SingleChoice chosen={productType} setChosen={setProductType} choiceMap={productTypeMap} btnLabel={'선택하기'}/>
                </div>
         </>
@@ -74,8 +76,8 @@ function ProductTypeContainer({ productType, setProductType, productSubType, set
         if (chosenTypeMap) {
             productSubTypeEl = (
                 <>
-                    <div className={"input-title"}>매물 세부 종류</div>
-                    <div className='input-container'>
+                    <div className={newSellPostClasses["input-title"]}>매물 세부 종류</div>
+                    <div className={newSellPostClasses['input-container']}>
                         <SingleChoice chosen={productSubType} setChosen={setProductSubType} choiceMap={chosenTypeMap} btnLabel={'선택하기'}/>
                     </div>
                 </>    
@@ -84,7 +86,7 @@ function ProductTypeContainer({ productType, setProductType, productSubType, set
     }
     
     return (
-        <div className="input-grid">
+        <div className={newSellPostClasses["input-grid"]}>
             {productTypeEl}
             {productSubTypeEl}
         </div>

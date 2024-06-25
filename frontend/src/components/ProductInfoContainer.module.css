@@ -1,0 +1,15 @@
+.main-purpose-input {
+    border: 1px solid;
+    padding: 10px;
+    border-radius: 10px;
+
+    & input {
+        width: 100%;
+        font-size: .9rem;
+        border: none;
+    }
+
+    & input:focus {
+        outline: none;
+    }
+}
