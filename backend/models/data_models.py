@@ -147,7 +147,7 @@ class AddressData(BaseModel):
 
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
 
-    address: str
+    # address: str
     jibunAddress: str
     roadAddress: str
     bcode: ForcedStr

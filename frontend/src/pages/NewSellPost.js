@@ -10,6 +10,7 @@ import ProductTypeContainer from '../components/ProductTypeContainer';
 import ProductInfoContainer from '../components/ProductInfoContainer';
 
 function NewSellPost() {
+	console.log('NewSellPost');
 
     let storedProductType = sessionStorage.getItem('productType');
     let storedProductSubType = sessionStorage.getItem('productSubType');
@@ -31,7 +32,10 @@ function NewSellPost() {
  
     function resetAll() {
         setProductType('');
+        setProductSubType('');
         setAddressData({});
+        setDongName('');
+        setMainPurpose('');
     }
 
     useEffect(() => {
@@ -47,22 +51,23 @@ function NewSellPost() {
     }, [productSubType]);
 
     useEffect(() => {
+    	console.log('addressData chnaged')
         if (sessionStorage) {
             sessionStorage.setItem('addressData', JSON.stringify(addressData));
+        }
+        if (Object.keys(addressData).length > 0) {
+            setMainPurpose(addressData.brTitle[0]['mainPurpsCdNm']);
         }
     }, [addressData]);
 
     useEffect(() => {
-        // console.log(dongName);
+        console.log(dongName);
         if (sessionStorage) {
             sessionStorage.setItem('dongName', dongName);
         }
         
         if (hasAddressData) {
-
-            if (addressData.brTitle.length === 1) {
-                setMainPurpose(addressData.brTitle[0]['mainPurpsCdNm']);
-            } else {
+            if (addressData.brTitle.length > 1) {
                 for (let item of addressData.brTitle) {
                     if (item['dongNm'] === dongName) {
                         setMainPurpose(item['mainPurpsCdNm']);

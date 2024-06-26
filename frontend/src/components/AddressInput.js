@@ -29,6 +29,7 @@ async function postAddressData(data) {
 const addressSearch = address => {
     return new Promise((resolve, reject) => {
         geocoder.addressSearch(address, function(result, status) {
+            console.log(address, result)
             if (status === kakao.maps.services.Status.OK) {
                 resolve({ "lat": result[0].y, "lng": result[0].x });
             } else {
@@ -70,20 +71,22 @@ function AddressInput({ addressData, setAddressData }) {
                     roadnameCode: data.roadnameCode,
 
                     buildingName: data.buildingName,
-                    buildingCode: data.buildingCode
+                    buildingCode: data.buildingCode,
+
+                    userSelectedType: data.userSelectedType
                 }
 
-                newData['address'] = data.userSelectedType === 'R' ? newData.roadAddress : newData.jibunAddress;
+                let selectedAddress = data.userSelectedType === 'R' ? newData.roadAddress : newData.jibunAddress;
 
                 try {
-                    let { lat, lng } = await addressSearch(newData.address);
+                    let { lat, lng } = await addressSearch(newData.roadAddress);
                     newData['latlng'] = [lat, lng];
                 } catch (error) {
                     console.log(error);
                 }
 
                 // console.log('in execDaumPostcode', data);
-                // console.log('in execDaumPostcode', newData);
+                console.log('in execDaumPostcode', newData);
 
                 let totData = await postAddressData(newData)
 
@@ -96,7 +99,7 @@ function AddressInput({ addressData, setAddressData }) {
 
                 let addressValueEl = document.getElementById('address-value');
                 if (addressValueEl) {
-                    addressValueEl.value = newData.address;    
+                    addressValueEl.value = selectedAddress;    
                 }
 
                 // 커서를 상세주소 필드로 이동한다.

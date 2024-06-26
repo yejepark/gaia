@@ -7,7 +7,8 @@ import DropDownInput from './DropDownInput';
 
 function AddressContainer({ addressData, setAddressData, dongName, setDongName }) {
 	
-	let addressTopEl, addressDongEl, addressDetailEl, dongNms;
+	let addressTopEl, addressDongEl, addressDetailEl;
+	let dongNms = [];
 
 	let hasAddressData = Object.keys(addressData).length > 0;
 
@@ -18,13 +19,13 @@ function AddressContainer({ addressData, setAddressData, dongName, setDongName }
 				<input type="text" 
 					className={classes["address-value"]} id='address-value' 
 					placeholder={'직접입력'} 
-					defaultValue={addressData.address}
+					defaultValue={addressData.userSelectedType === 'R' ? addressData.roadAddress : addressData.jibunAddress}
 					autoComplete="off"
 				/>
 			</>
 		);
-
-		dongNms = addressData.brTitle.map(item => item.dongNm.trim()).filter(name => name.length > 0);
+    	
+    	dongNms = addressData.brTitle.map(item => item.dongNm.trim()).filter(name => name.length > 0);	
 		if (dongNms.length > 0) {
 			dongNms.sort();
 			let dongNmMaxLen = Math.max(...addressData.brTitle.map(item=>item.dongNm.length));
