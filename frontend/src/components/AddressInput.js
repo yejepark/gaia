@@ -29,7 +29,7 @@ async function postAddressData(data) {
 const addressSearch = address => {
     return new Promise((resolve, reject) => {
         geocoder.addressSearch(address, function(result, status) {
-            console.log(address, result)
+            // console.log(address, result)
             if (status === kakao.maps.services.Status.OK) {
                 resolve({ "lat": result[0].y, "lng": result[0].x });
             } else {
@@ -64,16 +64,14 @@ function AddressInput({ addressData, setAddressData }) {
 
                     zonecode: data.zonecode,
 
-                    bname: data.bname1.length > 0 ? data.bname1 + ' ' + data.bname2 : data.bname2,
+                    // bname: data.bname1.length > 0 ? data.bname1 + ' ' + data.bname2 : data.bname2,
                     bcode: data.bcode,
 
                     roadname: data.roadname,
                     roadnameCode: data.roadnameCode,
 
                     buildingName: data.buildingName,
-                    buildingCode: data.buildingCode,
-
-                    userSelectedType: data.userSelectedType
+                    buildingCode: data.buildingCode
                 }
 
                 let selectedAddress = data.userSelectedType === 'R' ? newData.roadAddress : newData.jibunAddress;
@@ -89,6 +87,7 @@ function AddressInput({ addressData, setAddressData }) {
                 console.log('in execDaumPostcode', newData);
 
                 let totData = await postAddressData(newData)
+                totData['userSelectedType'] = data.userSelectedType;
 
                 setAddressData(totData);
 

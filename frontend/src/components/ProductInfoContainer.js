@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 import newSellPostClasses from '../pages/NewSellPost.module.css';
 import classes from './ProductInfoContainer.module.css';
 
@@ -13,13 +15,37 @@ const buildingUsages = [
     "가설건축물", "장례식장", "미등기건물", "그밖에토지의정착물"
 ];
 
-function ProductInfoContainer({  addressData, mainPurpose, setMainPurpose }) {
+function ProductInfoContainer({  addressData, dongName }) {
+    let storedMainPurpose = sessionStorage.getItem('mainPurpose');
+
+    let [mainPurpose, setMainPurpose] = useState(storedMainPurpose ? storedMainPurpose : '');
+    
+    useEffect(() => {
+        if (sessionStorage) sessionStorage.setItem('mainPurpose', mainPurpose);
+    }, [mainPurpose]);    
+
     let hasAddressData = Object.keys(addressData).length > 0;
+    useEffect(() => {
+        if (hasAddressData) {
+            setMainPurpose(addressData.brTitle[0]['mainPurpsCdNm']);
+        }    
+    }, [addressData]);
+
+    useEffect(() => {        
+        if (hasAddressData) {
+            if (addressData.brTitle.length > 1) {
+                for (let item of addressData.brTitle) {
+                    if (item['dongNm'] === dongName) {
+                        setMainPurpose(item['mainPurpsCdNm']);
+                        break;
+                    }
+                }        
+            }
+        }
+    }, [dongName]);
 
     let addressMainPurposeEl;
-
     if (hasAddressData) {
-
         addressMainPurposeEl = (
             <>
                 <div className={newSellPostClasses["input-title"]}>건축물 주용도</div>
@@ -34,7 +60,7 @@ function ProductInfoContainer({  addressData, mainPurpose, setMainPurpose }) {
             </>
         )    
     }
-    
+
     return (
         <div className={newSellPostClasses["input-grid"]}>
                 {addressMainPurposeEl}

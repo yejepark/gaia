@@ -99,7 +99,7 @@ class BrTitle(BaseModel):
 
     mgmBldrgstPk: str
 
-    platGbCd: int 
+    platGbCd: int
     # 0: land, 1: mountain, 2: block
     regstrGbCd: int
     regstrGbCdNm: str
