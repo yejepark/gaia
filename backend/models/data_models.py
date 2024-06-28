@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pydantic.functional_validators import BeforeValidator
 
-from typing import List, Optional, Dict, Union
+from typing import List, Optional, Dict, Union, Any
 from typing_extensions import Annotated
 
 from bson import ObjectId
@@ -162,6 +162,7 @@ class AddressData(BaseModel):
     latlng: List[str]
 
     brTitle: List[BrTitle] | None = None
+    # brTitle: Any | None = None
 
     model_config = ConfigDict(
         populate_by_name=True,

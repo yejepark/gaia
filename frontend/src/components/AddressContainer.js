@@ -30,6 +30,7 @@ function AddressContainer({ floor, setFloor, addressState, dispatchAddress }) {
             </>
         );
         
+        // console.log(addressData.brTitle.map(item => item.dongNm))
         dongNms = addressData.brTitle.map(item => item.dongNm.trim()).filter(name => name.length > 0);    
         if (dongNms.length > 0) {
             dongNms.sort();

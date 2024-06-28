@@ -1,3 +1,49 @@
+.input-value {
+    padding: 10px;
+    border-radius: 10px;
+    font-size: .9rem;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}
+
+.midinput {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.subinput {
+    display: flex;
+    align-items: center;
+
+    position: relative;
+    padding: 0px 10px 0 0;
+    
+    &>input {
+        width: 100%;
+    }
+
+    &>.subtitle {
+        width: 100%;
+    }
+    
+    &>.unit {
+        position: absolute;
+        top:0%;
+        right: 15%;
+        padding: 10px 2px;
+        
+        &:hover {
+            background-color: violet;
+        }
+    }
+}
+
 .main-purpose-input {
     border: 1px solid;
     padding: 10px;

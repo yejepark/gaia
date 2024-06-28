@@ -59,7 +59,15 @@ function DropDownInput({ localValue, setLocalValue, values, options }) {
     let dropdownOpenClass = dropdownOpen ? '' : ' ' + filtersClasses.hidden;
 
     let dropdownItems;
-    if (values.length > 0 && !(typeof values[0] === 'string' || values[0] instanceof String)) {
+    if (values.length > 0 && ((typeof values[0] === 'number') || (typeof values[0] === 'string' || values[0] instanceof String))) {
+        dropdownItems = values.map((v) => {
+            return (
+                <div key={v} value={v} onClick={dropdownClickHandler}>
+                   <span className={classes['dropdown-item']}>{v}{options.unit}</span>
+                </div>
+            );
+        });
+    } else {
         dropdownItems = values.map((item) => {
             return (
                 <div key={item.key} value={item.value} onClick={dropdownClickHandler}>
@@ -67,15 +75,7 @@ function DropDownInput({ localValue, setLocalValue, values, options }) {
                 </div>
             );
         });
-    } else {
-            dropdownItems = values.map((v) => {
-            return (
-                <div key={v} value={v} onClick={dropdownClickHandler}>
-                   <span className={classes['dropdown-item']}>{v}{options.unit}</span>
-                </div>
-            );
-        });
-    };
+    }   
 
     if (options.extraItems) {
         options.extraItems.forEach((item) => {

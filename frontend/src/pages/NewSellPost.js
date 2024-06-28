@@ -36,7 +36,7 @@ function addressStateReducer(state, action) {
 
 	if (action.type === 'UPDATE_DONGNAME') {
 		let dongName = action.payload;
-		let brTitleIdx;
+		let brTitleIdx = '0';
 		for (let [idx, item] of Object.entries(state.data.brTitle)) {
             if (item['dongNm'] === dongName) {
                 brTitleIdx = idx;

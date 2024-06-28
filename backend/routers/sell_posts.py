@@ -7,6 +7,7 @@ from decouple import config
 import requests
 import json
 import asyncio
+import re
 
 import cloudinary
 import cloudinary.uploader
@@ -20,7 +21,6 @@ API_SECRET = config("CLOUD_API_SECRET", cast=str)
 GOV_API_SERVICE_KEY = config("GOV_API_SERVICE_KEY", cast=str)
 
 GOV_DATA_URL = "http://apis.data.go.kr/1613000/BldRgstService_v2/getBrTitleInfo"
-
 
 cloudinary.config(
     cloud_name=CLOUD_NAME,
@@ -57,28 +57,36 @@ async def show_sell_post(id: str, request: Request):
 
 
 async def get_br_title_data(address_data, mainAtchOnly=True):
+    jibun_match = re.search(r"[\-0-9]+$", address_data.jibunAddress)
+    jibun = jibun_match.group().split('-')
+    bun = jibun[0].zfill(4)
+    ji = jibun[1].zfill(4) if len(jibun) == 2 else '0000'
+
     payload = {
         "ServiceKey": GOV_API_SERVICE_KEY,
         "_type": "json",
         "sigunguCd": address_data.sigunguCode,
         "bjdongCd": address_data.bcode[5:],
-        "bun": address_data.buildingCode[11:15],
-        "ji": address_data.buildingCode[15:19],
+        "bun": bun,
+        "ji": ji,
         "numOfRows": 100
     }
+    # print('request payload')
     # print(json.dumps(payload, indent=2))
 
     gov_resp = await asyncio.to_thread(
         requests.get, GOV_DATA_URL, params=payload
     )
+    # print('request repsonse')
+    # print(gov_resp.text)
     gov_data = json.loads(gov_resp.text)
 
     if gov_data['response']['header']['resultCode'] != '00':
-        return {}
+        return []
 
     br_title = gov_data['response']['body']['items']
     if len(br_title) == 0 or 'item' not in br_title:
-        return {}
+        return []
 
     br_title = br_title['item']
 
@@ -98,6 +106,8 @@ async def get_br_title_data(address_data, mainAtchOnly=True):
     status_code=status.HTTP_201_CREATED
 )
 async def create_address_data(address_data: AddressData, request: Request):
+
+    print(address_data)
 
     # br_title = await get_br_title_data(address_data)
 

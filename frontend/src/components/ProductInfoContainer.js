@@ -18,12 +18,15 @@ const buildingUsages = [
 function ProductInfoContainer({ addressState }) {
     let addressData = addressState.data;
     let dongName = addressState.dongName;
+    let brTitle;
+    if (addressData && addressData.brTitle.length > 0) {
+        brTitle = addressData.brTitle[addressState.brTitleIdx];
+    }
+    console.log(brTitle);
     
     let hasAddressData = addressData ? Object.keys(addressData).length > 0 : null;
-    let addressMainPurposeEl;
 
     let storedMainPurpose = sessionStorage.getItem('mainPurpose');
-
     let [mainPurpose, setMainPurpose] = useState(storedMainPurpose ? storedMainPurpose : '');
     
     useEffect(() => {
@@ -31,7 +34,7 @@ function ProductInfoContainer({ addressState }) {
     }, [mainPurpose]);    
 
     useEffect(() => {
-        if (hasAddressData) {
+        if (hasAddressData && addressData.brTitle.length > 0) {
             setMainPurpose(addressData.brTitle[0]['mainPurpsCdNm']);
         }    
     }, [addressData]);
@@ -48,7 +51,10 @@ function ProductInfoContainer({ addressState }) {
             }
         }
     }, [dongName]);
+
+    // console.log(addressData)
     
+    let addressMainPurposeEl, addressPlatAreaEl, addressRoomCntEl;
     if (hasAddressData) {
         addressMainPurposeEl = (
             <>
@@ -62,12 +68,93 @@ function ProductInfoContainer({ addressState }) {
                     }}
                 />
             </>
-        )    
+        );
+
+        let buildingLandRatio = brTitle.platArea > 0 ? Math.round(brTitle.archArea/brTitle.platArea*100) : '';
+        let floorAreaRatio = brTitle.platArea > 0 ? Math.round(brTitle.vlRatEstmTotArea/brTitle.platArea*100) : '';
+        addressPlatAreaEl = (
+            <>
+                <div className={newSellPostClasses["input-title"]}>면적정보</div>
+                <div className={newSellPostClasses['input-subgrid']}>
+                    <div className={classes.subtitle}>대지면적</div>
+                    <div className={classes.subinput}>
+                        <input type="text" 
+                            className={classes["input-value"]}
+                            placeholder={'직접입력'} 
+                            defaultValue={brTitle.platArea}
+                            autoComplete="off"
+                        />
+                        <div className={classes.unit}>m&sup2;</div>
+                    </div>
+
+                    <div></div>
+                    <div></div>
+
+                    <div className={classes.subtitle}>건축면적</div>
+                    <div className={classes.subinput}>
+                        <input type="text" 
+                            className={classes["input-value"]}
+                            placeholder={'직접입력'} 
+                            defaultValue={brTitle.archArea}
+                            autoComplete="off"
+                        />
+                        <div className={classes.unit}>m&sup2;</div>
+                    </div>
+
+                    <div className={classes.subtitle}>건패율</div>
+                    <div className={classes.subinput}>
+                        <input type="text" 
+                            className={classes["input-value"]}
+                            placeholder={'직접입력'} 
+                            defaultValue={buildingLandRatio}
+                            autoComplete="off"
+                        />
+                        <div className={classes.unit}>%</div>
+                    </div>
+
+                    <div className={classes.subtitle}>연면적</div>
+                    <div className={classes.subinput}>
+                        <input type="text" 
+                            className={classes["input-value"]}
+                            placeholder={'직접입력'} 
+                            defaultValue={brTitle.vlRatEstmTotArea}
+                            autoComplete="off"
+                        />
+                        <div className={classes.unit}>m&sup2;</div>
+                    </div>
+
+                    <div className={classes.subtitle}>용적률</div>
+                    <div className={classes.subinput}>
+                        <input type="text" 
+                            className={classes["input-value"]}
+                            placeholder={'직접입력'} 
+                            defaultValue={floorAreaRatio}
+                            autoComplete="off"
+                        />
+                        <div className={classes.unit}>%</div>
+                    </div>                    
+                </div>
+            </>
+        )
+
+        addressRoomCntEl = (
+            <>
+                <div className={newSellPostClasses["input-title"]}>총 사무실수</div>
+                <input type="text" 
+                    className={classes["input-value"]}
+                    placeholder={'직접입력'} 
+                    defaultValue={brTitle.hoCnt}
+                    autoComplete="off"
+                />
+            </>
+        )
     }
 
     return (
         <div className={newSellPostClasses["input-grid"]}>
                 {addressMainPurposeEl}
+                {addressPlatAreaEl}
+                {addressRoomCntEl}
         </div>
     );
 }

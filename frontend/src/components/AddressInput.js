@@ -10,6 +10,7 @@ function foldDaumPostcode() {
 }
 
 async function postAddressData(data) {
+    // console.log('start postAddressData');
     let res = await fetch(
         "http://localhost:8000/sell_posts/address_data/create", {
             method: "POST",
@@ -86,7 +87,7 @@ function AddressInput({ addressState, dispatchAddress }) {
                 }
 
                 // console.log('in execDaumPostcode', data);
-                console.log('in execDaumPostcode', newData);
+                // console.log('in execDaumPostcode', newData);
 
                 let totData = await postAddressData(newData)
                 totData['userSelectedType'] = data.userSelectedType;
