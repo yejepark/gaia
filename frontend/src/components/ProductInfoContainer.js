@@ -15,7 +15,13 @@ const buildingUsages = [
     "가설건축물", "장례식장", "미등기건물", "그밖에토지의정착물"
 ];
 
-function ProductInfoContainer({  addressData, dongName }) {
+function ProductInfoContainer({ addressState }) {
+    let addressData = addressState.data;
+    let dongName = addressState.dongName;
+    
+    let hasAddressData = addressData ? Object.keys(addressData).length > 0 : null;
+    let addressMainPurposeEl;
+
     let storedMainPurpose = sessionStorage.getItem('mainPurpose');
 
     let [mainPurpose, setMainPurpose] = useState(storedMainPurpose ? storedMainPurpose : '');
@@ -24,7 +30,6 @@ function ProductInfoContainer({  addressData, dongName }) {
         if (sessionStorage) sessionStorage.setItem('mainPurpose', mainPurpose);
     }, [mainPurpose]);    
 
-    let hasAddressData = Object.keys(addressData).length > 0;
     useEffect(() => {
         if (hasAddressData) {
             setMainPurpose(addressData.brTitle[0]['mainPurpsCdNm']);
@@ -43,8 +48,7 @@ function ProductInfoContainer({  addressData, dongName }) {
             }
         }
     }, [dongName]);
-
-    let addressMainPurposeEl;
+    
     if (hasAddressData) {
         addressMainPurposeEl = (
             <>

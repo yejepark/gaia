@@ -21,7 +21,7 @@ async function postAddressData(data) {
     // console.log('in postAddressData', JSON.stringify(data));
 
     let recvData = await res.json();
-    console.log('in postAddressData', recvData)
+    // console.log('in postAddressData', recvData)
 
     return recvData;
 }
@@ -39,9 +39,11 @@ const addressSearch = address => {
     });
 };
 
-function AddressInput({ addressData, setAddressData }) {
+function AddressInput({ addressState, dispatchAddress }) {
 
-    let hasAddressData = Object.keys(addressData).length > 0;    
+    let addressData = addressState.data;
+    let hasAddressData = addressData ? Object.keys(addressData).length > 0 : null;
+
     let zonecodeEl;
     if (hasAddressData) {
         let zonecodeValue = '우편번호: ' + addressData.zonecode;
@@ -89,7 +91,7 @@ function AddressInput({ addressData, setAddressData }) {
                 let totData = await postAddressData(newData)
                 totData['userSelectedType'] = data.userSelectedType;
 
-                setAddressData(totData);
+                dispatchAddress({ type: 'FETCH_SUCCESS', payload: totData });
 
                 element_wrap.style.display = 'none';
 

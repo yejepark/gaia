@@ -7,14 +7,15 @@ import AddressInput from './AddressInput';
 import DropDownInput from './DropDownInput';
 
 
-function AddressContainer({ addressData, setAddressData, dongName, setDongName, floor, setFloor }) {
+function AddressContainer({ floor, setFloor, addressState, dispatchAddress }) {
     
     let [brTitleIdx, setBrTitleIdx] = useState(0);
 
     let topEl, dongEl, floorEl, detailEl;
     let dongNms = [];
 
-    let hasAddressData = Object.keys(addressData).length > 0;
+    let addressData = addressState.data;
+    let hasAddressData  = addressData ? Object.keys(addressData).length > 0 : null;
 
     if (hasAddressData) {
         topEl = (
@@ -39,11 +40,12 @@ function AddressContainer({ addressData, setAddressData, dongName, setDongName, 
                 <>
                     <div className={newSellPostClasses["input-title"]}>동명칭</div>
                     <DropDownInput
-                        localValue={dongName} setLocalValue={setDongName} 
+                        localValue={addressState.dongName}
+                        setLocalValue={(dong) => dispatchAddress({ type: 'UPDATE_DONGNAME', payload: dong })} 
                         values={dongNms} 
                         options={{
                             placeholder: "직접입력",
-                            custumClass: classes['dong-input'],
+                            custumClass: classes['address-dropdown'],
                             // style: {width: `${dongNmMaxLen+5}rem`}
                         }}
                     />
@@ -51,8 +53,7 @@ function AddressContainer({ addressData, setAddressData, dongName, setDongName, 
             );    
         }
 
-        let chosenBrTitle = addressData.brTitle[brTitleIdx];
-
+        let chosenBrTitle = addressState.data ? addressState.data.brTitle[addressState.brTitleIdx] : null;        
         if (chosenBrTitle) {
             let ugrndFlrKeys = Array.from({length: chosenBrTitle.ugrndFlrCnt}, (x,i)=> -(chosenBrTitle.ugrndFlrCnt-i));
             let grndFlrKeys = Array.from({length: chosenBrTitle.grndFlrCnt}, (x,i)=> i+1);
@@ -65,11 +66,12 @@ function AddressContainer({ addressData, setAddressData, dongName, setDongName, 
                 <>
                     <div className={newSellPostClasses["input-title"]}>층정보</div>
                     <DropDownInput
-                        localValue={floor} setLocalValue={setFloor} 
+                        localValue={addressState.floor}
+                        setLocalValue={(floor) => dispatchAddress({ type: 'UPDATE_FLOOR', payload: floor })} 
                         values={floorValues} 
                         options={{
                             placeholder: "직접입력",
-                            custumClass: classes['dong-input'],
+                            custumClass: classes['address-dropdown'],
                         }}
                     />                    
                 </>
@@ -84,21 +86,10 @@ function AddressContainer({ addressData, setAddressData, dongName, setDongName, 
         );
     }
 
-    useEffect(() => {
-        if (hasAddressData) {
-            for (let [idx, item] of Object.entries(addressData.brTitle)) {
-                if (item['dongNm'] === dongName) {
-                    setBrTitleIdx(idx);
-                    break;
-                }
-            }    
-        }
-    }, [dongName]);
-
     return (
         <div className={newSellPostClasses["input-grid"]}>
             <div className={newSellPostClasses["input-title"]}>주소</div>
-            <AddressInput addressData={addressData} setAddressData={setAddressData} />
+            <AddressInput addressState={addressState} dispatchAddress={dispatchAddress} />
 
             {topEl}
             {dongEl}
