@@ -86,7 +86,7 @@ function AddressInput({ addressState, dispatchAddress }) {
                     console.log(error);
                 }
 
-                // console.log('in execDaumPostcode', data);
+                console.log('in execDaumPostcode', data);
                 // console.log('in execDaumPostcode', newData);
 
                 let totData = await postAddressData(newData)

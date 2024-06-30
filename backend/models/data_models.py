@@ -143,6 +143,21 @@ class BrTitle(BaseModel):
     crtnDay: ForcedStr
 
 
+class BrJijigu(BaseModel):
+
+    mgmBldrgstPk: str
+
+    jijiguGbCd: ForcedStr 
+    jijiguGbCdNm: str
+
+    jijiguCd: ForcedStr
+    jijiguCdNm: str
+
+    etcJijigu: str
+
+    crtnDay: ForcedStr
+
+
 class AddressData(BaseModel):
 
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
@@ -162,6 +177,7 @@ class AddressData(BaseModel):
     latlng: List[str]
 
     brTitle: List[BrTitle] | None = None
+    brJijigu: List[BrJijigu] | None = None
     # brTitle: Any | None = None
 
     model_config = ConfigDict(

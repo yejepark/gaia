@@ -34,12 +34,15 @@
     
     &>.unit {
         position: absolute;
-        top:0%;
         right: 15%;
-        padding: 10px 2px;
+
+        padding: 3px 3px;
         
         &:hover {
+            border-radius: 5px;
             background-color: violet;
+            color: white;
+            cursor: pointer;
         }
     }
 }

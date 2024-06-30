@@ -7,7 +7,7 @@ import AddressInput from './AddressInput';
 import DropDownInput from './DropDownInput';
 
 
-function AddressContainer({ floor, setFloor, addressState, dispatchAddress }) {
+function AddressContainer({ addressState, dispatchAddress }) {
     
     let [brTitleIdx, setBrTitleIdx] = useState(0);
 
