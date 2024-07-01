@@ -65,7 +65,10 @@ function ProductTypeContainer({ productType, setProductType, productSubType, set
         <>
             <div className={newSellPostClasses["input-title"]}>매물 종류</div> 
                <div className={newSellPostClasses['input-container']}>
-                   <SingleChoice chosen={productType} setChosen={setProductType} choiceMap={productTypeMap} btnLabel={'선택하기'}/>
+                   <SingleChoice
+                        chosen={productType} setChosen={setProductType} choiceMap={productTypeMap}
+                        btnLabel='선택하기' name='productType'
+                    />
                </div>
         </>
     );
@@ -78,7 +81,10 @@ function ProductTypeContainer({ productType, setProductType, productSubType, set
                 <>
                     <div className={newSellPostClasses["input-title"]}>매물 세부 종류</div>
                     <div className={newSellPostClasses['input-container']}>
-                        <SingleChoice chosen={productSubType} setChosen={setProductSubType} choiceMap={chosenTypeMap} btnLabel={'선택하기'}/>
+                        <SingleChoice
+                            chosen={productSubType} setChosen={setProductSubType} choiceMap={chosenTypeMap} 
+                            btnLabel='선택하기' name='productSubType'
+                        />
                     </div>
                 </>    
             );    
