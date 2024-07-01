@@ -15,7 +15,7 @@ function inputClickHandler(event) {
 }
 
 
-function DropDownInput({ localValue, setLocalValue, values, options }) {
+function DropDownInput({ localValue, setLocalValue, values, name, options }) {
 
     let [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -90,7 +90,7 @@ function DropDownInput({ localValue, setLocalValue, values, options }) {
     return (
         <div className={options.custumClass} onClick={containerClickHandler} style={options.style}>
             <div className={classes['dropdown-input']}>
-                <input type='text' name='dropdown-input' autoComplete="off"
+                <input type='text' name={name} autoComplete="off"
                     placeholder={options.placeholder}
                     onChange={textChangeHandler} 
                     value={localValue}

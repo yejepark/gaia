@@ -5,7 +5,7 @@ import ApplyButton from './ApplyButton';
 
 import classes from './Filters.module.css';
 
-function SingleChoice({ chosen, setChosen, choiceMap, btnLabel }) {
+function SingleChoice({ chosen, setChosen, choiceMap, btnLabel, name }) {
 
     let [dialogOpen, setDialogOpen] = useState(false);
 
@@ -24,7 +24,7 @@ function SingleChoice({ chosen, setChosen, choiceMap, btnLabel }) {
 
     let inputEls = Object.keys(choiceMap).map((choice)=> {return (
         <label key={choice}>
-            <input type="radio" value={choice} name="choice" onClick={radioClickHandler} checked={chosen===choice} readOnly/>
+            <input type="radio" value={choice} name={name} onClick={radioClickHandler} checked={chosen===choice} readOnly/>
             <span>{choiceMap[choice]}</span>
         </label>
     ); });

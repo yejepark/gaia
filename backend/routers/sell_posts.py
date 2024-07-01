@@ -74,14 +74,14 @@ async def get_gov_data(address_data, target_url):
         "ji": ji,
         "numOfRows": 100
     }
-    print('request payload')
-    print(json.dumps(payload, indent=2))
+    # print('request payload')
+    # print(json.dumps(payload, indent=2))
 
     resp = await asyncio.to_thread(
         requests.get, target_url, params=payload
     )
-    print('request repsonse')
-    print(resp.text)
+    # print('request repsonse')
+    # print(resp.text)
     resp_dict = json.loads(resp.text)
 
     if resp_dict['response']['header']['resultCode'] != '00':

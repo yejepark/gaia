@@ -83,6 +83,7 @@ function AddressInput({ addressState, dispatchAddress }) {
                     let { lat, lng } = await addressSearch(newData.roadAddress);
                     newData['latlng'] = [lat, lng];
                 } catch (error) {
+                    newData['latlng'] = [];
                     console.log(error);
                 }
 

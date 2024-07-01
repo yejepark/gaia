@@ -6,6 +6,22 @@ import classes from './AddressContainer.module.css';
 import AddressInput from './AddressInput';
 import DropDownInput from './DropDownInput';
 
+function SavedTextInput({ id, name, customClass, placeholder, defaultValue }) {
+    let savedText = sessionStorage.getItem(name);
+    let [text, setText] = useState(savedText ? savedText : defaultValue);
+
+    function textChangeHandler(event) {
+        let newText = event.target.value
+        setText(newText);
+        sessionStorage.setItem(name, newText);
+    }
+
+    return <input type="text"
+        name={name} id={id} className={customClass}
+        placeholder={placeholder} autoComplete="off"
+        value={text} onChange={textChangeHandler} />
+}
+
 
 function AddressContainer({ addressState, dispatchAddress }) {
     
@@ -26,14 +42,23 @@ function AddressContainer({ addressState, dispatchAddress }) {
                     placeholder={'직접입력'} 
                     defaultValue={addressData.userSelectedType === 'R' ? addressData.roadAddress : addressData.jibunAddress}
                     autoComplete="off"
+                    name='topAddress'
                 />
             </>
         );
-        
-        // console.log(addressData.brTitle.map(item => item.dongNm))
-        dongNms = addressData.brTitle.map(item => item.dongNm.trim()).filter(name => name.length > 0);    
+
+        dongNms = addressData.brTitle.map((item, idx) => {
+            let dongNm = item.bldNm === item.dongNm ? ' ' : item.dongNm;
+            return {
+                text: (item.bldNm + ' ' + dongNm).trim(),
+                value: item.bldNm + '|' + dongNm,
+                key: item.bldNm + '-' + dongNm + '-' + idx,
+            };
+        }).filter((item) => item.text.trim().length > 0);
+        // console.log(dongNms)
+
         if (dongNms.length > 0) {
-            dongNms.sort();
+            dongNms.sort(function(a,b) { return ('' + a.value).localeCompare(b.value); });
             let dongNmMaxLen = Math.max(...addressData.brTitle.map(item=>item.dongNm.length));
             dongNmMaxLen = Math.min(dongNmMaxLen, 10)
             
@@ -41,9 +66,13 @@ function AddressContainer({ addressState, dispatchAddress }) {
                 <>
                     <div className={newSellPostClasses["input-title"]}>동명칭</div>
                     <DropDownInput
-                        localValue={addressState.dongName}
-                        setLocalValue={(dong) => dispatchAddress({ type: 'UPDATE_DONGNAME', payload: dong })} 
-                        values={dongNms} 
+                        localValue={addressState.bldName + ' ' + addressState.dongName}
+                        setLocalValue={(bldAndDong) => {
+                            let [bldName, dongName] = bldAndDong.split('|');
+                            dispatchAddress({ type: 'UPDATE_DONGNAME', payload: {bldName, dongName} });
+                        }}
+                        values={dongNms}
+                        name='dongName'
                         options={{
                             placeholder: "직접입력",
                             custumClass: classes['address-dropdown'],
@@ -69,7 +98,8 @@ function AddressContainer({ addressState, dispatchAddress }) {
                     <DropDownInput
                         localValue={addressState.floor}
                         setLocalValue={(floor) => dispatchAddress({ type: 'UPDATE_FLOOR', payload: floor })} 
-                        values={floorValues} 
+                        values={floorValues}
+                        name='floor'
                         options={{
                             placeholder: "직접입력",
                             custumClass: classes['address-dropdown'],
@@ -82,7 +112,7 @@ function AddressContainer({ addressState, dispatchAddress }) {
         detailEl = (
             <>
                 <div className={newSellPostClasses["input-title"]}>상세주소</div>
-                <input type="text" className={classes["address-detail"]} id="address-detail" placeholder="" autoComplete="off" />
+                <SavedTextInput id='address-detail' name='addressDetail' customClass={classes["address-detail"]} />
             </>
         );
     }

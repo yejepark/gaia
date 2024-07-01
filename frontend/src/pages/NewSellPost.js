@@ -1,4 +1,5 @@
 import { useEffect, useState, useReducer } from 'react';
+import { Form } from 'react-router-dom';
 
 import classes from './NewSellPost.module.css';
 
@@ -13,7 +14,9 @@ import ProductInfoContainer from '../components/ProductInfoContainer';
 const initialAddressState = {
 	data: null,
 	dongName: '',
+	bldName: '',
 	brTitleIdx: '0',
+	districtType: '',
 	floor: '1층',
 }
 
@@ -26,27 +29,40 @@ function addressStateReducer(state, action) {
 	}
 
 	if (action.type === 'FETCH_SUCCESS') {
+		let data = action.payload;
+		console.log(data)
+		let districtType = '';
+		let brJijigu = [];
+		if (data.brJijigu.length > 0) {
+			brJijigu = data.brJijigu.filter(item => item['jijiguGbCd'] === '1');
+			brJijigu.sort(function (a,b) {return a.jijiguCd.localeCompare(b.jijiguCd);});
+			districtType = [... new Set(brJijigu.map(item => item.jijiguCdNm))].join(', ');
+		}
 		let nextState = {
 			...initialAddressState,
-			data: action.payload,
+			data,
+			districtType
 		};
 		if (nextState.data && sessionStorage) sessionStorage.setItem('addressState', JSON.stringify(nextState));
 		return nextState;
 	}
 
 	if (action.type === 'UPDATE_DONGNAME') {
-		let dongName = action.payload;
+		let bldName = action.payload.bldName;
+		let dongName = action.payload.dongName;
 		let brTitleIdx = '0';
 		for (let [idx, item] of Object.entries(state.data.brTitle)) {
-            if (item['dongNm'] === dongName) {
+            if (item['dongNm'] === dongName && item['bldNm'] === bldName) {
                 brTitleIdx = idx;
             	break;
             }
         }
+
         let nextState = { 
         	...state,
 			dongName,
-			brTitleIdx,
+			bldName,
+			brTitleIdx
 		}
         if (nextState.data && sessionStorage) sessionStorage.setItem('addressState', JSON.stringify(nextState));
 		return nextState;
@@ -109,17 +125,26 @@ function NewSellPost() {
 
     return (
         <div className={classes["body-container"]}> 
-            <div className={classes["main-container"]}>
+            <Form method="post" className={classes["main-container"]}>
                 <ProductTypeContainer
                     productType={productType} setProductType={setProductType}
                     productSubType={productSubType} setProductSubType={setProductSubType}
                 />
                 <AddressContainer addressState={addressState} dispatchAddress={dispatchAddress} />
-                <ProductInfoContainer addressState={addressState} />
+                <ProductInfoContainer bldName={addressState.bldName} dongName={addressState.dongName} addressState={addressState} />
                 <button onClick={resetAll}>모두 지우기</button>
-            </div>
+                <button type="submit">Create</button>
+            </Form>
         </div>
     );
 }
 
 export default NewSellPost;
+
+
+export async function action({ request }) {
+	const formData = await request.formData();
+	const postData = Object.fromEntries(formData);
+	console.log(postData);
+	return postData
+}
