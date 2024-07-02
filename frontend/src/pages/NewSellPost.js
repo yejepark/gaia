@@ -30,7 +30,7 @@ function addressStateReducer(state, action) {
 
 	if (action.type === 'FETCH_SUCCESS') {
 		let data = action.payload;
-		console.log('addressStateReducer:', data)
+		// console.log('addressStateReducer:', data)
 		let districtType = '';
 		let brJijigu = [];
 		if (data.brJijigu.length > 0) {

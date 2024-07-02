@@ -100,35 +100,86 @@ function MainPurposeEl({ mainPurpose, setMainPurpose }) {
     </>);
 }
 
-function BuildingAreaEl({ brTitle }) {
+function BuildingAreaEl({ brTitle, bldName, dongName }) {
+    // console.log('BuildingAreaEl')
 
     let platArea = brTitle ? brTitle.platArea : 0;
     let archArea = brTitle ? brTitle.archArea : 0;
     let totArea = brTitle ? brTitle.vlRatEstmTotArea : 0;
-    let buildingLandRatio = brTitle && platArea > 0 ? Math.round(archArea/platArea*100) : 0;
-    let floorAreaRatio = brTitle && platArea > 0 ? Math.round(totArea/platArea*100) : 0;
+    let buildingLandRatio = platArea > 0 ? Math.round(archArea/platArea*100) : 0;
+    let floorAreaRatio = platArea > 0 ? Math.round(totArea/platArea*100) : 0;
        
+    let [areaInfo, setAreaInfo] = useState({
+        platArea, archArea, totArea, buildingLandRatio, floorAreaRatio
+    });
+    // console.log('areaInfo: ', areaInfo)
+
+    useEffect(()=>{
+        setAreaInfo({platArea, archArea, totArea, buildingLandRatio, floorAreaRatio});
+    }, [bldName, dongName]);
+
+    function updateInfo(event, key) {
+        setAreaInfo(prevInfo => {
+            
+            if (key === 'archArea') {
+                let tempPlatArea = prevInfo.platArea;
+                let tempArchArea = Number(event.target.value);
+                return {...prevInfo, [key]: tempArchArea,
+                    buildingLandRatio: tempPlatArea > 0 ? Math.round(tempArchArea/tempPlatArea*100): 0};
+
+            } else if (key === 'totArea') {
+                let tempPlatArea = prevInfo.platArea;
+                let tempTotArea = Number(event.target.value);
+                return {...prevInfo, [key]: tempTotArea,
+                    floorAreaRatio: tempPlatArea > 0 ? Math.round(tempTotArea/tempPlatArea*100): 0};
+
+            } else if (key === 'platArea') {
+                let tempPlatArea = Number(event.target.value);
+                return {...prevInfo, [key]: tempPlatArea,
+                    buildingLandRatio: tempPlatArea > 0 ? Math.round(prevInfo.archArea/tempPlatArea*100): 0,
+                    floorAreaRatio: tempPlatArea > 0 ? Math.round(prevInfo.totArea/tempPlatArea*100): 0,
+                };
+            }
+
+            return prevInfo;
+        });
+    }
+   
     let inputAreaValues = [
-        {subtitle: '대지면적', defaultValue: platArea, unit: 'm2', name: 'platArea', inputClass: 'resettable'}, {}, {},
-        {subtitle: '건축면적', defaultValue: archArea.toFixed(1), unit: 'm2', name: 'archArea', inputClass: 'resettable'},
-        {subtitle: '건폐율', defaultValue: buildingLandRatio, unit: '%', name: 'buildingLandRatio'},
-        {subtitle: '연면적', defaultValue: totArea.toFixed(1), unit: 'm2', name: 'totArea'},
-        {subtitle: '용적률', defaultValue: floorAreaRatio, unit: '%', name: 'floorAreaRatio'},
+        {subtitle: '대지면적'}, {unit: 'm2', name: 'platArea'}, {}, {},
+        {subtitle: '건축면적'}, {unit: 'm2', name: 'archArea'},
+        {subtitle: '건폐율'}, {unit: '%', name: 'buildingLandRatio'},
+        {subtitle: '연면적'}, {unit: 'm2', name: 'totArea'},
+        {subtitle: '용적률'}, {unit: '%', name: 'floorAreaRatio'},
     ];
 
     return (<>
         <div className={newSellPostClasses["input-title"]}>면적정보</div>
         <div className={newSellPostClasses['input-subgrid'] + ' buildingAreaInfo'}>
             {inputAreaValues.map((item, idx) => {
-                if (Object.keys(item).length > 0) {
-                    return <InputWithDefault key={idx}
-                        subtitle={item.subtitle}
-                        defaultValue={item.defaultValue} 
-                        unit={item.unit}
-                        inputClass={'resettable'}
-                        name={item.name} />;   
+                if (item.subtitle) {
+                    return <div key={idx} className={classes.subtitle}>{item.subtitle}</div>;
+                } else if (item.name) {
+                    let unitEl;
+                    if (item.unit === 'm2') {
+                        unitEl = <div className={classes.unit}>m<sup>2</sup></div>;
+                    } else {
+                        unitEl = <div className={classes.unit}>{item.unit}</div>;
+                    }
+                    return ( 
+                        <div key={idx} className={classes.subinput}>
+                            <input type='text'
+                                name={item.name}
+                                className={classes["input-value"]}
+                                value={areaInfo[item.name]}
+                                onChange={(e) => updateInfo(e, item.name)}
+                                autoComplete='off'
+                            />
+                            {unitEl}
+                     </div>
+                    );
                 } else {
-                    return <div key={idx}></div>;
+                    return <div key={idx}></div>;                            
                 }
             })}
         </div>
@@ -183,12 +234,13 @@ function ProductInfoContainer({ bldName, dongName, addressState }) {
     let [mainPurpose, setMainPurpose] = useState('');
     let [districtType, setDistrictType] = useState('');
 
+    let BuildingAreaElement;
     useEffect(() => {
         if (brTitle) {
             setMainPurpose(brTitle['mainPurpsCdNm']);
             setDistrictType(addressState['districtType']);
-            let resettables = document.querySelector('.buildingAreaInfo').querySelectorAll(".resettable");
-            resettables.forEach(el => { el.value = el.defaultValue; });
+            // let resettables = document.querySelector('.buildingAreaInfo').querySelectorAll(".resettable");
+            // resettables.forEach(el => { el.value = el.defaultValue; });
         }
     }, [bldName, dongName, hasBrTitleData]);
 
@@ -196,7 +248,7 @@ function ProductInfoContainer({ bldName, dongName, addressState }) {
         <div className={newSellPostClasses["input-grid"]}>
             <BuildingFloorEl brTitle={brTitle} />
             <MainPurposeEl mainPurpose={mainPurpose} setMainPurpose={setMainPurpose} />
-            <BuildingAreaEl brTitle={brTitle} />
+            <BuildingAreaEl brTitle={brTitle} bldName={bldName} dongName={dongName} />
             <DistrictTypeEl districtType={districtType} setDistrictType={setDistrictType} />
             <BulidingRoomCntEl brTitle={brTitle} />
         </div>
