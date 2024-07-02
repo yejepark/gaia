@@ -105,7 +105,7 @@ class BrTitle(BaseModel):
     regstrGbCdNm: str
 
     bldNm: str
-    dongNm: str
+    dongNm: ForcedStr
 
     platArea: float
     vlRatEstmTotArea: float

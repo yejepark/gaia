@@ -38,11 +38,15 @@
 
         padding: 3px 3px;
         
-        &:hover {
+        /*&:hover {
             border-radius: 5px;
             background-color: violet;
             color: white;
             cursor: pointer;
+        }*/
+
+        & sup {
+            font-size: 0.6rem;
         }
     }
 }

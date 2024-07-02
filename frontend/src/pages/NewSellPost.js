@@ -30,7 +30,7 @@ function addressStateReducer(state, action) {
 
 	if (action.type === 'FETCH_SUCCESS') {
 		let data = action.payload;
-		console.log(data)
+		console.log('addressStateReducer:', data)
 		let districtType = '';
 		let brJijigu = [];
 		if (data.brJijigu.length > 0) {
@@ -103,12 +103,13 @@ function NewSellPost() {
     let [productSubType, setProductSubType] = useState(storedProductSubType ? storedProductSubType : '');
 
     const [addressState, dispatchAddress] = useReducer(addressStateReducer, initialAddressState);
-    console.log(addressState);
+    console.log('addressState: ', addressState);
  
-    function resetAll() {
+    function resetAll(event) {
         setProductType('');
         setProductSubType('');
         dispatchAddress({type: 'RESET'});
+        sessionStorage.setItem('addressDetail', '');
     }
 
     useEffect(() => {
@@ -132,7 +133,7 @@ function NewSellPost() {
                 />
                 <AddressContainer addressState={addressState} dispatchAddress={dispatchAddress} />
                 <ProductInfoContainer bldName={addressState.bldName} dongName={addressState.dongName} addressState={addressState} />
-                <button onClick={resetAll}>모두 지우기</button>
+                <button type='reset' onClick={resetAll}>모두 지우기</button>
                 <button type="submit">Create</button>
             </Form>
         </div>
@@ -145,6 +146,6 @@ export default NewSellPost;
 export async function action({ request }) {
 	const formData = await request.formData();
 	const postData = Object.fromEntries(formData);
-	console.log(postData);
+	console.log('form action: ', postData);
 	return postData
 }

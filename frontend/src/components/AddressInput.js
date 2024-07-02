@@ -87,8 +87,8 @@ function AddressInput({ addressState, dispatchAddress }) {
                     console.log(error);
                 }
 
-                console.log('in execDaumPostcode', data);
-                // console.log('in execDaumPostcode', newData);
+                // console.log('in execDaumPostcode 1:', data);
+                // console.log('in execDaumPostcode 2:', newData);
 
                 let totData = await postAddressData(newData)
                 totData['userSelectedType'] = data.userSelectedType;
