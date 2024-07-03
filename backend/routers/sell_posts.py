@@ -59,7 +59,7 @@ async def show_sell_post(id: str, request: Request):
     raise HTTPException(status_code=404, detail=f"sell post {id} not found")
 
 
-async def get_gov_data(address_data, target_url):
+async def get_gov_data(address_data, target_url, numOfRows=100):
     jibun_match = re.search(r"[\-0-9]+$", address_data.jibunAddress)
     jibun = jibun_match.group().split('-')
     bun = jibun[0].zfill(4)
@@ -72,7 +72,7 @@ async def get_gov_data(address_data, target_url):
         "bjdongCd": address_data.bcode[5:],
         "bun": bun,
         "ji": ji,
-        "numOfRows": 100
+        "numOfRows": numOfRows
     }
     # print('request payload')
     # print(json.dumps(payload, indent=2))
@@ -104,14 +104,17 @@ async def get_br_title_data(address_data, mainAtchOnly=True):
     data = await get_gov_data(address_data, br_title_URL)
 
     if mainAtchOnly:
-        data = [item for item in data if item['mainAtchGbCd'] == 0]
+        data = [item for item in data if int(item['mainAtchGbCd']) == 0]
 
     return [BrTitle(**item).model_dump() for item in data]
 
 
-async def get_br_jijigu_data(address_data):
+async def get_br_jijigu_data(address_data, jiyukOnly=True):
 
-    data = await get_gov_data(address_data, br_jijigu_URL)
+    data = await get_gov_data(address_data, br_jijigu_URL, numOfRows=20)
+
+    if jiyukOnly:
+        data = [item for item in data if int(item['jijiguGbCd']) == 1]
 
     return [BrJijigu(**item).model_dump() for item in data]
 

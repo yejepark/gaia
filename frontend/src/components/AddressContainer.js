@@ -61,12 +61,13 @@ function AddressContainer({ addressState, dispatchAddress }) {
             dongNms.sort(function(a,b) { return ('' + a.value).localeCompare(b.value); });
             let dongNmMaxLen = Math.max(...addressData.brTitle.map(item=>item.dongNm.length));
             dongNmMaxLen = Math.min(dongNmMaxLen, 10)
-            
+
+            let currentDongName = (addressState.bldName + ' ' + addressState.dongName).trim()
             dongEl = (
                 <>
                     <div className={newSellPostClasses["input-title"]}>동명칭</div>
                     <DropDownInput
-                        localValue={addressState.bldName + ' ' + addressState.dongName}
+                        localValue={currentDongName}
                         setLocalValue={(bldAndDong) => {
                             let [bldName, dongName] = bldAndDong.split('|');
                             dispatchAddress({ type: 'UPDATE_DONGNAME', payload: {bldName, dongName} });

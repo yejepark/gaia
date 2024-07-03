@@ -28,65 +28,54 @@ const districtTypes = [
 ];
 
 
-function InputWithDefault({ subtitle, defaultValue, unit, inputClass, name }) {
+function BuildingFloorEl({ buildingCode, brTitle }) {
+    let bldName = brTitle?.bldNm;
+    let dongName = brTitle?.dongNm;
 
-    let unitEl;
-    if (unit === 'm2') {
-        unitEl = <div className={classes.unit}>m<sup>2</sup></div>;
-    } else {
-        unitEl = <div className={classes.unit}>{unit}</div>;
-    }
+    let ugrndFlrCntEl, grndFlrCntEl
 
-    return (<>
-        <div className={classes.subtitle}>{subtitle}</div>
-        <div className={classes.subinput}>
-            <input type="text" 
-                name={name}
-                className={classes["input-value"] + ' ' + inputClass}
-                defaultValue={defaultValue}
-                placeholder={'직접입력'} 
-                autoComplete="off"
-            />
-            {unitEl}
-        </div>
-    </>);
-}
+    let ugrndFlrCnt = brTitle ? brTitle.ugrndFlrCnt : 0;
+    let grndFlrCnt = brTitle ? brTitle.grndFlrCnt : 1;
 
-function BuildingFloorEl({ brTitle }) {
+    let [floorInfo, setFloorInfo] = useState({ugrndFlrCnt, grndFlrCnt});
 
-    if (!brTitle) {
-        return (<>
-            <div className={newSellPostClasses["input-title"]}>층정보</div>
-            <div className={newSellPostClasses['input-subgrid'] + ' buildingFloorInfo'}>
-                 <InputWithDefault subtitle={'지하'} defaultValue={0} unit={'층'} inputClass={'resettable'} />
-                 <InputWithDefault subtitle={'지상'} defaultValue={1} unit={'층'} inputClass={'resettable'} />
-            </div>
-        </>);
-    }
-    
+    useEffect(() => {
+        setFloorInfo({ ugrndFlrCnt, grndFlrCnt });
+    }, [buildingCode, bldName, dongName]);
+
     let inputFloorValues = [
-        {subtitle: '지하', defaultValue: brTitle.ugrndFlrCnt, unit: '층'},
-        {subtitle: '지상', defaultValue: brTitle.grndFlrCnt, unit: '층'},
+        {subtitle: '지하'}, {unit: '층', name: 'ugrndFlrCnt'},
+        {subtitle: '지상'}, {unit: '층', name: 'grndFlrCnt'},
     ];
+
     return (<>
         <div className={newSellPostClasses["input-title"]}>층정보</div>
         <div className={newSellPostClasses['input-subgrid'] + ' buildingFloorInfo'}>
             {inputFloorValues.map((item, idx) => {
-                if (Object.keys(item).length > 0) {
-                    return <InputWithDefault key={idx}
-                        subtitle={item.subtitle}
-                        defaultValue={item.defaultValue} 
-                        unit={item.unit}
-                        inputClass={'resettable'} />;   
+                if (item.subtitle) {
+                    return <div key={idx} className={classes.subtitle}>{item.subtitle}</div>;
                 } else {
-                    return <div key={idx}></div>;
+                    return (
+                        <div key={idx} className={classes.subinput}>
+                            <input type='text' name={item.name} className={classes["input-value"]} autoComplete='off'
+                                    value={floorInfo[item.name]}
+                                    onChange={(e) => { setFloorInfo({...floorInfo, [item.name]: e.target.value}); }} />
+                            <div className={classes.unit}>{item.unit}</div>
+                        </div>
+                    );
                 }
             })}
         </div>
     </>);
 }
 
-function MainPurposeEl({ mainPurpose, setMainPurpose }) {
+function MainPurposeEl({ buildingCode, brTitle }) {
+    let [mainPurpose, setMainPurpose] = useState(brTitle ? brTitle.mainPurpsCdNm : '');
+
+    useEffect(() => {
+        if (brTitle) setMainPurpose(brTitle.mainPurpsCdNm);
+    }, [buildingCode]);
+    
     return (<>
         <div className={newSellPostClasses["input-title"]}>건축물 주용도</div>
         <DropDownInput
@@ -100,12 +89,24 @@ function MainPurposeEl({ mainPurpose, setMainPurpose }) {
     </>);
 }
 
-function BuildingAreaEl({ brTitle, bldName, dongName }) {
-    // console.log('BuildingAreaEl')
+function BuildingAreaEl({ buildingCode, brTitle }) {
+    let bldName = brTitle?.bldNm;
+    let dongName = brTitle?.dongNm;
+    // console.log('BuildingAreaEl', buildingCode, '|', bldName, '|', dongName, '|')
+    // console.log('brTitle: ', brTitle)
 
-    let platArea = brTitle ? brTitle.platArea : 0;
-    let archArea = brTitle ? brTitle.archArea : 0;
-    let totArea = brTitle ? brTitle.vlRatEstmTotArea : 0;
+    let platArea = brTitle ? Number(brTitle.platArea.toFixed(2)) : 0;
+    let archArea = brTitle ? Number(brTitle.archArea.toFixed(2)) : 0;
+    let totArea = brTitle ? Number(brTitle.vlRatEstmTotArea.toFixed(2)) : 0;
+    
+    // if (archArea === 0 && totArea > 0) {
+    //     archArea = brTitle ? Number((totArea / brTitle.grndFlrCnt).toFixed(2)) : 0;
+    // } else if (totArea === 0 && archArea > 0) {
+    //     totArea = brTitle ? Number((archArea * brTitle.grndFlrCnt).toFixed(2)) : 0;
+    // }
+    
+    // console.log(platArea, archArea, totArea)
+
     let buildingLandRatio = platArea > 0 ? Math.round(archArea/platArea*100) : 0;
     let floorAreaRatio = platArea > 0 ? Math.round(totArea/platArea*100) : 0;
        
@@ -114,9 +115,11 @@ function BuildingAreaEl({ brTitle, bldName, dongName }) {
     });
     // console.log('areaInfo: ', areaInfo)
 
+    // let hasBrTitleData = brTitle ? Object.keys(brTitle).length > 0 : false;
+    // console.log(buildingCode, hasBrTitleData)
     useEffect(()=>{
         setAreaInfo({platArea, archArea, totArea, buildingLandRatio, floorAreaRatio});
-    }, [bldName, dongName]);
+    }, [buildingCode, bldName, dongName]);
 
     function updateInfo(event, key) {
         setAreaInfo(prevInfo => {
@@ -186,7 +189,13 @@ function BuildingAreaEl({ brTitle, bldName, dongName }) {
     </>);
 }
 
-function DistrictTypeEl({ districtType, setDistrictType }) {
+function DistrictTypeEl({ buildingCode, baseDistrictType }) {
+    let [districtType, setDistrictType] = useState(baseDistrictType ? baseDistrictType : '');
+
+    useEffect(() => {
+        if (baseDistrictType) setDistrictType(baseDistrictType);
+    }, [buildingCode]);
+
     return (<>
         <div className={newSellPostClasses["input-title"]}>용도지역</div>
         <DropDownInput
@@ -200,71 +209,87 @@ function DistrictTypeEl({ districtType, setDistrictType }) {
     </>);
 }
 
-function BulidingRoomCntEl({ brTitle }) {
-    if (!brTitle) {
-        return (<>
-            <div className={newSellPostClasses["input-title"]}>총 사무실수</div>
-            <input type="text" className={classes["input-value"]} placeholder={'직접입력'} defaultValue={0} autoComplete="off"/>
-        </>);
-    }
+function BulidingRoomCntEl({ buildingCode, brTitle }) {
+
+    let hhldCnt = brTitle ? brTitle.hhldCnt : 0;
+    let hoCnt = brTitle ? brTitle.hoCnt : 0;
+    let fmlyCnt = brTitle ? brTitle.fmlyCnt : 0;
+    
+    let [roomCntInfo, setRoomCntInfo] = useState({hhldCnt, hoCnt, fmlyCnt});
+
+    useEffect(() => {
+        setRoomCntInfo({ hhldCnt, hoCnt, fmlyCnt });
+    }, [buildingCode]);
+
+    let inputRoomCntValues = [
+        {subtitle: '세대'}, {unit: '개', name: 'hhldCnt'},
+        {subtitle: '호'}, {unit: '개', name: 'hoCnt'},
+        {subtitle: '가구'}, {unit: '개', name: 'fmlyCnt'},
+    ];
 
     return (<>
-        <div className={newSellPostClasses["input-title"]}>총 사무실수</div>
-        <input type="text" 
-            className={classes["input-value"]}
-            placeholder={'직접입력'} 
-            defaultValue={brTitle.hoCnt}
-            autoComplete="off"
-        />
+        <div className={newSellPostClasses["input-title"]}>총 세대/호</div>
+        <div className={newSellPostClasses['input-subgrid'] + ' buildingRoomCnt'}>
+            {inputRoomCntValues.map((item, idx) => {
+                if (item.subtitle) {
+                    return <div key={idx} className={classes.subtitle}>{item.subtitle}</div>;
+                } else {
+                    return (
+                        <div key={idx} className={classes.subinput}>
+                            <input type='text' name={item.name} className={classes["input-value"]} autoComplete='off'
+                                    value={roomCntInfo[item.name]}
+                                    onChange={(e) => { setRoomCntInfo({...roomCntInfo, [item.name]: e.target.value}); }} />
+                            <div className={classes.unit}>{item.unit}</div>
+                        </div>
+                    );
+                }
+            })}
+        </div>
     </>);
 }
 
-function ProductInfoContainer({ bldName, dongName, addressState }) {
+function ProductInfoContainer({ addressState }) {
     console.log('ProductInfoContainer')
-
     let addressData = addressState.data;
-    console.log('addressData: ', addressData)
+
+    let buildingCode = addressData?.buildingCode;
+    let dongName = addressState.dongName;
+    let bldName = addressState.bldName;
+
+    // console.log('addressData: ', addressData)
     
-    let hasAddressData = addressData ? Object.keys(addressData).length > 0 : null;
-    
-    let hasBrTitleData = addressData ? addressData.brTitle.length > 0 : null;
+    let hasBrTitleData = addressData ? addressData.brTitle.length > 0 : false;
     let brTitle = hasBrTitleData ? addressData.brTitle[addressState.brTitleIdx] : null;
+    // console.log('buildingCode: ', buildingCode)
     console.log('brTitle: ', brTitle);
-
-    let [mainPurpose, setMainPurpose] = useState('');
-    let [districtType, setDistrictType] = useState('');
-
-    let BuildingAreaElement;
-    useEffect(() => {
-        if (brTitle) {
-            setMainPurpose(brTitle['mainPurpsCdNm']);
-            setDistrictType(addressState['districtType']);
-            // let resettables = document.querySelector('.buildingAreaInfo').querySelectorAll(".resettable");
-            // resettables.forEach(el => { el.value = el.defaultValue; });
-        }
-    }, [bldName, dongName, hasBrTitleData]);
 
     return (
         <div className={newSellPostClasses["input-grid"]}>
-            <BuildingFloorEl brTitle={brTitle} />
-            <MainPurposeEl mainPurpose={mainPurpose} setMainPurpose={setMainPurpose} />
-            <BuildingAreaEl brTitle={brTitle} bldName={bldName} dongName={dongName} />
-            <DistrictTypeEl districtType={districtType} setDistrictType={setDistrictType} />
-            <BulidingRoomCntEl brTitle={brTitle} />
+            <BuildingFloorEl buildingCode={buildingCode} brTitle={brTitle} />
+            <MainPurposeEl buildingCode={buildingCode} brTitle={brTitle} />
+            <BuildingAreaEl buildingCode={buildingCode} brTitle={brTitle} />
+            <DistrictTypeEl buildingCode={buildingCode} baseDistrictType={addressState.districtType} />
+            <BulidingRoomCntEl buildingCode={buildingCode} brTitle={brTitle} />
         </div>
     );
 }
 
 export default memo(ProductInfoContainer, function(prevProps, nextProps) {
-    // console.log(prevProps.addressState.data);
-    // console.log(nextProps.addressState.data);
+    let prevState = prevProps.addressState;
+    let nextState = nextProps.addressState;
+
+    let prevData = prevState.data;
+    let nextData = nextState.data;
+
     // console.log('(', prevProps.bldName, '|', prevProps.dongName, ')');
     // console.log('(', nextProps.bldName, '|', nextProps.dongName, ')');
+    let isNewData = prevData === null && nextData !== null;
+    if (isNewData) return false;
 
-    if (!prevProps.addressState.data && nextProps.addressState.data) return false;
-
-    return (
-        prevProps.bldName === nextProps.bldName &&
-        prevProps.dongName === nextProps.dongName
-    );
+    let isSameAddress = prevData?.buildingCode === nextData?.buildingCode;
+    let isSameBuilding = prevState.bldName === nextState.bldName;
+    let isSameDong = prevState.dongName === nextState.dongName;
+    // console.log('memo of ProductInfoContainer: ', isNewData, isSameAddress, isSameBuilding, isSameDong);
+    
+    return isSameAddress && isSameBuilding && isSameDong;
 });

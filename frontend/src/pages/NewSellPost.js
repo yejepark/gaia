@@ -132,7 +132,7 @@ function NewSellPost() {
                     productSubType={productSubType} setProductSubType={setProductSubType}
                 />
                 <AddressContainer addressState={addressState} dispatchAddress={dispatchAddress} />
-                <ProductInfoContainer bldName={addressState.bldName} dongName={addressState.dongName} addressState={addressState} />
+                <ProductInfoContainer addressState={addressState} />
                 <button type='reset' onClick={resetAll}>모두 지우기</button>
                 <button type="submit">Create</button>
             </Form>
