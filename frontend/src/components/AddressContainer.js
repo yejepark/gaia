@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import newSellPostClasses from '../pages/NewSellPost.module.css';
 import classes from './AddressContainer.module.css';
@@ -24,8 +24,6 @@ function SavedTextInput({ id, name, customClass, placeholder, defaultValue }) {
 
 
 function AddressContainer({ addressState, dispatchAddress }) {
-    
-    let [brTitleIdx, setBrTitleIdx] = useState(0);
 
     let topEl, dongEl, floorEl, detailEl;
     let dongNms = [];
@@ -59,8 +57,8 @@ function AddressContainer({ addressState, dispatchAddress }) {
 
         if (dongNms.length > 0) {
             dongNms.sort(function(a,b) { return ('' + a.value).localeCompare(b.value); });
-            let dongNmMaxLen = Math.max(...addressData.brTitle.map(item=>item.dongNm.length));
-            dongNmMaxLen = Math.min(dongNmMaxLen, 10)
+            // let dongNmMaxLen = Math.max(...addressData.brTitle.map(item=>item.dongNm.length));
+            // dongNmMaxLen = Math.min(dongNmMaxLen, 10)
 
             let currentDongName = (addressState.bldName + ' ' + addressState.dongName).trim()
             dongEl = (

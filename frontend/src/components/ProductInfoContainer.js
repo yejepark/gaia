@@ -27,13 +27,60 @@ const districtTypes = [
     "농림지역", "자연환경보전지역"
 ];
 
+const structureTypes = [
+    "조적구조", "벽돌구조", "블럭구조", "석구조", "스틸하우스조", "보강콘크리트조", "기타조적구조",
+    "콘크리트구조", "철근콘크리트구조", "프리케스트콘크리트구조",
+    "철파이프조", "돌담 및 토담조", "라멘조", "석회 및 흙혼합 벽돌조", "기타콘크리트구조",
+    "철골구조", "일반철골구조", "경량철골구조", "강파이프구조",
+    "황토조", "연와조", "조석조", "기타강구조",
+    "철골철근콘크리트구조", "철골콘크리트구조", "경량철골조", "기타철골철근콘크리트구조",
+    "목구조", "일반목구조", "통나무구조", "시켄트블럭조", "조립식판넬조", "흙벽돌조",
+    "컨테이너조", "막구조", "기타구조"
+];
+structureTypes.sort();
 
-function BuildingFloorEl({ buildingCode, brTitle }) {
-    let bldName = brTitle?.bldNm;
-    let dongName = brTitle?.dongNm;
+function ValuesToElements({ curValue, setCurValue, values }) {
+    return values.map((item, idx) => {
+        if (item.subtitle) {
+            return <div key={idx} className={classes.subtitle}>{item.subtitle}</div>;
+        } else {
+            return (
+                <div key={idx} className={classes.subinput}>
+                    <input type='text' name={item.name} className={classes["input-value"]} autoComplete='off'
+                            value={curValue[item.name]}
+                            onChange={(e) => { setCurValue({...curValue, [item.name]: e.target.value}); }} />
+                    <div className={classes.unit}>{item.unit}</div>
+                </div>
+            );
+        }
+    });
+}
 
-    let ugrndFlrCntEl, grndFlrCntEl
+function ValuesToDropDown({ eventDep, title, dataKey, values, data }) {
+    let [value, setValue] = useState(data ? data[dataKey] : '');
 
+    useEffect(() => {
+        if (dataKey) {
+            if (data) setValue(data[dataKey]);    
+        } else {
+            if (data) setValue(data);
+        }
+    }, [eventDep, data, dataKey]);
+    
+    return (<>
+        <div className={newSellPostClasses["input-title"]}>{title}</div>
+        <DropDownInput
+            localValue={value} setLocalValue={setValue} 
+            values={values} 
+            options={{
+                placeholder: "직접입력",
+                custumClass: classes['main-purpose-input'],
+            }}
+        />
+    </>);
+}
+
+function BuildingFloorEl({ brTitle }) {
     let ugrndFlrCnt = brTitle ? brTitle.ugrndFlrCnt : 0;
     let grndFlrCnt = brTitle ? brTitle.grndFlrCnt : 1;
 
@@ -41,7 +88,7 @@ function BuildingFloorEl({ buildingCode, brTitle }) {
 
     useEffect(() => {
         setFloorInfo({ ugrndFlrCnt, grndFlrCnt });
-    }, [buildingCode, bldName, dongName]);
+    }, [ugrndFlrCnt, grndFlrCnt]);
 
     let inputFloorValues = [
         {subtitle: '지하'}, {unit: '층', name: 'ugrndFlrCnt'},
@@ -51,48 +98,19 @@ function BuildingFloorEl({ buildingCode, brTitle }) {
     return (<>
         <div className={newSellPostClasses["input-title"]}>층정보</div>
         <div className={newSellPostClasses['input-subgrid'] + ' buildingFloorInfo'}>
-            {inputFloorValues.map((item, idx) => {
-                if (item.subtitle) {
-                    return <div key={idx} className={classes.subtitle}>{item.subtitle}</div>;
-                } else {
-                    return (
-                        <div key={idx} className={classes.subinput}>
-                            <input type='text' name={item.name} className={classes["input-value"]} autoComplete='off'
-                                    value={floorInfo[item.name]}
-                                    onChange={(e) => { setFloorInfo({...floorInfo, [item.name]: e.target.value}); }} />
-                            <div className={classes.unit}>{item.unit}</div>
-                        </div>
-                    );
-                }
-            })}
+            <ValuesToElements curValue={floorInfo} setCurValue={setFloorInfo} values={inputFloorValues} />
         </div>
     </>);
 }
 
 function MainPurposeEl({ buildingCode, brTitle }) {
-    let [mainPurpose, setMainPurpose] = useState(brTitle ? brTitle.mainPurpsCdNm : '');
-
-    useEffect(() => {
-        if (brTitle) setMainPurpose(brTitle.mainPurpsCdNm);
-    }, [buildingCode]);
-    
-    return (<>
-        <div className={newSellPostClasses["input-title"]}>건축물 주용도</div>
-        <DropDownInput
-            localValue={mainPurpose} setLocalValue={setMainPurpose} 
-            values={buildingUsages} 
-            options={{
-                placeholder: "직접입력",
-                custumClass: classes['main-purpose-input'],
-            }}
-        />
-    </>);
+    return <ValuesToDropDown 
+        eventDep={buildingCode} title='건축물 주용도' 
+        dataKey='mainPurpsCdNm' 
+        values={buildingUsages} data={brTitle} />
 }
 
-function BuildingAreaEl({ buildingCode, brTitle }) {
-    let bldName = brTitle?.bldNm;
-    let dongName = brTitle?.dongNm;
-    // console.log('BuildingAreaEl', buildingCode, '|', bldName, '|', dongName, '|')
+function BuildingAreaEl({ brTitle }) {
     // console.log('brTitle: ', brTitle)
 
     let platArea = brTitle ? Number(brTitle.platArea.toFixed(2)) : 0;
@@ -117,9 +135,10 @@ function BuildingAreaEl({ buildingCode, brTitle }) {
 
     // let hasBrTitleData = brTitle ? Object.keys(brTitle).length > 0 : false;
     // console.log(buildingCode, hasBrTitleData)
+
     useEffect(()=>{
         setAreaInfo({platArea, archArea, totArea, buildingLandRatio, floorAreaRatio});
-    }, [buildingCode, bldName, dongName]);
+    }, [platArea, archArea, totArea, buildingLandRatio, floorAreaRatio]);
 
     function updateInfo(event, key) {
         setAreaInfo(prevInfo => {
@@ -190,62 +209,70 @@ function BuildingAreaEl({ buildingCode, brTitle }) {
 }
 
 function DistrictTypeEl({ buildingCode, baseDistrictType }) {
-    let [districtType, setDistrictType] = useState(baseDistrictType ? baseDistrictType : '');
-
-    useEffect(() => {
-        if (baseDistrictType) setDistrictType(baseDistrictType);
-    }, [buildingCode]);
-
-    return (<>
-        <div className={newSellPostClasses["input-title"]}>용도지역</div>
-        <DropDownInput
-            localValue={districtType} setLocalValue={setDistrictType} 
-            values={districtTypes} 
-            options={{
-                placeholder: "직접입력",
-                custumClass: classes['main-purpose-input'],
-            }}
-        />
-    </>);
+    return <ValuesToDropDown
+        eventDep={buildingCode} title='용도지역'
+        values={districtTypes} data={baseDistrictType} />
 }
 
-function BulidingRoomCntEl({ buildingCode, brTitle }) {
+function BulidingRoomCntEl({ brTitle }) {
 
     let hhldCnt = brTitle ? brTitle.hhldCnt : 0;
     let hoCnt = brTitle ? brTitle.hoCnt : 0;
     let fmlyCnt = brTitle ? brTitle.fmlyCnt : 0;
     
-    let [roomCntInfo, setRoomCntInfo] = useState({hhldCnt, hoCnt, fmlyCnt});
+    let [roomCntInfo, setRoomCntInfo] = useState({ hhldCnt, hoCnt, fmlyCnt });
 
     useEffect(() => {
         setRoomCntInfo({ hhldCnt, hoCnt, fmlyCnt });
-    }, [buildingCode]);
+    }, [hhldCnt, hoCnt, fmlyCnt]);
 
     let inputRoomCntValues = [
-        {subtitle: '세대'}, {unit: '개', name: 'hhldCnt'},
-        {subtitle: '호'}, {unit: '개', name: 'hoCnt'},
-        {subtitle: '가구'}, {unit: '개', name: 'fmlyCnt'},
+        {subtitle: '세대'}, {name: 'hhldCnt', unit: '개'},
+        {subtitle: '호'}, {name: 'hoCnt', unit: '개'},
+        {subtitle: '가구'}, {name: 'fmlyCnt', unit: '개'},
     ];
 
     return (<>
         <div className={newSellPostClasses["input-title"]}>총 세대/호</div>
         <div className={newSellPostClasses['input-subgrid'] + ' buildingRoomCnt'}>
-            {inputRoomCntValues.map((item, idx) => {
-                if (item.subtitle) {
-                    return <div key={idx} className={classes.subtitle}>{item.subtitle}</div>;
-                } else {
-                    return (
-                        <div key={idx} className={classes.subinput}>
-                            <input type='text' name={item.name} className={classes["input-value"]} autoComplete='off'
-                                    value={roomCntInfo[item.name]}
-                                    onChange={(e) => { setRoomCntInfo({...roomCntInfo, [item.name]: e.target.value}); }} />
-                            <div className={classes.unit}>{item.unit}</div>
-                        </div>
-                    );
-                }
-            })}
+            <ValuesToElements curValue={roomCntInfo} setCurValue={setRoomCntInfo} values={inputRoomCntValues} />
         </div>
     </>);
+}
+
+function BuildingParkingEl({ brTitle }) {
+
+    let indrAutoUtcnt = brTitle ? brTitle.indrAutoUtcnt : 0;
+    let indrMechUtcnt = brTitle ? brTitle.indrMechUtcnt : 0;
+    let oudrAutoUtcnt = brTitle ? brTitle.oudrAutoUtcnt : 0;
+    let oudrMechUtcnt = brTitle ? brTitle.oudrMechUtcnt : 0;
+
+    let [parkingInfo, setParkingInfo] = useState({ indrAutoUtcnt, indrMechUtcnt, oudrAutoUtcnt, oudrMechUtcnt });
+
+    useEffect(() => {
+        setParkingInfo({ indrAutoUtcnt, indrMechUtcnt, oudrAutoUtcnt, oudrMechUtcnt });
+    }, [indrAutoUtcnt, indrMechUtcnt,oudrAutoUtcnt, oudrMechUtcnt]);
+
+    let inputParkingValues = [
+        {subtitle: '실내 자주식'}, {name: 'indrAutoUtcnt', unit: '대'},
+        {subtitle: '실내 기계식'}, {name: 'indrMechUtcnt', unit: '대'},
+        {subtitle: '실외 자주식'}, {name: 'oudrAutoUtcnt', unit: '대'},
+        {subtitle: '실외 기계식'}, {name: 'oudrMechUtcnt', unit: '대'},
+    ];
+
+    return (<>
+        <div className={newSellPostClasses["input-title"]}>주차장</div>
+        <div className={newSellPostClasses['input-subgrid'] + ' buildingRoomCnt'}>
+            <ValuesToElements curValue={parkingInfo} setCurValue={setParkingInfo} values={inputParkingValues} />
+        </div>
+    </>);
+}
+
+function StructureEl({ buildingCode, brTitle }) {
+    return <ValuesToDropDown
+        eventDep={buildingCode} title='건축물 구조'
+        dataKey='strctCdNm'
+        values={structureTypes} data={brTitle} />
 }
 
 function ProductInfoContainer({ addressState }) {
@@ -253,8 +280,6 @@ function ProductInfoContainer({ addressState }) {
     let addressData = addressState.data;
 
     let buildingCode = addressData?.buildingCode;
-    let dongName = addressState.dongName;
-    let bldName = addressState.bldName;
 
     // console.log('addressData: ', addressData)
     
@@ -265,11 +290,13 @@ function ProductInfoContainer({ addressState }) {
 
     return (
         <div className={newSellPostClasses["input-grid"]}>
-            <BuildingFloorEl buildingCode={buildingCode} brTitle={brTitle} />
+            <BuildingFloorEl brTitle={brTitle} />
             <MainPurposeEl buildingCode={buildingCode} brTitle={brTitle} />
-            <BuildingAreaEl buildingCode={buildingCode} brTitle={brTitle} />
+            <BuildingAreaEl brTitle={brTitle} />
             <DistrictTypeEl buildingCode={buildingCode} baseDistrictType={addressState.districtType} />
-            <BulidingRoomCntEl buildingCode={buildingCode} brTitle={brTitle} />
+            <BulidingRoomCntEl brTitle={brTitle} />
+            <BuildingParkingEl brTitle={brTitle} />
+            <StructureEl buildingCode={buildingCode} brTitle={brTitle} />
         </div>
     );
 }

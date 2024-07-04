@@ -3,9 +3,6 @@ import { Form } from 'react-router-dom';
 
 import classes from './NewSellPost.module.css';
 
-import SingleChoice from '../components/SingleChoice';
-import DropDownInput from '../components/DropDownInput';
-
 import AddressContainer from '../components/AddressContainer';
 import ProductTypeContainer from '../components/ProductTypeContainer';
 import ProductInfoContainer from '../components/ProductInfoContainer';
@@ -36,7 +33,7 @@ function addressStateReducer(state, action) {
 		if (data.brJijigu.length > 0) {
 			brJijigu = data.brJijigu.filter(item => item['jijiguGbCd'] === '1');
 			brJijigu.sort(function (a,b) {return a.jijiguCd.localeCompare(b.jijiguCd);});
-			districtType = [... new Set(brJijigu.map(item => item.jijiguCdNm))].join(', ');
+			districtType = [...(new Set(brJijigu.map(item => item.jijiguCdNm)))].join(', ');
 		}
 		let nextState = {
 			...initialAddressState,
@@ -80,7 +77,7 @@ function addressStateReducer(state, action) {
 
 	if (action.type === 'RESTORE') {
 		let storedState = JSON.parse(sessionStorage.getItem('addressState') || '{}');
-		if (Object.keys(storedState).length = 0) {
+		if (Object.keys(storedState).length === 0) {
 			return initialAddressState;
 		}
 		return storedState;

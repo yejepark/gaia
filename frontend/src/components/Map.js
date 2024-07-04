@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 
 import { debounce } from '../utilities/methods';
 import classes from './Map.module.css';
@@ -79,7 +79,7 @@ function KakaoMap({ assets }) {
 
     let container = useRef();
 
-    function centerMap(positions) {
+    const centerMap = useCallback(function(positions) {
         if (positions.length > 0) {
             const bounds = positions.reduce(
                 (bds, latlng) => bds.extend(latlng),
@@ -87,7 +87,7 @@ function KakaoMap({ assets }) {
             );
             kakaoMap.setBounds(bounds);
         }
-    }
+    }, [kakaoMap]);
 
     // Create the kakao map object:
     useEffect(() => {
@@ -121,7 +121,7 @@ function KakaoMap({ assets }) {
 
         centerMap(newPositions);
 
-    }, [kakaoMap, assets]);
+    }, [kakaoMap, assets, centerMap]);
 
     // useEffect(() => {
     //     if (positions.length > 0) {

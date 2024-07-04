@@ -22,7 +22,8 @@ function CardItem({ data }) {
     let urls = data.pic_urls;
 
     let cardId = 'card-' + data.id;
-    let imgCarousel;
+    // console.log(cardId)
+    let imgCarousel = document.querySelector('#' + cardId + ' .' + classes['img-carousel']); 
 
     function cardClickHandler(event) {
         console.log('card', event.target);
@@ -66,21 +67,21 @@ function CardItem({ data }) {
         urls.forEach((url, imgIdx) => {
             let key = data.id + '-' + imgIdx;
             if (url.startsWith('http')) {
-                imgElements.push(<img id={'pic-' + key} key={key} src={url}/>)    
+                imgElements.push(<img alt={key} id={'pic-' + key} key={key} src={url}/>)    
             } else {
-                imgElements.push(<img id={'pic-' + key} key={key} src={imageServer+ '/pictures' + url}/>)    
+                imgElements.push(<img alt={key} id={'pic-' + key} key={key} src={imageServer+ '/pictures' + url}/>)    
             }
         })
     }
 
     // Slide images in the image carousel when arrows are clicked:
     useEffect(() => {
-        if (!imgCarousel) { imgCarousel = document.querySelector('#' + cardId + ' .' + classes['img-carousel']); }
+        // if (!imgCarousel) { imgCarousel = document.querySelector('#' + cardId + ' .' + classes['img-carousel']); }
         if (imgCarousel) { 
             let width = imgCarousel.firstChild.getBoundingClientRect().width;
             imgCarousel.style.transform = `translate(${-width*imgPos}px)`;
         }
-    }, [imgPos]);
+    }, [imgPos, imgCarousel]);
 
     // When the window is resized, reset the image carousel:
     useEffect(() => {
@@ -92,7 +93,7 @@ function CardItem({ data }) {
             window.addEventListener('resize', resizeHandler);
             return () => { window.removeEventListener('resize', resizeHandler); };
         };
-    }, []);
+    }, [imgCarousel]);
 
     if (imgElements.length > 0) return (
         <div id={cardId} tabIndex='0' className={classes['card-item']} onClick={cardClickHandler} onMouseOver={mouseOverHandler} onMouseOut={mouseOutHandler}>
