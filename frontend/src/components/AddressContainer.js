@@ -22,110 +22,111 @@ function SavedTextInput({ id, name, customClass, placeholder, defaultValue }) {
         value={text} onChange={textChangeHandler} />
 }
 
+function TopEl({ addressData }) {
+    return (<>
+        <div className={newSellPostClasses["input-title"]}></div>
+        <input type="text" 
+            className={classes["address-value"]} id='address-value' 
+            placeholder={'직접입력'} 
+            defaultValue={addressData.userSelectedType === 'R' ? addressData.roadAddress : addressData.jibunAddress}
+            autoComplete="off"
+            name='topAddress'
+        />
+    </>);
+}
+
+function DongEl({ addressState, dispatchAddress }) {
+
+    let dongNms = addressState.data.brTitle.map((item, idx) => {
+        let dongNm = item.bldNm === item.dongNm ? ' ' : item.dongNm;
+        return {
+            text: (item.bldNm + ' ' + dongNm).trim(),
+            value: item.bldNm + '|' + dongNm,
+            key: item.bldNm + '-' + dongNm + '-' + idx,
+        };
+    }).filter((item) => item.text.trim().length > 0);
+
+    if (dongNms.length === 0) return;
+
+    dongNms.sort(function(a,b) { return ('' + a.value).localeCompare(b.value); });
+    // let dongNmMaxLen = Math.max(...addressData.brTitle.map(item=>item.dongNm.length));
+    let currentDongName = (addressState.bldName + ' ' + addressState.dongName).trim()
+ 
+    return (<>
+        <div className={newSellPostClasses["input-title"]}>동명칭</div>
+        <DropDownInput
+            localValue={currentDongName}
+            setLocalValue={(bldAndDong) => {
+                let [bldName, dongName] = bldAndDong.split('|');
+                dispatchAddress({ type: 'UPDATE_DONGNAME', payload: {bldName, dongName} });
+            }}
+            values={dongNms}
+            name='dongName'
+            options={{
+                placeholder: "직접입력",
+                custumClass: classes['address-dropdown'],
+                // style: {width: `${dongNmMaxLen+5}rem`}
+            }}
+        />
+    </>);    
+}
+
+function FloorEl({ brTitle, addressState, dispatchAddress }) {
+    
+    let ugrndFlrKeys = Array.from({length: brTitle.ugrndFlrCnt}, (x,i)=> -(brTitle.ugrndFlrCnt-i));
+    let grndFlrKeys = Array.from({length: brTitle.grndFlrCnt}, (x,i)=> i+1);
+    let flrKeys = ugrndFlrKeys.concat(grndFlrKeys);
+    let floorValues = flrKeys.map(k => {
+        if (k < 0) return {key: k, value: `지하${-k}층`, text: `지하${-k}층`};
+        return {key: k, value: `${k}층`, text: `${k}층`};
+    });
+
+    return (<>
+        <div className={newSellPostClasses["input-title"]}>층정보</div>
+        <DropDownInput
+            localValue={addressState.floor}
+            setLocalValue={(floor) => dispatchAddress({ type: 'UPDATE_FLOOR', payload: floor })} 
+            values={floorValues}
+            name='floor'
+            options={{
+                placeholder: "직접입력",
+                custumClass: classes['address-dropdown'],
+            }}
+        />                    
+    </>);
+}
+
 
 function AddressContainer({ addressState, dispatchAddress }) {
-
-    let topEl, dongEl, floorEl, detailEl;
-    let dongNms = [];
 
     let addressData = addressState.data;
     let hasAddressData  = addressData ? Object.keys(addressData).length > 0 : null;
 
-    if (hasAddressData) {
-        topEl = (
-            <>
-                <div className={newSellPostClasses["input-title"]}></div>
-                <input type="text" 
-                    className={classes["address-value"]} id='address-value' 
-                    placeholder={'직접입력'} 
-                    defaultValue={addressData.userSelectedType === 'R' ? addressData.roadAddress : addressData.jibunAddress}
-                    autoComplete="off"
-                    name='topAddress'
-                />
-            </>
-        );
-
-        dongNms = addressData.brTitle.map((item, idx) => {
-            let dongNm = item.bldNm === item.dongNm ? ' ' : item.dongNm;
-            return {
-                text: (item.bldNm + ' ' + dongNm).trim(),
-                value: item.bldNm + '|' + dongNm,
-                key: item.bldNm + '-' + dongNm + '-' + idx,
-            };
-        }).filter((item) => item.text.trim().length > 0);
-        // console.log(dongNms)
-
-        if (dongNms.length > 0) {
-            dongNms.sort(function(a,b) { return ('' + a.value).localeCompare(b.value); });
-            // let dongNmMaxLen = Math.max(...addressData.brTitle.map(item=>item.dongNm.length));
-            // dongNmMaxLen = Math.min(dongNmMaxLen, 10)
-
-            let currentDongName = (addressState.bldName + ' ' + addressState.dongName).trim()
-            dongEl = (
-                <>
-                    <div className={newSellPostClasses["input-title"]}>동명칭</div>
-                    <DropDownInput
-                        localValue={currentDongName}
-                        setLocalValue={(bldAndDong) => {
-                            let [bldName, dongName] = bldAndDong.split('|');
-                            dispatchAddress({ type: 'UPDATE_DONGNAME', payload: {bldName, dongName} });
-                        }}
-                        values={dongNms}
-                        name='dongName'
-                        options={{
-                            placeholder: "직접입력",
-                            custumClass: classes['address-dropdown'],
-                            // style: {width: `${dongNmMaxLen+5}rem`}
-                        }}
-                    />
-                </>
-            );    
-        }
-
-        let chosenBrTitle = addressState.data ? addressState.data.brTitle[addressState.brTitleIdx] : null;        
-        if (chosenBrTitle) {
-            let ugrndFlrKeys = Array.from({length: chosenBrTitle.ugrndFlrCnt}, (x,i)=> -(chosenBrTitle.ugrndFlrCnt-i));
-            let grndFlrKeys = Array.from({length: chosenBrTitle.grndFlrCnt}, (x,i)=> i+1);
-            let flrKeys = ugrndFlrKeys.concat(grndFlrKeys);
-            let floorValues = flrKeys.map(k => {
-                if (k < 0) return {key: k, value: `지하${-k}층`, text: `지하${-k}층`};
-                return {key: k, value: `${k}층`, text: `${k}층`};
-            });
-            floorEl = (
-                <>
-                    <div className={newSellPostClasses["input-title"]}>층정보</div>
-                    <DropDownInput
-                        localValue={addressState.floor}
-                        setLocalValue={(floor) => dispatchAddress({ type: 'UPDATE_FLOOR', payload: floor })} 
-                        values={floorValues}
-                        name='floor'
-                        options={{
-                            placeholder: "직접입력",
-                            custumClass: classes['address-dropdown'],
-                        }}
-                    />                    
-                </>
-            );
-        }
-        
-        detailEl = (
-            <>
-                <div className={newSellPostClasses["input-title"]}>상세주소</div>
-                <SavedTextInput id='address-detail' name='addressDetail' customClass={classes["address-detail"]} />
-            </>
-        );
+    let brTitle;
+    if (addressState.data && addressState.data.brTitle.length > 0) {
+        brTitle = addressState.data.brTitle[addressState.brTitleIdx];
     }
+        
+    let detailEl = (
+        <>
+            <div className={newSellPostClasses["input-title"]}>상세주소</div>
+            <SavedTextInput id='address-detail' name='addressDetail' customClass={classes["address-detail"]} />
+        </>
+    );
 
     return (
-        <div className={newSellPostClasses["input-grid"]}>
-            <div className={newSellPostClasses["input-title"]}>주소</div>
-            <AddressInput addressState={addressState} dispatchAddress={dispatchAddress} />
+        <fieldset className={newSellPostClasses['input-set']}>
+            <legend>주소 정보</legend>
+            <div className={newSellPostClasses["input-grid"]}>
+                <div className={newSellPostClasses["input-title"]}>주소</div>
+                <AddressInput addressState={addressState} dispatchAddress={dispatchAddress} />
 
-            {topEl}
-            {dongEl}
-            {floorEl}
-            {detailEl}
-        </div>
+                {hasAddressData && <TopEl addressData={addressData} />}
+                {hasAddressData && <DongEl addressState={addressState} dispatchAddress={dispatchAddress} />}
+                {brTitle && <FloorEl brTitle={brTitle} addressState={addressState} dispatchAddress={dispatchAddress} />}
+                {hasAddressData && detailEl}
+            </div>
+        </fieldset>
     )
 }
 

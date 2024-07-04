@@ -130,8 +130,10 @@ function NewSellPost() {
                 />
                 <AddressContainer addressState={addressState} dispatchAddress={dispatchAddress} />
                 <ProductInfoContainer addressState={addressState} />
-                <button type='reset' onClick={resetAll}>모두 지우기</button>
-                <button type="submit">Create</button>
+                <div>
+                	<button type='reset' onClick={resetAll}>모두 지우기</button>
+                	<button type="submit">Create</button>
+                </div>
             </Form>
         </div>
     );

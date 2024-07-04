@@ -23,7 +23,7 @@
 
     position: relative;
     padding: 0px 10px 0 0;
-    
+
     &>input {
         width: 100%;
     }
@@ -31,13 +31,13 @@
     &>.subtitle {
         width: 100%;
     }
-    
+
     &>.unit {
         position: absolute;
         right: 15%;
 
         padding: 3px 3px;
-        
+
         /*&:hover {
             border-radius: 5px;
             background-color: violet;
@@ -65,4 +65,13 @@
     & input:focus {
         outline: none;
     }
+}
+
+.year-input {
+    width: 5rem;
+}
+
+.month-input,
+.day-input {
+    width: 3.5rem;
 }

@@ -59,11 +59,9 @@ const productTypeMap = {
 
 function ProductTypeContainer({ productType, setProductType, productSubType, setProductSubType }) {
     
-    let productTypeEl, productSubTypeEl, chosenTypeMap;
-
-    productTypeEl = (
+    let productTypeEl = (
         <>
-            <div className={newSellPostClasses["input-title"]}>매물 종류</div> 
+            <div className={newSellPostClasses["input-title"]}>대분류</div> 
                <div className={newSellPostClasses['input-container']}>
                    <SingleChoice
                         chosen={productType} setChosen={setProductType} choiceMap={productTypeMap}
@@ -73,29 +71,26 @@ function ProductTypeContainer({ productType, setProductType, productSubType, set
         </>
     );
 
-    if (productType) {
-        chosenTypeMap = typeToSubTypeMap[productType];
+    let chosenTypeMap = productType && typeToSubTypeMap[productType];
 
-        if (chosenTypeMap) {
-            productSubTypeEl = (
-                <>
-                    <div className={newSellPostClasses["input-title"]}>매물 세부 종류</div>
-                    <div className={newSellPostClasses['input-container']}>
-                        <SingleChoice
-                            chosen={productSubType} setChosen={setProductSubType} choiceMap={chosenTypeMap} 
-                            btnLabel='선택하기' name='productSubType'
-                        />
-                    </div>
-                </>    
-            );    
-        }
-    }
-    
-    return (
-        <div className={newSellPostClasses["input-grid"]}>
-            {productTypeEl}
-            {productSubTypeEl}
+    let productSubTypeEl = chosenTypeMap && (<>
+        <div className={newSellPostClasses["input-title"]}>소분류</div>
+        <div className={newSellPostClasses['input-container']}>
+            <SingleChoice
+                chosen={productSubType} setChosen={setProductSubType} choiceMap={chosenTypeMap} 
+                btnLabel='선택하기' name='productSubType'
+            />
         </div>
+    </>);    
+        
+    return (
+        <fieldset className={newSellPostClasses['input-set']}>
+            <legend>매물 종류</legend>
+            <div className={newSellPostClasses["input-grid"]}>
+                {productTypeEl}
+                {productSubTypeEl}
+            </div>
+        </fieldset>
     );
 }
 

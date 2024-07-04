@@ -268,11 +268,93 @@ function BuildingParkingEl({ brTitle }) {
     </>);
 }
 
+function ElevatorEl({ brTitle }) {
+    let rideUseElvtCnt = brTitle ? brTitle.rideUseElvtCnt : 0;
+    let emgenUseElvtCnt = brTitle ? brTitle.emgenUseElvtCnt : 0;
+
+    let [elevatorInfo, setElevatorInfo] = useState({ rideUseElvtCnt, emgenUseElvtCnt });
+
+    useEffect(() => {
+        setElevatorInfo({ rideUseElvtCnt, emgenUseElvtCnt });
+    }, [rideUseElvtCnt, emgenUseElvtCnt]);
+
+    let inputElevatorValues = [
+        {subtitle: '승용'}, {unit: '대', name: 'rideUseElvtCnt'},
+        {subtitle: '비상용'}, {unit: '대', name: 'emgenUseElvtCnt'},
+    ];
+
+    return (<>
+        <div className={newSellPostClasses["input-title"]}>승강기</div>
+        <div className={newSellPostClasses['input-subgrid'] + ' buildingFloorInfo'}>
+            <ValuesToElements curValue={elevatorInfo} setCurValue={setElevatorInfo} values={inputElevatorValues} />
+        </div>
+    </>);
+}
+
 function StructureEl({ buildingCode, brTitle }) {
     return <ValuesToDropDown
         eventDep={buildingCode} title='건축물 구조'
         dataKey='strctCdNm'
         values={structureTypes} data={brTitle} />
+}
+
+function UseAprDayEl({ brTitle }) {
+    let useAprDay = brTitle?.useAprDay;
+
+    let curDate = new Date();
+    let thisYear = curDate.getFullYear();
+
+    let [yearValue, setYearValue] = useState(useAprDay ? Number(useAprDay.slice(0, 4)) : thisYear);
+    let [monthValue, setMonthValue] = useState(useAprDay ? Number(useAprDay.slice(4, 6)) : 1);
+    let [dayValue, setDayValue] = useState(useAprDay ? Number(useAprDay.slice(6, 8)) : 1);
+
+    useEffect(() => {
+        setYearValue(useAprDay ? Number(useAprDay.slice(0, 4)) : thisYear);
+        setMonthValue(useAprDay ? Number(useAprDay.slice(4, 6)) : 1);
+        setDayValue(useAprDay ? Number(useAprDay.slice(6, 8)) : 1);
+    }, [useAprDay]);
+
+    let yearValues = Array.from({length: 100}, (x, i) => thisYear - i);
+    let monthValues = Array.from({length: 12}, (x, i) => i+1);
+    let dayValues = Array.from({length: 31}, (x, i) => i+1);
+
+    return (<>
+        <div className={newSellPostClasses['input-title']}>사용승인일</div>
+        <div className={newSellPostClasses['input-subflex']}>
+            <DropDownInput
+                name='useAprYear'
+                localValue={yearValue} setLocalValue={setYearValue} 
+                values={yearValues} 
+                options={{
+                    placeholder: "직접입력",
+                    custumClass: classes['year-input'],
+                }}
+            />
+            <div className={classes.subtitle}>년</div>
+
+            <DropDownInput
+                name='useAprMonth'
+                localValue={monthValue} setLocalValue={setMonthValue} 
+                values={monthValues} 
+                options={{
+                    placeholder: "직접입력",
+                    custumClass: classes['month-input'],
+                }}
+            />
+            <div className={classes.subtitle}>월</div>
+
+            <DropDownInput
+                name='useAprDay'
+                localValue={dayValue} setLocalValue={setDayValue} 
+                values={dayValues} 
+                options={{
+                    placeholder: "직접입력",
+                    custumClass: classes['day-input'],
+                }}
+            />
+            <div className={classes.subtitle}>일</div>
+        </div>
+    </>);
 }
 
 function ProductInfoContainer({ addressState }) {
@@ -289,15 +371,20 @@ function ProductInfoContainer({ addressState }) {
     console.log('brTitle: ', brTitle);
 
     return (
-        <div className={newSellPostClasses["input-grid"]}>
-            <BuildingFloorEl brTitle={brTitle} />
-            <MainPurposeEl buildingCode={buildingCode} brTitle={brTitle} />
-            <BuildingAreaEl brTitle={brTitle} />
-            <DistrictTypeEl buildingCode={buildingCode} baseDistrictType={addressState.districtType} />
-            <BulidingRoomCntEl brTitle={brTitle} />
-            <BuildingParkingEl brTitle={brTitle} />
-            <StructureEl buildingCode={buildingCode} brTitle={brTitle} />
-        </div>
+        <fieldset className={newSellPostClasses['input-set']}>
+            <legend>건물 정보</legend>
+            <div className={newSellPostClasses["input-grid"]}>
+                <MainPurposeEl buildingCode={buildingCode} brTitle={brTitle} />
+                <DistrictTypeEl buildingCode={buildingCode} baseDistrictType={addressState.districtType} />
+                <BulidingRoomCntEl brTitle={brTitle} />
+                <BuildingFloorEl brTitle={brTitle} />
+                <BuildingAreaEl brTitle={brTitle} />
+                <BuildingParkingEl brTitle={brTitle} />
+                <ElevatorEl brTitle={brTitle} />
+                <StructureEl buildingCode={buildingCode} brTitle={brTitle} />
+                <UseAprDayEl brTitle={brTitle} />
+            </div>
+        </fieldset>
     );
 }
 
