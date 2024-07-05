@@ -3,8 +3,9 @@ import { Form } from 'react-router-dom';
 
 import classes from './NewSellPost.module.css';
 
-import AddressContainer from '../components/AddressContainer';
 import ProductTypeContainer from '../components/ProductTypeContainer';
+import AddressContainer from '../components/AddressContainer';
+import ProductContainer from '../components/ProductContainer';
 import ProductInfoContainer from '../components/ProductInfoContainer';
 
 
@@ -93,9 +94,11 @@ function addressStateReducer(state, action) {
 function NewSellPost() {
     console.log('NewSellPost');
 
+    let storedTradeType = sessionStorage.getItem('tradeType');
     let storedProductType = sessionStorage.getItem('productType');
     let storedProductSubType = sessionStorage.getItem('productSubType');
 
+    let [tradeType, setTradeType] = useState(storedTradeType ? storedTradeType : '');;
     let [productType, setProductType] = useState(storedProductType ? storedProductType : '');
     let [productSubType, setProductSubType] = useState(storedProductSubType ? storedProductSubType : '');
 
@@ -103,6 +106,7 @@ function NewSellPost() {
     console.log('addressState: ', addressState);
  
     function resetAll(event) {
+    	setTradeType('');
         setProductType('');
         setProductSubType('');
         dispatchAddress({type: 'RESET'});
@@ -112,6 +116,10 @@ function NewSellPost() {
     useEffect(() => {
     	dispatchAddress({ type: "RESTORE" });
     }, [])
+
+    useEffect(() => {
+        if (sessionStorage) sessionStorage.setItem('tradeType', tradeType);
+    }, [tradeType]);
 
     useEffect(() => {
         if (sessionStorage) sessionStorage.setItem('productType', productType);
@@ -124,11 +132,21 @@ function NewSellPost() {
     return (
         <div className={classes["body-container"]}> 
             <Form method="post" className={classes["main-container"]}>
-                <ProductTypeContainer
-                    productType={productType} setProductType={setProductType}
-                    productSubType={productSubType} setProductSubType={setProductSubType}
-                />
-                <AddressContainer addressState={addressState} dispatchAddress={dispatchAddress} />
+            	<fieldset className={classes['input-set']}>
+            		<legend>매물 종류</legend>
+                	<ProductTypeContainer
+	                	tradeType={tradeType} setTradeType={setTradeType}
+	                    productType={productType} setProductType={setProductType}
+	                    productSubType={productSubType} setProductSubType={setProductSubType}
+	                />
+	            </fieldset>
+
+	            <fieldset className={classes['input-set']}>
+            		<legend>주소 정보</legend>
+                	<AddressContainer addressState={addressState} dispatchAddress={dispatchAddress} />
+                </fieldset>
+
+                {/*<ProductContainer addressState={addressState} />*/}
                 <ProductInfoContainer addressState={addressState} />
                 <div>
                 	<button type='reset' onClick={resetAll}>모두 지우기</button>

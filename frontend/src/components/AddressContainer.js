@@ -115,18 +115,15 @@ function AddressContainer({ addressState, dispatchAddress }) {
     );
 
     return (
-        <fieldset className={newSellPostClasses['input-set']}>
-            <legend>주소 정보</legend>
-            <div className={newSellPostClasses["input-grid"]}>
-                <div className={newSellPostClasses["input-title"]}>주소</div>
-                <AddressInput addressState={addressState} dispatchAddress={dispatchAddress} />
+        <div className={newSellPostClasses["input-grid"]}>
+            <div className={newSellPostClasses["input-title"]}>주소</div>
+            <AddressInput addressState={addressState} dispatchAddress={dispatchAddress} />
 
-                {hasAddressData && <TopEl addressData={addressData} />}
-                {hasAddressData && <DongEl addressState={addressState} dispatchAddress={dispatchAddress} />}
-                {brTitle && <FloorEl brTitle={brTitle} addressState={addressState} dispatchAddress={dispatchAddress} />}
-                {hasAddressData && detailEl}
-            </div>
-        </fieldset>
+            {hasAddressData && <TopEl addressData={addressData} />}
+            {hasAddressData && <DongEl addressState={addressState} dispatchAddress={dispatchAddress} />}
+            {brTitle && <FloorEl brTitle={brTitle} addressState={addressState} dispatchAddress={dispatchAddress} />}
+            {hasAddressData && detailEl}
+        </div>
     )
 }
 

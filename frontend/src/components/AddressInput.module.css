@@ -4,15 +4,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 0px;
-}
 
-.address-subcontainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 20px;
-
-    &>input {
+    & input {
         border: 1px solid;
         border-radius: 10px;
         font-size: .9rem;
@@ -20,10 +13,16 @@
     }
 }
 
+.positional-container {
+    position: relative;
+    height: 0;
+    width: 100%;
+}
+
 .postcodeWrap {
     display: none;
     border: 1px solid;
-    width: 500px;
+    width: min(500px, 100%);
     height: 300px;
     margin: 0 0;
     z-index: 100;

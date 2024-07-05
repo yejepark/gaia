@@ -1,4 +1,3 @@
-import filtersClasses from './Filters.module.css';
 import classes from './AddressInput.module.css';
 
 let { daum, kakao } = window;
@@ -44,12 +43,6 @@ function AddressInput({ addressState, dispatchAddress }) {
 
     let addressData = addressState.data;
     let hasAddressData = addressData ? Object.keys(addressData).length > 0 : null;
-
-    let zonecodeEl;
-    if (hasAddressData) {
-        let zonecodeValue = '우편번호: ' + addressData.zonecode;
-        zonecodeEl = <div id="zonecode">{zonecodeValue}</div>
-    }
 
     function execDaumPostcode() {
         var element_wrap = document.getElementById('postcodeWrap');
@@ -128,12 +121,10 @@ function AddressInput({ addressState, dispatchAddress }) {
     return (
         <div>
             <div className={classes["address-container"]}>
-                <div className={classes["address-subcontainer"]}> 
-                    <input type="button" onClick={execDaumPostcode} value="주소입력하기"></input>
-                </div>
-                {zonecodeEl}
+                <input type="button" onClick={execDaumPostcode} value="주소입력하기"></input>
+                {hasAddressData && <div id="zonecode">{'우편번호: ' + addressData.zonecode}</div>}
             </div>
-            <div className={filtersClasses["positional-container"]}>
+            <div className={classes["positional-container"]}>
                 <div id="postcodeWrap" className={classes.postcodeWrap}>
                     <div className={classes["btnFoldWrap"]} onClick={foldDaumPostcode} alt="접기 버튼"></div>
                 </div>

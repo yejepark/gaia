@@ -61,7 +61,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
                         }}
                     />
 
-                    <div className={filtersClasses.dash}>-</div>
+                    <div className={classes.dash}>-</div>
 
                     <div className={classes['max-header']}>최대</div>
                     <DropDownInput

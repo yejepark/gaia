@@ -1,6 +1,13 @@
-import newSellPostClasses from '../pages/NewSellPost.module.css';
+import classes from './ProductTypeContainer.module.css';
 
 import SingleChoice from './SingleChoice';
+
+const tradeTypeMap = {
+    sell: '매매',
+    jeonse: '전세',
+    lease: '월세',
+    shortLease: '단기임대'
+}
 
 const sanggaTypeMap = {
     danjiMall: "단지내상가", 
@@ -56,41 +63,52 @@ const productTypeMap = {
     // etc: '기타'
 };
 
+function ItemContainer({ children, title }) {
+    return (
+        <div className={classes['input-item']}>
+            <div className={classes["input-title"]}>{title}</div> 
+            <div className={classes['input-container']}>{children}</div>
+        </div>
+    );
+}
 
-function ProductTypeContainer({ productType, setProductType, productSubType, setProductSubType }) {
+function ProductTypeContainer({ tradeType, setTradeType, productType, setProductType, productSubType, setProductSubType }) {
+
+    let tradeTypeEl = (
+        <ItemContainer title='거래유형'>
+            <SingleChoice
+                chosen={tradeType} setChosen={setTradeType} choiceMap={tradeTypeMap}
+                btnLabel='선택하기' name='tradeType'
+            />
+        </ItemContainer>
+    );
     
     let productTypeEl = (
-        <>
-            <div className={newSellPostClasses["input-title"]}>대분류</div> 
-               <div className={newSellPostClasses['input-container']}>
-                   <SingleChoice
-                        chosen={productType} setChosen={setProductType} choiceMap={productTypeMap}
-                        btnLabel='선택하기' name='productType'
-                    />
-               </div>
-        </>
+        <ItemContainer title='대분류'>
+           <SingleChoice
+                chosen={productType} setChosen={setProductType} choiceMap={productTypeMap}
+                btnLabel='선택하기' name='productType'
+            />
+        </ItemContainer>
     );
 
     let chosenTypeMap = productType && typeToSubTypeMap[productType];
 
-    let productSubTypeEl = chosenTypeMap && (<>
-        <div className={newSellPostClasses["input-title"]}>소분류</div>
-        <div className={newSellPostClasses['input-container']}>
+    let productSubTypeEl = chosenTypeMap && (
+        <ItemContainer title='소분류'>
             <SingleChoice
                 chosen={productSubType} setChosen={setProductSubType} choiceMap={chosenTypeMap} 
                 btnLabel='선택하기' name='productSubType'
             />
-        </div>
-    </>);    
+        </ItemContainer>
+    );
         
     return (
-        <fieldset className={newSellPostClasses['input-set']}>
-            <legend>매물 종류</legend>
-            <div className={newSellPostClasses["input-grid"]}>
-                {productTypeEl}
-                {productSubTypeEl}
-            </div>
-        </fieldset>
+        <div className={classes["input-grid"]}>
+            {tradeTypeEl}
+            {productTypeEl}
+            {productSubTypeEl}
+        </div>
     );
 }
 

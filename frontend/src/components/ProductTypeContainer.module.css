@@ -1,0 +1,26 @@
+.input-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+
+	padding: 20px 0;
+}
+
+.input-container {
+    height: 2rem;
+
+    & * {
+        font-size: 0.9rem;
+    }
+}
+
+.input-item {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	padding-left: 2.5rem;
+	gap: 20px;
+}
+
+.input-title {
+	width: fit-content;
+}

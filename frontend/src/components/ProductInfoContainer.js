@@ -312,7 +312,7 @@ function UseAprDayEl({ brTitle }) {
         setYearValue(useAprDay ? Number(useAprDay.slice(0, 4)) : thisYear);
         setMonthValue(useAprDay ? Number(useAprDay.slice(4, 6)) : 1);
         setDayValue(useAprDay ? Number(useAprDay.slice(6, 8)) : 1);
-    }, [useAprDay]);
+    }, [useAprDay, thisYear]);
 
     let yearValues = Array.from({length: 100}, (x, i) => thisYear - i);
     let monthValues = Array.from({length: 12}, (x, i) => i+1);
