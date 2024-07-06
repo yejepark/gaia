@@ -103,6 +103,7 @@ function AddressInput({ addressState, dispatchAddress }) {
                 if (addressDetailEl) {
                     addressDetailEl.focus();    
                 }
+                element_wrap.style.height = '100px';
             },
 
             // 우편번호 찾기 화면 크기가 조정되었을때 실행할 코드를 작성하는 부분. iframe을 넣은 element의 높이값을 조정한다.
@@ -122,7 +123,7 @@ function AddressInput({ addressState, dispatchAddress }) {
         <div>
             <div className={classes["address-container"]}>
                 <input type="button" onClick={execDaumPostcode} value="주소입력하기"></input>
-                {hasAddressData && <div id="zonecode">{'우편번호: ' + addressData.zonecode}</div>}
+                {hasAddressData && <div id="zonecode" className={classes.zonecode}>{'우편번호: ' + addressData.zonecode}</div>}
             </div>
             <div className={classes["positional-container"]}>
                 <div id="postcodeWrap" className={classes.postcodeWrap}>

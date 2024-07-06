@@ -1,7 +1,7 @@
 import { useState, useEffect, memo } from 'react';
 import React from 'react';
 
-import newSellPostClasses from '../pages/NewSellPost.module.css';
+import parentClasses from '../pages/NewSellPost.module.css';
 import classes from './ProductInfoContainer.module.css';
 
 import DropDownInput from './DropDownInput';
@@ -46,7 +46,7 @@ function ValuesToElements({ curValue, setCurValue, values }) {
         } else {
             return (
                 <div key={idx} className={classes.subinput}>
-                    <input type='text' name={item.name} className={classes["input-value"]} autoComplete='off'
+                    <input type='text' name={item.name} className={parentClasses["input-value"]} autoComplete='off'
                             value={curValue[item.name]}
                             onChange={(e) => { setCurValue({...curValue, [item.name]: e.target.value}); }} />
                     <div className={classes.unit}>{item.unit}</div>
@@ -55,6 +55,17 @@ function ValuesToElements({ curValue, setCurValue, values }) {
         }
     });
 }
+
+
+function ItemContainer({ children, title }) {
+    return (
+        <>
+            <div className={parentClasses["input-title"]}>{title}</div>
+            <div className={classes['input-container']}>{children}</div>
+        </>
+    );
+}
+
 
 function ValuesToDropDown({ eventDep, title, dataKey, values, data }) {
     let [value, setValue] = useState(data ? data[dataKey] : '');
@@ -67,18 +78,20 @@ function ValuesToDropDown({ eventDep, title, dataKey, values, data }) {
         }
     }, [eventDep, data, dataKey]);
     
-    return (<>
-        <div className={newSellPostClasses["input-title"]}>{title}</div>
-        <DropDownInput
-            localValue={value} setLocalValue={setValue} 
-            values={values} 
-            options={{
-                placeholder: "직접입력",
-                custumClass: classes['main-purpose-input'],
-            }}
-        />
-    </>);
+    return (
+        <ItemContainer title={title}>
+            <DropDownInput
+                localValue={value} setLocalValue={setValue} 
+                values={values} 
+                options={{
+                    placeholder: "직접입력",
+                    custumClass: parentClasses['dropdown-container'],
+                }}
+            />
+        </ItemContainer>
+    );
 }
+
 
 function BuildingFloorEl({ brTitle }) {
     let ugrndFlrCnt = brTitle ? brTitle.ugrndFlrCnt : 0;
@@ -95,13 +108,15 @@ function BuildingFloorEl({ brTitle }) {
         {subtitle: '지상'}, {unit: '층', name: 'grndFlrCnt'},
     ];
 
-    return (<>
-        <div className={newSellPostClasses["input-title"]}>층정보</div>
-        <div className={newSellPostClasses['input-subgrid'] + ' buildingFloorInfo'}>
-            <ValuesToElements curValue={floorInfo} setCurValue={setFloorInfo} values={inputFloorValues} />
-        </div>
-    </>);
+    return (
+        <ItemContainer title='층정보'>
+            <div className={parentClasses['input-subgrid'] + ' buildingFloorInfo'}>
+                <ValuesToElements curValue={floorInfo} setCurValue={setFloorInfo} values={inputFloorValues} />
+            </div>
+        </ItemContainer>
+    );
 }
+
 
 function MainPurposeEl({ buildingCode, brTitle }) {
     return <ValuesToDropDown 
@@ -109,6 +124,7 @@ function MainPurposeEl({ buildingCode, brTitle }) {
         dataKey='mainPurpsCdNm' 
         values={buildingUsages} data={brTitle} />
 }
+
 
 function BuildingAreaEl({ brTitle }) {
     // console.log('brTitle: ', brTitle)
@@ -175,44 +191,47 @@ function BuildingAreaEl({ brTitle }) {
         {subtitle: '용적률'}, {unit: '%', name: 'floorAreaRatio'},
     ];
 
-    return (<>
-        <div className={newSellPostClasses["input-title"]}>면적정보</div>
-        <div className={newSellPostClasses['input-subgrid'] + ' buildingAreaInfo'}>
-            {inputAreaValues.map((item, idx) => {
-                if (item.subtitle) {
-                    return <div key={idx} className={classes.subtitle}>{item.subtitle}</div>;
-                } else if (item.name) {
-                    let unitEl;
-                    if (item.unit === 'm2') {
-                        unitEl = <div className={classes.unit}>m<sup>2</sup></div>;
+    return (
+        <ItemContainer title='면적정보'>
+            <div className={parentClasses['input-subgrid'] + ' buildingAreaInfo'}>
+                {inputAreaValues.map((item, idx) => {
+                    if (item.subtitle) {
+                        return <div key={idx} className={classes.subtitle}>{item.subtitle}</div>;
+                    } else if (item.name) {
+                        let unitEl;
+                        if (item.unit === 'm2') {
+                            unitEl = <div className={classes.unit}>m<sup>2</sup></div>;
+                        } else {
+                            unitEl = <div className={classes.unit}>{item.unit}</div>;
+                        }
+                        return ( 
+                            <div key={idx} className={classes.subinput}>
+                                <input type='text'
+                                    name={item.name}
+                                    className={parentClasses["input-value"]}
+                                    value={areaInfo[item.name]}
+                                    onChange={(e) => updateInfo(e, item.name)}
+                                    autoComplete='off'
+                                />
+                                {unitEl}
+                         </div>
+                        );
                     } else {
-                        unitEl = <div className={classes.unit}>{item.unit}</div>;
+                        return <div key={idx}></div>;                            
                     }
-                    return ( 
-                        <div key={idx} className={classes.subinput}>
-                            <input type='text'
-                                name={item.name}
-                                className={classes["input-value"]}
-                                value={areaInfo[item.name]}
-                                onChange={(e) => updateInfo(e, item.name)}
-                                autoComplete='off'
-                            />
-                            {unitEl}
-                     </div>
-                    );
-                } else {
-                    return <div key={idx}></div>;                            
-                }
-            })}
-        </div>
-    </>);
+                })}
+            </div>
+        </ItemContainer>
+    );
 }
+
 
 function DistrictTypeEl({ buildingCode, baseDistrictType }) {
     return <ValuesToDropDown
         eventDep={buildingCode} title='용도지역'
         values={districtTypes} data={baseDistrictType} />
 }
+
 
 function BulidingRoomCntEl({ brTitle }) {
 
@@ -232,12 +251,13 @@ function BulidingRoomCntEl({ brTitle }) {
         {subtitle: '가구'}, {name: 'fmlyCnt', unit: '개'},
     ];
 
-    return (<>
-        <div className={newSellPostClasses["input-title"]}>총 세대/호</div>
-        <div className={newSellPostClasses['input-subgrid'] + ' buildingRoomCnt'}>
-            <ValuesToElements curValue={roomCntInfo} setCurValue={setRoomCntInfo} values={inputRoomCntValues} />
-        </div>
-    </>);
+    return (
+        <ItemContainer title='총 세대/호'>
+            <div className={parentClasses['input-subgrid'] + ' buildingRoomCnt'}>
+                <ValuesToElements curValue={roomCntInfo} setCurValue={setRoomCntInfo} values={inputRoomCntValues} />
+            </div>
+        </ItemContainer>
+    );
 }
 
 function BuildingParkingEl({ brTitle }) {
@@ -260,12 +280,13 @@ function BuildingParkingEl({ brTitle }) {
         {subtitle: '실외 기계식'}, {name: 'oudrMechUtcnt', unit: '대'},
     ];
 
-    return (<>
-        <div className={newSellPostClasses["input-title"]}>주차장</div>
-        <div className={newSellPostClasses['input-subgrid'] + ' buildingRoomCnt'}>
-            <ValuesToElements curValue={parkingInfo} setCurValue={setParkingInfo} values={inputParkingValues} />
-        </div>
-    </>);
+    return (
+        <ItemContainer title='주차장'>
+            <div className={parentClasses['input-subgrid'] + ' buildingRoomCnt'}>
+                <ValuesToElements curValue={parkingInfo} setCurValue={setParkingInfo} values={inputParkingValues} />
+            </div>
+        </ItemContainer>
+    );
 }
 
 function ElevatorEl({ brTitle }) {
@@ -283,12 +304,13 @@ function ElevatorEl({ brTitle }) {
         {subtitle: '비상용'}, {unit: '대', name: 'emgenUseElvtCnt'},
     ];
 
-    return (<>
-        <div className={newSellPostClasses["input-title"]}>승강기</div>
-        <div className={newSellPostClasses['input-subgrid'] + ' buildingFloorInfo'}>
-            <ValuesToElements curValue={elevatorInfo} setCurValue={setElevatorInfo} values={inputElevatorValues} />
-        </div>
-    </>);
+    return (
+        <ItemContainer title='승강기'>
+            <div className={parentClasses['input-subgrid'] + ' buildingFloorInfo'}>
+                <ValuesToElements curValue={elevatorInfo} setCurValue={setElevatorInfo} values={inputElevatorValues} />
+            </div>
+        </ItemContainer>
+    );
 }
 
 function StructureEl({ buildingCode, brTitle }) {
@@ -318,43 +340,36 @@ function UseAprDayEl({ brTitle }) {
     let monthValues = Array.from({length: 12}, (x, i) => i+1);
     let dayValues = Array.from({length: 31}, (x, i) => i+1);
 
-    return (<>
-        <div className={newSellPostClasses['input-title']}>사용승인일</div>
-        <div className={newSellPostClasses['input-subflex']}>
-            <DropDownInput
-                name='useAprYear'
-                localValue={yearValue} setLocalValue={setYearValue} 
-                values={yearValues} 
-                options={{
-                    placeholder: "직접입력",
-                    custumClass: classes['year-input'],
-                }}
-            />
-            <div className={classes.subtitle}>년</div>
+    let items = [
+        {name: 'useAprYear', value: yearValue, setValue: setYearValue,
+            values: yearValues, inputClass: classes['year-input']}, {unit: '년'},
+        {name: 'useAprMonth', value: monthValue, setValue: setMonthValue,
+            values: monthValues, inputClass: classes['month-input']}, {unit: '월'},
+        {name: 'useAprDay', value: dayValue, setValue: setDayValue, 
+            values: dayValues, inputClass: classes['day-input']}, {unit: '일'}
+    ];
+    return (
+        <ItemContainer title='사용승인일'>
+            <div className={classes['input-subflex']}>
+                {items.map((item, idx) => {
+                    if (item.name) {
+                        return (
+                            <DropDownInput key={idx} name={item.name}
+                                localValue={item.value} setLocalValue={item.setValue}
+                                values={item.values}
+                                options={{
+                                    placeholder: "직접입력",
+                                    custumClass: item.inputClass
+                                }}/>
+                        );                        
+                    } else if (item.unit) {
+                        return <div className={classes.unit}>{item.unit}</div>        
+                    }
 
-            <DropDownInput
-                name='useAprMonth'
-                localValue={monthValue} setLocalValue={setMonthValue} 
-                values={monthValues} 
-                options={{
-                    placeholder: "직접입력",
-                    custumClass: classes['month-input'],
-                }}
-            />
-            <div className={classes.subtitle}>월</div>
-
-            <DropDownInput
-                name='useAprDay'
-                localValue={dayValue} setLocalValue={setDayValue} 
-                values={dayValues} 
-                options={{
-                    placeholder: "직접입력",
-                    custumClass: classes['day-input'],
-                }}
-            />
-            <div className={classes.subtitle}>일</div>
-        </div>
-    </>);
+                })}
+            </div>
+        </ItemContainer>
+    );
 }
 
 function ProductInfoContainer({ addressState }) {
@@ -370,22 +385,17 @@ function ProductInfoContainer({ addressState }) {
     // console.log('buildingCode: ', buildingCode)
     console.log('brTitle: ', brTitle);
 
-    return (
-        <fieldset className={newSellPostClasses['input-set']}>
-            <legend>건물 정보</legend>
-            <div className={newSellPostClasses["input-grid"]}>
-                <MainPurposeEl buildingCode={buildingCode} brTitle={brTitle} />
-                <DistrictTypeEl buildingCode={buildingCode} baseDistrictType={addressState.districtType} />
-                <BulidingRoomCntEl brTitle={brTitle} />
-                <BuildingFloorEl brTitle={brTitle} />
-                <BuildingAreaEl brTitle={brTitle} />
-                <BuildingParkingEl brTitle={brTitle} />
-                <ElevatorEl brTitle={brTitle} />
-                <StructureEl buildingCode={buildingCode} brTitle={brTitle} />
-                <UseAprDayEl brTitle={brTitle} />
-            </div>
-        </fieldset>
-    );
+    return (<>
+        <MainPurposeEl buildingCode={buildingCode} brTitle={brTitle} />
+        <DistrictTypeEl buildingCode={buildingCode} baseDistrictType={addressState.districtType} />
+        <BulidingRoomCntEl brTitle={brTitle} />
+        <BuildingFloorEl brTitle={brTitle} />
+        <BuildingAreaEl brTitle={brTitle} />
+        <BuildingParkingEl brTitle={brTitle} />
+        <ElevatorEl brTitle={brTitle} />
+        <StructureEl buildingCode={buildingCode} brTitle={brTitle} />
+        <UseAprDayEl brTitle={brTitle} />
+    </>);
 }
 
 export default memo(ProductInfoContainer, function(prevProps, nextProps) {

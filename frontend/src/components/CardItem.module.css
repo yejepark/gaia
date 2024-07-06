@@ -39,8 +39,10 @@
     position: relative;
     display: flex;
     transition: transform 0.1s;
+    width: 100%;
 
     &>img {
+        flex-shrink: 0;
         width: 100%;
         min-height: 200px;
         object-fit: cover;

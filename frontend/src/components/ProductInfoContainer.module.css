@@ -1,20 +1,6 @@
-.input-value {
-    padding: 10px;
-    border-radius: 10px;
-    font-size: .9rem;
-}
-
-.inputs {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-
-}
-
-.midinput {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+.subtitle {
+    font-size: 0.9rem;
+    width: 100%;
 }
 
 .subinput {
@@ -28,50 +14,29 @@
         width: 100%;
     }
 
-    &>.subtitle {
-        width: 100%;
-    }
-
-    &>.unit {
+    & .unit {
         position: absolute;
         right: 15%;
-
-        padding: 3px 3px;
-
-        /*&:hover {
-            border-radius: 5px;
-            background-color: violet;
-            color: white;
-            cursor: pointer;
-        }*/
-
-        & sup {
-            font-size: 0.6rem;
-        }
     }
 }
 
-.main-purpose-input {
-    border: 1px solid;
-    padding: 10px;
-    border-radius: 10px;
-
-    & input {
-        width: 100%;
-        font-size: .9rem;
-        border: none;
+.unit {
+    font-size: 0.9rem;
+    & sup {
+        font-size: 0.6rem;
     }
+}
 
-    & input:focus {
-        outline: none;
-    }
+.input-subflex {
+    display: flex;
+    align-items: center;
+    gap: 0px 10px;
 }
 
 .year-input {
     width: 5rem;
 }
 
-.month-input,
-.day-input {
+.month-input, .day-input {
     width: 3.5rem;
 }

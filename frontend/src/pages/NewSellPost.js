@@ -143,11 +143,18 @@ function NewSellPost() {
 
 	            <fieldset className={classes['input-set']}>
             		<legend>주소 정보</legend>
-                	<AddressContainer addressState={addressState} dispatchAddress={dispatchAddress} />
+            		<div className={classes["input-grid"]}>
+	                	<AddressContainer addressState={addressState} dispatchAddress={dispatchAddress} />
+	                </div>
                 </fieldset>
 
                 {/*<ProductContainer addressState={addressState} />*/}
-                <ProductInfoContainer addressState={addressState} />
+                <fieldset className={classes['input-set']}>
+            		<legend>건물 정보</legend>
+            		<div className={classes["input-grid"]}>
+	                	<ProductInfoContainer addressState={addressState} />
+	                </div>
+                </fieldset>
                 <div>
                 	<button type='reset' onClick={resetAll}>모두 지우기</button>
                 	<button type="submit">Create</button>

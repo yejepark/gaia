@@ -1,10 +1,18 @@
 import { useState } from 'react';
 
-import newSellPostClasses from '../pages/NewSellPost.module.css';
-import classes from './AddressContainer.module.css';
+import parentClasses from '../pages/NewSellPost.module.css';
 
 import AddressInput from './AddressInput';
 import DropDownInput from './DropDownInput';
+
+function ItemContainer({ children, title }) {
+    return (
+        <>
+            <div className={parentClasses["input-title"]}>{title}</div>
+            <div className={parentClasses['input-container']}>{children}</div>
+        </>
+    );
+}
 
 function SavedTextInput({ id, name, customClass, placeholder, defaultValue }) {
     let savedText = sessionStorage.getItem(name);
@@ -23,16 +31,17 @@ function SavedTextInput({ id, name, customClass, placeholder, defaultValue }) {
 }
 
 function TopEl({ addressData }) {
-    return (<>
-        <div className={newSellPostClasses["input-title"]}></div>
-        <input type="text" 
-            className={classes["address-value"]} id='address-value' 
-            placeholder={'직접입력'} 
-            defaultValue={addressData.userSelectedType === 'R' ? addressData.roadAddress : addressData.jibunAddress}
-            autoComplete="off"
-            name='topAddress'
-        />
-    </>);
+    return (
+        <ItemContainer>
+            <input type="text" 
+                className={parentClasses["input-value"]} id='address-value' 
+                placeholder={'직접입력'} 
+                defaultValue={addressData.userSelectedType === 'R' ? addressData.roadAddress : addressData.jibunAddress}
+                autoComplete="off"
+                name='topAddress'
+            />
+        </ItemContainer>
+    );
 }
 
 function DongEl({ addressState, dispatchAddress }) {
@@ -52,23 +61,24 @@ function DongEl({ addressState, dispatchAddress }) {
     // let dongNmMaxLen = Math.max(...addressData.brTitle.map(item=>item.dongNm.length));
     let currentDongName = (addressState.bldName + ' ' + addressState.dongName).trim()
  
-    return (<>
-        <div className={newSellPostClasses["input-title"]}>동명칭</div>
-        <DropDownInput
-            localValue={currentDongName}
-            setLocalValue={(bldAndDong) => {
-                let [bldName, dongName] = bldAndDong.split('|');
-                dispatchAddress({ type: 'UPDATE_DONGNAME', payload: {bldName, dongName} });
-            }}
-            values={dongNms}
-            name='dongName'
-            options={{
-                placeholder: "직접입력",
-                custumClass: classes['address-dropdown'],
-                // style: {width: `${dongNmMaxLen+5}rem`}
-            }}
-        />
-    </>);    
+    return (
+        <ItemContainer title='동명칭'>
+            <DropDownInput
+                localValue={currentDongName}
+                setLocalValue={(bldAndDong) => {
+                    let [bldName, dongName] = bldAndDong.split('|');
+                    dispatchAddress({ type: 'UPDATE_DONGNAME', payload: {bldName, dongName} });
+                }}
+                values={dongNms}
+                name='dongName'
+                options={{
+                    placeholder: "직접입력",
+                    custumClass: parentClasses['dropdown-container'],
+                    // style: {width: `${dongNmMaxLen+5}rem`}
+                }}
+            />
+        </ItemContainer>
+    );    
 }
 
 function FloorEl({ brTitle, addressState, dispatchAddress }) {
@@ -81,19 +91,20 @@ function FloorEl({ brTitle, addressState, dispatchAddress }) {
         return {key: k, value: `${k}층`, text: `${k}층`};
     });
 
-    return (<>
-        <div className={newSellPostClasses["input-title"]}>층정보</div>
-        <DropDownInput
-            localValue={addressState.floor}
-            setLocalValue={(floor) => dispatchAddress({ type: 'UPDATE_FLOOR', payload: floor })} 
-            values={floorValues}
-            name='floor'
-            options={{
-                placeholder: "직접입력",
-                custumClass: classes['address-dropdown'],
-            }}
-        />                    
-    </>);
+    return (
+        <ItemContainer title='층정보'>
+            <DropDownInput
+                localValue={addressState.floor}
+                setLocalValue={(floor) => dispatchAddress({ type: 'UPDATE_FLOOR', payload: floor })} 
+                values={floorValues}
+                name='floor'
+                options={{
+                    placeholder: "직접입력",
+                    custumClass: parentClasses['dropdown-container'],
+                }}
+            />                    
+        </ItemContainer>
+    );
 }
 
 
@@ -107,24 +118,25 @@ function AddressContainer({ addressState, dispatchAddress }) {
         brTitle = addressState.data.brTitle[addressState.brTitleIdx];
     }
         
-    let detailEl = (
-        <>
-            <div className={newSellPostClasses["input-title"]}>상세주소</div>
-            <SavedTextInput id='address-detail' name='addressDetail' customClass={classes["address-detail"]} />
-        </>
+    let searchBtn = (
+        <ItemContainer title='주소'>
+            <AddressInput addressState={addressState} dispatchAddress={dispatchAddress} />
+        </ItemContainer>
     );
 
-    return (
-        <div className={newSellPostClasses["input-grid"]}>
-            <div className={newSellPostClasses["input-title"]}>주소</div>
-            <AddressInput addressState={addressState} dispatchAddress={dispatchAddress} />
+    let detailEl = (
+        <ItemContainer title='상세주소'>
+            <SavedTextInput id='address-detail' name='addressDetail' customClass={parentClasses["input-value"]} />
+        </ItemContainer>
+    );
 
-            {hasAddressData && <TopEl addressData={addressData} />}
-            {hasAddressData && <DongEl addressState={addressState} dispatchAddress={dispatchAddress} />}
-            {brTitle && <FloorEl brTitle={brTitle} addressState={addressState} dispatchAddress={dispatchAddress} />}
-            {hasAddressData && detailEl}
-        </div>
-    )
+    return (<>
+        {searchBtn}
+        {hasAddressData && <TopEl addressData={addressData} />}
+        {hasAddressData && <DongEl addressState={addressState} dispatchAddress={dispatchAddress} />}
+        {brTitle && <FloorEl brTitle={brTitle} addressState={addressState} dispatchAddress={dispatchAddress} />}
+        {hasAddressData && detailEl}
+    </>)
 }
 
 export default AddressContainer;
