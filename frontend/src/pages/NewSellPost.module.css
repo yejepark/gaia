@@ -58,6 +58,13 @@
     text-align: left;
     font-weight: 450;
     font-size: 1rem;
+/*    color: blue;*/
+}
+
+.input-subtitle {
+    font-size: 0.9rem;
+    width: 100%;
+/*    color: red;*/
 }
 
 .input-container {
@@ -74,7 +81,6 @@
         font-size: .9rem;
     }
 }
-
 
 .input-value {
     height: 2rem;
@@ -97,4 +103,34 @@
         outline: 2px solid var(--focus-color);
         outline-offset: -2px;
     }
+}
+
+.input-with-unit {
+    display: flex;
+    align-items: center;
+
+    position: relative;
+    padding: 0px 10px 0 0;
+
+    &>input {
+        width: 100%;
+    }
+
+    & .unit {
+        position: absolute;
+        right: 15%;
+    }
+}
+
+.unit {
+    font-size: 0.9rem;
+    & sup {
+        font-size: 0.6rem;
+    }
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }

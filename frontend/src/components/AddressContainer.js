@@ -5,14 +5,7 @@ import parentClasses from '../pages/NewSellPost.module.css';
 import AddressInput from './AddressInput';
 import DropDownInput from './DropDownInput';
 
-function ItemContainer({ children, title }) {
-    return (
-        <>
-            <div className={parentClasses["input-title"]}>{title}</div>
-            <div className={parentClasses['input-container']}>{children}</div>
-        </>
-    );
-}
+import { ItemContainer } from '../pages/NewSellPost';
 
 function SavedTextInput({ id, name, customClass, placeholder, defaultValue }) {
     let savedText = sessionStorage.getItem(name);
@@ -55,14 +48,13 @@ function DongEl({ addressState, dispatchAddress }) {
         };
     }).filter((item) => item.text.trim().length > 0);
 
-    if (dongNms.length === 0) return;
-
     dongNms.sort(function(a,b) { return ('' + a.value).localeCompare(b.value); });
     // let dongNmMaxLen = Math.max(...addressData.brTitle.map(item=>item.dongNm.length));
-    let currentDongName = (addressState.bldName + ' ' + addressState.dongName).trim()
- 
-    return (
-        <ItemContainer title='동명칭'>
+
+    let currentDongName = (addressState.bldName + ' ' + addressState.dongName).trim();    
+
+    let dongEl = (
+        <ItemContainer title='동 명칭'>
             <DropDownInput
                 localValue={currentDongName}
                 setLocalValue={(bldAndDong) => {
@@ -78,7 +70,9 @@ function DongEl({ addressState, dispatchAddress }) {
                 }}
             />
         </ItemContainer>
-    );    
+    );
+ 
+    return <> {dongNms.length > 0 && dongEl} </>;    
 }
 
 function FloorEl({ brTitle, addressState, dispatchAddress }) {
@@ -92,7 +86,7 @@ function FloorEl({ brTitle, addressState, dispatchAddress }) {
     });
 
     return (
-        <ItemContainer title='층정보'>
+        <ItemContainer title='층 명칭' isSubEl={true}>
             <DropDownInput
                 localValue={addressState.floor}
                 setLocalValue={(floor) => dispatchAddress({ type: 'UPDATE_FLOOR', payload: floor })} 
@@ -124,6 +118,24 @@ function AddressContainer({ addressState, dispatchAddress }) {
         </ItemContainer>
     );
 
+    let hoEl = (
+        <ItemContainer title='호 명칭' isSubEl={true}>
+            <div className={parentClasses['input-with-unit']}>
+                <SavedTextInput name='hoName' customClass={parentClasses["input-value"]} />
+                <div className={parentClasses.unit}>호</div>
+            </div>
+        </ItemContainer>
+    );
+
+    let midEl = (
+        <ItemContainer>
+            <div className={parentClasses['input-subgrid']}>
+                {brTitle && <FloorEl brTitle={brTitle} addressState={addressState} dispatchAddress={dispatchAddress} />}
+                {brTitle && hoEl}                
+            </div>
+        </ItemContainer>
+    );
+
     let detailEl = (
         <ItemContainer title='상세주소'>
             <SavedTextInput id='address-detail' name='addressDetail' customClass={parentClasses["input-value"]} />
@@ -134,7 +146,7 @@ function AddressContainer({ addressState, dispatchAddress }) {
         {searchBtn}
         {hasAddressData && <TopEl addressData={addressData} />}
         {hasAddressData && <DongEl addressState={addressState} dispatchAddress={dispatchAddress} />}
-        {brTitle && <FloorEl brTitle={brTitle} addressState={addressState} dispatchAddress={dispatchAddress} />}
+        {hasAddressData && midEl}
         {hasAddressData && detailEl}
     </>)
 }

@@ -30,15 +30,15 @@ function SingleChoice({ chosen, setChosen, choiceMap, btnLabel, name }) {
     ); });
 
     return (<>
-        <button className={btnClass} onClick={btnClickHandler} id="choice-button">
+        <button type="button" className={btnClass} onClick={btnClickHandler}>
             {chosen && choiceMap[chosen] ? choiceMap[chosen] : btnLabel}
             <UpDown up={dialogOpen} />
         </button> 
 
-        <div className = {classes.backdrop + dialogOpenClass} onClick={btnClickHandler} id="choice-backdrop"> </div>
+        <div className = {classes.backdrop + dialogOpenClass} onClick={btnClickHandler}> </div>
 
         <div className={classes['positional-container']}>
-            <div className={classes.dialog + dialogOpenClass} id="choice-dialog"> 
+            <div className={classes.dialog + dialogOpenClass}> 
                 {inputEls}
                 <ApplyButton clickHandler={btnClickHandler} />
             </div> 

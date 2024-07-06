@@ -5,9 +5,21 @@ import classes from './Filters.module.css';
 import { arrayRange } from '../utilities/methods';
 
 import UpDown from './UpDown';
-import ListingTypeFilter from './ListingTypeFilter';
-import SpaceUseFilter from './SpaceUseFilter';
+import SingleChoice from './SingleChoice';
+import MultipleChoice from './MultipleChoice';
 import RangeFilter from './RangeFilter';
+
+const listingTypeMap = { rent: '임대', trade: '매매', 'direct-rent': '직거래' };
+
+const spaceUseMap = {
+    office: '사무실',
+    coworking: '공유오피스',
+    industrial: '산업용',
+    retail: '소매업',
+    restaurant: '식당',
+    medical: '의료업',
+    land: '토지'
+};
 
 const rentValues = [...arrayRange(0, 300, 20), ...arrayRange(350, 600, 50), ...arrayRange(700, 1000, 100)];
 const areaValues = [...arrayRange(0, 20, 5), ...arrayRange(30, 100, 10), ...arrayRange(200, 400, 100)];
@@ -65,11 +77,13 @@ function Filters() {
             </form>
 
             <div className={classes['filter-container']}>
-                <ListingTypeFilter listingType={listingType} setListingType={setListingType} />
+                <SingleChoice chosen={listingType} setChosen={setListingType} choiceMap={listingTypeMap} 
+                    btnLabel='거래' name='listingType' />
             </div>
 
             <div className={classes['filter-container']}>
-                <SpaceUseFilter checkedSpaceUses={checkedSpaceUses} setCheckedSpaceUses={setCheckedSpaceUses} />
+                <MultipleChoice checkedList={checkedSpaceUses} setCheckedList={setCheckedSpaceUses} choiceMap={spaceUseMap} 
+                    defaultBtnLabel='용도' name='usage'/>
             </div>
 
             <div className={classes['filter-container']}>
@@ -80,10 +94,10 @@ function Filters() {
                 <RangeFilter minValue={minArea} setMinValue={setMinArea} maxValue={maxArea} setMaxValue={setMaxArea} unit={'평'} values={areaValues} btnName={'면적'} />
             </div>
             <div className={classes['filter-container']}>
-                <button className={classes.filter} id="all-filters">모든필터 <UpDown /></button>
+                <button type='button' className={classes.filter} id="all-filters">모든필터 <UpDown /></button>
             </div>
             <div className={classes['filter-container']}>
-                <button className={classes.filter + ' ' + classes["save-search"]}>검색저장</button>
+                <button type='button' className={classes.filter + ' ' + classes["save-search"]}>검색저장</button>
             </div>
         </div>
     )

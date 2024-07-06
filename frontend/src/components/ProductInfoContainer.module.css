@@ -1,36 +1,10 @@
-.subtitle {
-    font-size: 0.9rem;
-    width: 100%;
-}
-
-.subinput {
-    display: flex;
-    align-items: center;
-
-    position: relative;
-    padding: 0px 10px 0 0;
-
-    &>input {
-        width: 100%;
-    }
-
-    & .unit {
-        position: absolute;
-        right: 15%;
-    }
-}
-
-.unit {
-    font-size: 0.9rem;
-    & sup {
-        font-size: 0.6rem;
-    }
-}
-
 .input-subflex {
     display: flex;
     align-items: center;
     gap: 0px 10px;
+    & input {
+        font-size: 0.9rem;
+    }
 }
 
 .year-input {

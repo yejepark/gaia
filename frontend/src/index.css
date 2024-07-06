@@ -92,6 +92,46 @@ input[type="search"]::-webkit-search-results-decoration {
     display: none;
 }
 
+
+:where(input[type='radio'], input[type="checkbox"]) {
+    appearance: none;
+    background-color: var(--background-color);
+    margin: 0;
+    width: 1.4em;
+    height: 1.4em;
+    border: 1px solid currentColor;
+    display: inline-grid;
+    place-content: center;
+}
+
+input[type='radio'] {
+    border-radius: 50%;
+
+    &::before {
+        border-radius: 50%;
+    }
+}
+
+input[type='checkbox'] {
+    border-radius: 4px;
+}
+
+:where(input[type='radio'], input[type='checkbox'])::before {
+    display: block;
+    content: '';
+    width: 0.8em;
+    height: 0.8em;
+}
+
+:where(input[type='radio'], input[type='checkbox']):hover::before {
+    background-color: var(--hover-color);
+}
+
+:where(input[type='radio'], input[type='checkbox']):checked::before {
+    background-color: var(--focus-color);
+}
+
+
 /*
 .diamond-shape {
     fill: red;

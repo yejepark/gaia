@@ -14,44 +14,6 @@
     text-wrap: nowrap;
 }
 
-.filters :where(input[type='radio'], input[type="checkbox"]) {
-    appearance: none;
-    background-color: var(--background-color);
-    margin: 0;
-    width: 1.4em;
-    height: 1.4em;
-    border: 1px solid currentColor;
-    display: inline-grid;
-    place-content: center;
-}
-
-.filters input[type='radio'] {
-    border-radius: 50%;
-
-    &::before {
-        border-radius: 50%;
-    }
-}
-
-.filters input[type='checkbox'] {
-    border-radius: 4px;
-}
-
-.filters :where(input[type='radio'], input[type='checkbox'])::before {
-    display: block;
-    content: '';
-    width: 0.8em;
-    height: 0.8em;
-}
-
-.filters :where(input[type='radio'], input[type='checkbox']):hover::before {
-    background-color: var(--hover-color);
-}
-
-.filters :where(input[type='radio'], input[type='checkbox']):checked::before {
-    background-color: var(--focus-color);
-}
-
 .filter-container {
     height: 75%;
 }
@@ -205,4 +167,15 @@
         color: var(--focus-color);
         border: 1px solid var(--focus-color);
     }
+}
+
+.multi-choice-dialog {
+    font-size: 0.9rem;
+}
+
+.multi-choice-string {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

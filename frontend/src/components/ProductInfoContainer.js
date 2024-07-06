@@ -6,6 +6,8 @@ import classes from './ProductInfoContainer.module.css';
 
 import DropDownInput from './DropDownInput';
 
+import { ItemContainer } from '../pages/NewSellPost';
+
 const buildingUsages = [
     "단독주택", "공동주택", "제1종근린생활시설", "제2종근린생활시설",
     "문화및집회시설", "종교시설", "판매시설", "운수시설", "의료시설",
@@ -42,14 +44,14 @@ structureTypes.sort();
 function ValuesToElements({ curValue, setCurValue, values }) {
     return values.map((item, idx) => {
         if (item.subtitle) {
-            return <div key={idx} className={classes.subtitle}>{item.subtitle}</div>;
+            return <div key={idx} className={parentClasses['input-subtitle']}>{item.subtitle}</div>;
         } else {
             return (
-                <div key={idx} className={classes.subinput}>
+                <div key={idx} className={parentClasses['input-with-unit']}>
                     <input type='text' name={item.name} className={parentClasses["input-value"]} autoComplete='off'
                             value={curValue[item.name]}
                             onChange={(e) => { setCurValue({...curValue, [item.name]: e.target.value}); }} />
-                    <div className={classes.unit}>{item.unit}</div>
+                    <div className={parentClasses.unit}>{item.unit}</div>
                 </div>
             );
         }
@@ -57,17 +59,7 @@ function ValuesToElements({ curValue, setCurValue, values }) {
 }
 
 
-function ItemContainer({ children, title }) {
-    return (
-        <>
-            <div className={parentClasses["input-title"]}>{title}</div>
-            <div className={classes['input-container']}>{children}</div>
-        </>
-    );
-}
-
-
-function ValuesToDropDown({ eventDep, title, dataKey, values, data }) {
+function ValuesToDropDown({ eventDep, title, dataKey, values, data, isSubEl }) {
     let [value, setValue] = useState(data ? data[dataKey] : '');
 
     useEffect(() => {
@@ -79,7 +71,7 @@ function ValuesToDropDown({ eventDep, title, dataKey, values, data }) {
     }, [eventDep, data, dataKey]);
     
     return (
-        <ItemContainer title={title}>
+        <ItemContainer title={title} isSubEl={isSubEl}>
             <DropDownInput
                 localValue={value} setLocalValue={setValue} 
                 values={values} 
@@ -196,16 +188,16 @@ function BuildingAreaEl({ brTitle }) {
             <div className={parentClasses['input-subgrid'] + ' buildingAreaInfo'}>
                 {inputAreaValues.map((item, idx) => {
                     if (item.subtitle) {
-                        return <div key={idx} className={classes.subtitle}>{item.subtitle}</div>;
+                        return <div key={idx} className={parentClasses['input-subtitle']}>{item.subtitle}</div>;
                     } else if (item.name) {
                         let unitEl;
                         if (item.unit === 'm2') {
-                            unitEl = <div className={classes.unit}>m<sup>2</sup></div>;
+                            unitEl = <div className={parentClasses.unit}>m<sup>2</sup></div>;
                         } else {
-                            unitEl = <div className={classes.unit}>{item.unit}</div>;
+                            unitEl = <div className={parentClasses.unit}>{item.unit}</div>;
                         }
                         return ( 
-                            <div key={idx} className={classes.subinput}>
+                            <div key={idx} className={parentClasses['input-with-unit']}>
                                 <input type='text'
                                     name={item.name}
                                     className={parentClasses["input-value"]}
@@ -363,7 +355,7 @@ function UseAprDayEl({ brTitle }) {
                                 }}/>
                         );                        
                     } else if (item.unit) {
-                        return <div className={classes.unit}>{item.unit}</div>        
+                        return <div key={idx} className={parentClasses.unit}>{item.unit}</div>        
                     }
 
                 })}
@@ -373,7 +365,7 @@ function UseAprDayEl({ brTitle }) {
 }
 
 function ProductInfoContainer({ addressState }) {
-    console.log('ProductInfoContainer')
+    // console.log('ProductInfoContainer')
     let addressData = addressState.data;
 
     let buildingCode = addressData?.buildingCode;
@@ -383,13 +375,13 @@ function ProductInfoContainer({ addressState }) {
     let hasBrTitleData = addressData ? addressData.brTitle.length > 0 : false;
     let brTitle = hasBrTitleData ? addressData.brTitle[addressState.brTitleIdx] : null;
     // console.log('buildingCode: ', buildingCode)
-    console.log('brTitle: ', brTitle);
+    // console.log('brTitle: ', brTitle);
 
     return (<>
         <MainPurposeEl buildingCode={buildingCode} brTitle={brTitle} />
         <DistrictTypeEl buildingCode={buildingCode} baseDistrictType={addressState.districtType} />
-        <BulidingRoomCntEl brTitle={brTitle} />
         <BuildingFloorEl brTitle={brTitle} />
+        <BulidingRoomCntEl brTitle={brTitle} />
         <BuildingAreaEl brTitle={brTitle} />
         <BuildingParkingEl brTitle={brTitle} />
         <ElevatorEl brTitle={brTitle} />

@@ -9,6 +9,17 @@ import ProductContainer from '../components/ProductContainer';
 import ProductInfoContainer from '../components/ProductInfoContainer';
 
 
+export function ItemContainer({ children, title, isSubEl }) {
+	let titleClass = isSubEl ? classes['input-subtitle'] : classes["input-title"];
+    return (
+        <>
+            <div className={titleClass}>{title}</div>
+
+            <div className={classes['input-container']}>{children}</div>
+        </>
+    );
+}
+
 const initialAddressState = {
 	data: null,
 	dongName: '',
@@ -28,7 +39,8 @@ function addressStateReducer(state, action) {
 
 	if (action.type === 'FETCH_SUCCESS') {
 		let data = action.payload;
-		// console.log('addressStateReducer:', data)
+		// console.log('addressStateReducer:', data);
+
 		let districtType = '';
 		let brJijigu = [];
 		if (data.brJijigu.length > 0) {
@@ -36,8 +48,21 @@ function addressStateReducer(state, action) {
 			brJijigu.sort(function (a,b) {return a.jijiguCd.localeCompare(b.jijiguCd);});
 			districtType = [...(new Set(brJijigu.map(item => item.jijiguCdNm)))].join(', ');
 		}
+
+		let dongName = '';
+		let bldName = '';
+		if (data && data.brTitle) {
+			let brTitle = data.brTitle.length > 0 ? data.brTitle[0] : null;
+			if (brTitle) {
+				dongName = brTitle.dongNm.trim();
+				bldName = brTitle.bldNm.trim();
+			}
+		}
+
 		let nextState = {
 			...initialAddressState,
+			dongName,
+			bldName,
 			data,
 			districtType
 		};
@@ -46,11 +71,11 @@ function addressStateReducer(state, action) {
 	}
 
 	if (action.type === 'UPDATE_DONGNAME') {
-		let bldName = action.payload.bldName;
-		let dongName = action.payload.dongName;
+		let bldName = action.payload.bldName.trim();
+		let dongName = action.payload.dongName.trim();
 		let brTitleIdx = '0';
 		for (let [idx, item] of Object.entries(state.data.brTitle)) {
-            if (item['dongNm'] === dongName && item['bldNm'] === bldName) {
+            if (dongName === item['dongNm'].trim() && bldName === item['bldNm'].trim()) {
                 brTitleIdx = idx;
             	break;
             }
@@ -148,14 +173,19 @@ function NewSellPost() {
 	                </div>
                 </fieldset>
 
-                {/*<ProductContainer addressState={addressState} />*/}
+                <fieldset className={classes['input-set']}>
+            		<legend>매물 정보</legend>
+                	<ProductContainer addressState={addressState} />
+                </fieldset>
+
                 <fieldset className={classes['input-set']}>
             		<legend>건물 정보</legend>
             		<div className={classes["input-grid"]}>
 	                	<ProductInfoContainer addressState={addressState} />
 	                </div>
                 </fieldset>
-                <div>
+
+                <div className={classes['button-container']}>
                 	<button type='reset' onClick={resetAll}>모두 지우기</button>
                 	<button type="submit">Create</button>
                 </div>
