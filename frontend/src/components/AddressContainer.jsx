@@ -135,7 +135,7 @@ function AddressContainer({ addressState, dispatchAddress }) {
     let hoEl = (
         <ItemContainer title='호 명칭' isSubEl={true}>
             <div className={parentClasses['input-with-unit']}>
-                <SavedTextInput name='hoName' customClass={parentClasses["input-value"]} />
+                <SavedTextInput name='hoName' customClass={parentClasses["input-value"]} defaultValue=''/>
                 <div className={parentClasses.unit}>호</div>
             </div>
         </ItemContainer>
@@ -153,7 +153,7 @@ function AddressContainer({ addressState, dispatchAddress }) {
 
     let detailEl = (
         <ItemContainer title='상세주소'>
-            <SavedTextInput id='address-detail' name='addressDetail' customClass={parentClasses["input-value"]} />
+            <SavedTextInput id='address-detail' name='addressDetail' customClass={parentClasses["input-value"]} defaultValue=''/>
         </ItemContainer>
     );
 

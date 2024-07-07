@@ -24,7 +24,7 @@
 
 .input-grid {
     display: grid;
-    grid-template-columns: 1fr 5fr;
+    grid-template-columns: 7.5rem 1fr;
 
     border: solid 1px var(--border-color);
     border-radius: 10px;
@@ -47,7 +47,7 @@
 .input-subgrid {
     display: grid;
 
-    grid-template-columns: 1fr 2fr 1fr 2fr;
+    grid-template-columns: 5rem 1fr 5rem 1fr;
 
     align-items: center;
 

@@ -1,5 +1,5 @@
 import { useEffect, useState, useReducer } from 'react';
-import { Form } from 'react-router-dom';
+import { Form, useActionData  } from 'react-router-dom';
 
 import classes from './NewSellPost.module.css';
 
@@ -133,6 +133,9 @@ function NewSellPost() {
 
     const [addressState, dispatchAddress] = useReducer(addressStateReducer, initialAddressState);
     console.log('addressState: ', addressState);
+
+    let actionData = useActionData();
+    console.log('actionData:', actionData)
  
     function resetAll(event) {
     	setTradeType('');
@@ -176,11 +179,11 @@ function NewSellPost() {
 	                	<AddressContainer addressState={addressState} dispatchAddress={dispatchAddress} />
 	                </div>
                 </fieldset>
-{/*
+
                 <fieldset className={classes['input-set']}>
             		<legend>매물 정보</legend>
                 	<ProductContainer addressState={addressState} />
-                </fieldset>*/}
+                </fieldset>
 
                 <fieldset className={classes['input-set']}>
             		<legend>건물 정보</legend>

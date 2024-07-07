@@ -6,13 +6,41 @@ import parentClasses from '../pages/NewSellPost.module.css';
 
 import { ItemContainer } from '../pages/NewSellPost';
 
+function NumberInput({ title, name, unit }) {
+	let savedNum = sessionStorage.getItem(name);
+	let [num, setNum] = useState(savedNum ? savedNum : '0');
+
+	function textChangeHandler(event) {
+        let newText = event.target.value
+        let newNum = parseInt(newText);
+
+        if (!newNum) return;
+
+        if (newText.length === 0) {
+        	setNum('');
+        	sessionStorage.setItem(name, '');
+        }
+
+        if (newNum >= 0) {
+        	setNum(newText);
+        	sessionStorage.setItem(name, newNum);	
+        }
+    }
+	
+	return (
+		<ItemContainer title={title}>
+			<input type='text' name={name} value={num} onChange={textChangeHandler} autoComplete='off'/>
+		</ItemContainer>
+	);
+}
 
 function ProductContainer({ addressState }) {
 
 	return (
             <div className={parentClasses["input-grid"]}>
-            	<div className={parentClasses["input-title"]}>매매가</div> 
-            	<div></div>
+            	<NumberInput title='매매가' name='tradePrice' unit='만원' />
+            	{/*<div className={parentClasses["input-title"]}>매매가</div> 
+            	<div></div>*/}
             	<div className={parentClasses["input-title"]}>보증금</div> 
             	<div></div>
             	<div className={parentClasses["input-title"]}>월세가</div> 
