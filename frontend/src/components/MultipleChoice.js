@@ -3,10 +3,11 @@ import { useState, memo } from 'react';
 import UpDown from './UpDown';
 import ApplyButton from './ApplyButton';
 
-import filtersClasses from './Filters.module.css';
+import parentClasses from './Filters.module.css';
+import classes from './MultipleChoice.module.css';
 
 
-function MultipleChoice({ checkedList, setCheckedList, choiceMap, defaultBtnLabel, name }) {
+function MultipleChoice({ checkedList, setCheckedList, choiceMap, defaultBtnLabel, name, notActive }) {
  	
  	let [dialogOpen, setDialogOpen] = useState(false);
 
@@ -23,11 +24,12 @@ function MultipleChoice({ checkedList, setCheckedList, choiceMap, defaultBtnLabe
             setCheckedList((prevList) => prevList.filter((x) => x !== clicked));
         }
     }
-	
-	let btnClass = checkedList.length === 0 ? '' : ' ' + filtersClasses.active;
-    let btnLabel = checkedList.length === 0 ? defaultBtnLabel : checkedList.map((x)=>choiceMap[x]).join(',');
+	let btnClass = checkedList?.length === 0 ? '' : (notActive ? '' : ' ' + parentClasses.active);
+    let btnLabel = checkedList?.length === 0 ? defaultBtnLabel : (
+        checkedList.map((x)=>choiceMap[x]).filter((x)=> x && x.length > 0).join(',')
+    );
 
-	let dialogOpenClass = dialogOpen ? '' : ' ' + filtersClasses.hidden;
+	let dialogOpenClass = dialogOpen ? '' : ' ' + parentClasses.hidden;
 
     let items = Object.keys(choiceMap).map((item)=> {
     	return (
@@ -38,21 +40,23 @@ function MultipleChoice({ checkedList, setCheckedList, choiceMap, defaultBtnLabe
 	    );
     });
 
-	return (<>
-        <button className={filtersClasses.filter + btnClass} onClick={btnClickHandler}>
-            <div className={filtersClasses['multi-choice-string']}>{btnLabel}</div>
+	return (<div className={classes.container}>
+        <button type='button' className={parentClasses.filter + btnClass} onClick={btnClickHandler}>
+            <div className={classes.string}>{btnLabel}</div>
             <UpDown up={dialogOpen}/>
         </button>
 
-        <div className={filtersClasses.backdrop + dialogOpenClass} onClick={btnClickHandler}></div>
+        <div className={parentClasses.backdrop + dialogOpenClass} onClick={btnClickHandler}></div>
 
-        <div className={filtersClasses['positional-container']}>
-            <div className={filtersClasses['multi-choice-dialog'] + ' ' + filtersClasses.dialog + dialogOpenClass}>
-                {items}
+        <div className={parentClasses['positional-container']}>
+            <div className={parentClasses.dialog + dialogOpenClass}>
+                <div className={classes.dialog}>
+                    {items}
+                </div>
                 <ApplyButton clickHandler={btnClickHandler} />
             </div>
         </div>
-	</>)
+	</div>)
 }
 
 export default memo(MultipleChoice);

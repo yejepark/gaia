@@ -1,0 +1,20 @@
+.container {
+    height: 100%;
+    width: 100%;
+    & button {
+        width: 100%
+    }
+}
+
+.dialog {
+    font-size: 0.9rem;
+    max-height: 18rem;
+    overflow-y: scroll;
+}
+
+.string {
+    max-width: 12rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

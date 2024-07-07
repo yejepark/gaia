@@ -47,7 +47,7 @@ function ValuesToElements({ curValue, setCurValue, values }) {
             return <div key={idx} className={parentClasses['input-subtitle']}>{item.subtitle}</div>;
         } else {
             return (
-                <div key={idx} className={parentClasses['input-with-unit']}>
+                <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
                     <input type='text' name={item.name} className={parentClasses["input-value"]} autoComplete='off'
                             value={curValue[item.name]}
                             onChange={(e) => { setCurValue({...curValue, [item.name]: e.target.value}); }} />
@@ -197,7 +197,7 @@ function BuildingAreaEl({ brTitle }) {
                             unitEl = <div className={parentClasses.unit}>{item.unit}</div>;
                         }
                         return ( 
-                            <div key={idx} className={parentClasses['input-with-unit']}>
+                            <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
                                 <input type='text'
                                     name={item.name}
                                     className={parentClasses["input-value"]}

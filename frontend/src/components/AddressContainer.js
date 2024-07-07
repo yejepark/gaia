@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import parentClasses from '../pages/NewSellPost.module.css';
 
 import AddressInput from './AddressInput';
 import DropDownInput from './DropDownInput';
+import MultipleChoice from './MultipleChoice';
 
 import { ItemContainer } from '../pages/NewSellPost';
 
@@ -75,28 +76,41 @@ function DongEl({ addressState, dispatchAddress }) {
     return <> {dongNms.length > 0 && dongEl} </>;    
 }
 
-function FloorEl({ brTitle, addressState, dispatchAddress }) {
-    
-    let ugrndFlrKeys = Array.from({length: brTitle.ugrndFlrCnt}, (x,i)=> -(brTitle.ugrndFlrCnt-i));
+function FloorEl({ brTitle, addressState, dispatchAddress }) {    
+    let ugrndFlrKeys = Array.from({length: brTitle.ugrndFlrCnt}, (x,i)=> -(i+1));
     let grndFlrKeys = Array.from({length: brTitle.grndFlrCnt}, (x,i)=> i+1);
-    let flrKeys = ugrndFlrKeys.concat(grndFlrKeys);
-    let floorValues = flrKeys.map(k => {
-        if (k < 0) return {key: k, value: `지하${-k}층`, text: `지하${-k}층`};
-        return {key: k, value: `${k}층`, text: `${k}층`};
-    });
+    let flrKeys = grndFlrKeys.concat(ugrndFlrKeys);
+    let floorMap = Object.fromEntries(flrKeys.map(k => {
+        if (k < 0) return ['B' + `${-k}`.padStart(3, '0'), `지하${-k}층`];
+        return ['A' + `${k}`.padStart(3, '0'), `${k}층`];
+    }));
+
+    let [checkedFloors, setCheckedFloors] = useState([]);
+    checkedFloors.sort();
+    let newFloors = JSON.stringify(checkedFloors);
+    
+    let buildingCode = addressState.data.buildingCode;
+    let dongName = addressState.dongName;
+    let bldName = addressState.bldName;
+
+    // console.log('checkedFloors: ', checkedFloors);
+
+    useEffect(()=>{
+        dispatchAddress({ type: 'UPDATE_FLOOR', payload: newFloors });
+    }, [newFloors]);
+
+    useEffect(()=>{
+        setCheckedFloors([]);
+    }, [buildingCode, dongName, bldName]);
 
     return (
         <ItemContainer title='층 명칭' isSubEl={true}>
-            <DropDownInput
-                localValue={addressState.floor}
-                setLocalValue={(floor) => dispatchAddress({ type: 'UPDATE_FLOOR', payload: floor })} 
-                values={floorValues}
-                name='floor'
-                options={{
-                    placeholder: "직접입력",
-                    custumClass: parentClasses['dropdown-container'],
-                }}
-            />                    
+            <MultipleChoice 
+                checkedList={checkedFloors} 
+                setCheckedList={setCheckedFloors} 
+                choiceMap={floorMap} 
+                defaultBtnLabel='' name='floors'
+                notActive={true} />
         </ItemContainer>
     );
 }
@@ -127,11 +141,12 @@ function AddressContainer({ addressState, dispatchAddress }) {
         </ItemContainer>
     );
 
+    let oneOrLessFloor = addressState.floors.split(',').length === 1;
     let midEl = (
         <ItemContainer>
             <div className={parentClasses['input-subgrid']}>
                 {brTitle && <FloorEl brTitle={brTitle} addressState={addressState} dispatchAddress={dispatchAddress} />}
-                {brTitle && hoEl}                
+                {brTitle && oneOrLessFloor && hoEl}                
             </div>
         </ItemContainer>
     );

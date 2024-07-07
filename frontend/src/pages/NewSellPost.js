@@ -11,11 +11,12 @@ import ProductInfoContainer from '../components/ProductInfoContainer';
 
 export function ItemContainer({ children, title, isSubEl }) {
 	let titleClass = isSubEl ? classes['input-subtitle'] : classes["input-title"];
+	let containerClass = isSubEl ? classes['input-subcontainer'] : classes['input-container']; 
     return (
         <>
             <div className={titleClass}>{title}</div>
 
-            <div className={classes['input-container']}>{children}</div>
+            <div className={containerClass}>{children}</div>
         </>
     );
 }
@@ -26,7 +27,7 @@ const initialAddressState = {
 	bldName: '',
 	brTitleIdx: '0',
 	districtType: '',
-	floor: '1층',
+	floors: '',
 }
 
 function addressStateReducer(state, action) {
@@ -81,8 +82,11 @@ function addressStateReducer(state, action) {
             }
         }
 
+        let floors = '';
+
         let nextState = { 
         	...state,
+        	floors,
 			dongName,
 			bldName,
 			brTitleIdx
@@ -92,10 +96,10 @@ function addressStateReducer(state, action) {
 	}
 
 	if (action.type === 'UPDATE_FLOOR') {
-		let floor = action.payload;
+		let floors = action.payload;
 		let nextState = {
 			...state,
-			floor,
+			floors,
 		};
 		if (nextState.data && sessionStorage) sessionStorage.setItem('addressState', JSON.stringify(nextState));
 		return nextState;
@@ -172,11 +176,11 @@ function NewSellPost() {
 	                	<AddressContainer addressState={addressState} dispatchAddress={dispatchAddress} />
 	                </div>
                 </fieldset>
-
+{/*
                 <fieldset className={classes['input-set']}>
             		<legend>매물 정보</legend>
                 	<ProductContainer addressState={addressState} />
-                </fieldset>
+                </fieldset>*/}
 
                 <fieldset className={classes['input-set']}>
             		<legend>건물 정보</legend>

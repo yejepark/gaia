@@ -46,6 +46,7 @@
 
 .input-subgrid {
     display: grid;
+
     grid-template-columns: 1fr 2fr 1fr 2fr;
 
     align-items: center;
@@ -58,21 +59,43 @@
     text-align: left;
     font-weight: 450;
     font-size: 1rem;
+
 /*    color: blue;*/
 }
 
 .input-subtitle {
     font-size: 0.9rem;
-    width: 100%;
+/*    width: 100%;*/
+    min-width: 100%;
+
 /*    color: red;*/
 }
 
 .input-container {
-    & input {
+    width: 100%;
+    &>input {
         width: 100%;
         font-size: .9rem;
     }
+
+/*    background-color: yellow;*/
 }
+
+.input-subcontainer {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    height: 2rem;
+
+    &>input {
+        width: 100%;
+        font-size: .9rem;
+    }
+
+/*    background-color: green;*/
+}
+
 
 .dropdown-container {
     & input {
@@ -81,6 +104,28 @@
         font-size: .9rem;
     }
 }
+
+.input-with-unit {
+    display: flex;
+    align-items: center;
+
+    position: relative;
+
+    &>input {
+        width: 100%;
+    }
+
+    & .unit {
+        position: absolute;
+        right: 10%;
+        font-size: 0.9rem;
+
+        & sup {
+            font-size: 0.6rem;
+        }
+    }
+}
+
 
 .input-value {
     height: 2rem;
@@ -102,30 +147,6 @@
     &:hover {
         outline: 2px solid var(--focus-color);
         outline-offset: -2px;
-    }
-}
-
-.input-with-unit {
-    display: flex;
-    align-items: center;
-
-    position: relative;
-    padding: 0px 10px 0 0;
-
-    &>input {
-        width: 100%;
-    }
-
-    & .unit {
-        position: absolute;
-        right: 15%;
-    }
-}
-
-.unit {
-    font-size: 0.9rem;
-    & sup {
-        font-size: 0.6rem;
     }
 }
 
