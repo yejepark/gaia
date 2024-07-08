@@ -72,7 +72,7 @@ function Filters() {
 
     return (
         <div className={classes.filters}>
-            <form className={classes['search-container']}>
+            <form className={classes['search-container'] + ' focusable'}>
                 <input type="search" placeholder="지역을 입력해 주세요" name="region-search"/>
             </form>
 

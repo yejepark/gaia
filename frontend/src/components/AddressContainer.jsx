@@ -28,7 +28,7 @@ function TopEl({ addressData }) {
     return (
         <ItemContainer>
             <input type="text" 
-                className={parentClasses["input-value"]} id='address-value' 
+                className={parentClasses["input-value"] + ' focusable'} id='address-value' 
                 placeholder={'직접입력'} 
                 defaultValue={addressData.userSelectedType === 'R' ? addressData.roadAddress : addressData.jibunAddress}
                 autoComplete="off"
@@ -97,7 +97,7 @@ function FloorEl({ brTitle, addressState, dispatchAddress }) {
 
     useEffect(()=>{
         dispatchAddress({ type: 'UPDATE_FLOOR', payload: newFloors });
-    }, [newFloors]);
+    }, [newFloors, dispatchAddress]);
 
     useEffect(()=>{
         setCheckedFloors([]);
@@ -135,7 +135,7 @@ function AddressContainer({ addressState, dispatchAddress }) {
     let hoEl = (
         <ItemContainer title='호 명칭' isSubEl={true}>
             <div className={parentClasses['input-with-unit']}>
-                <SavedTextInput name='hoName' customClass={parentClasses["input-value"]} defaultValue=''/>
+                <SavedTextInput name='hoName' customClass={parentClasses["input-value"] + ' focusable'} defaultValue=''/>
                 <div className={parentClasses.unit}>호</div>
             </div>
         </ItemContainer>
@@ -153,7 +153,7 @@ function AddressContainer({ addressState, dispatchAddress }) {
 
     let detailEl = (
         <ItemContainer title='상세주소'>
-            <SavedTextInput id='address-detail' name='addressDetail' customClass={parentClasses["input-value"]} defaultValue=''/>
+            <SavedTextInput id='address-detail' name='addressDetail' customClass={parentClasses["input-value"] + ' focusable'} defaultValue=''/>
         </ItemContainer>
     );
 

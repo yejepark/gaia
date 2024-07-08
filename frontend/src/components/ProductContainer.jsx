@@ -7,37 +7,39 @@ import parentClasses from '../pages/NewSellPost.module.css';
 import { ItemContainer } from '../pages/NewSellPost';
 
 function NumberInput({ title, name, unit }) {
-	let savedNum = sessionStorage.getItem(name);
-	let [num, setNum] = useState(savedNum ? savedNum : '0');
+    let savedNum = sessionStorage.getItem(name);
+    let [num, setNum] = useState(savedNum ? savedNum : 0);
 
-	function textChangeHandler(event) {
+    function textChangeHandler(event) {
         let newText = event.target.value
         let newNum = parseInt(newText);
+        console.log(newText, newNum)
 
-        if (!newNum) return;
-
-        if (newText.length === 0) {
-        	setNum('');
-        	sessionStorage.setItem(name, '');
+        if (!newNum || newText.length === 0) {
+            setNum('');
+            sessionStorage.setItem(name, '');
         }
 
         if (newNum >= 0) {
-        	setNum(newText);
-        	sessionStorage.setItem(name, newNum);	
+            setNum(newNum);
+            sessionStorage.setItem(name, newNum);
         }
     }
-	
-	return (
-		<ItemContainer title={title}>
-			<input type='text' name={name} value={num} onChange={textChangeHandler} autoComplete='off'/>
+
+    return (
+        <ItemContainer title={title}>
+        	<div className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
+				<input type='text' name={name} value={num} onChange={textChangeHandler} autoComplete='off' className='focusable'/>
+				<div className={parentClasses.unit}>{unit}</div>
+			</div>
 		</ItemContainer>
-	);
+    );
 }
 
 function ProductContainer({ addressState }) {
 
-	return (
-            <div className={parentClasses["input-grid"]}>
+    return (
+        <div className={parentClasses["input-grid"]}>
             	<NumberInput title='매매가' name='tradePrice' unit='만원' />
             	{/*<div className={parentClasses["input-title"]}>매매가</div> 
             	<div></div>*/}
@@ -70,7 +72,7 @@ function ProductContainer({ addressState }) {
             	<div className={parentClasses["input-title"]}>매물 설명</div> 
             	<div>1000글자</div>
             </div>
-	);
+    );
 }
 
 export default ProductContainer;

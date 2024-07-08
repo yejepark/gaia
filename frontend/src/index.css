@@ -132,6 +132,26 @@ input[type='checkbox'] {
 }
 
 
+.focusable {
+    &:focus {
+        outline: none;
+    }
+
+    &>input:focus {
+        outline: none;
+    }
+
+    &:focus-within {
+        box-shadow: 0px 0px 5px var(--focus-color);
+        background-image: none;
+    }
+
+    &:hover {
+        outline: 2px solid var(--focus-color);
+        outline-offset: -2px;
+    }
+}
+
 /*
 .diamond-shape {
     fill: red;

@@ -1,5 +1,5 @@
 import { useEffect, useState, useReducer } from 'react';
-import { Form, useActionData  } from 'react-router-dom';
+import { Form, useActionData } from 'react-router-dom';
 
 import classes from './NewSellPost.module.css';
 
@@ -10,114 +10,111 @@ import ProductInfoContainer from '../components/ProductInfoContainer';
 
 
 export function ItemContainer({ children, title, isSubEl }) {
-	let titleClass = isSubEl ? classes['input-subtitle'] : classes["input-title"];
-	let containerClass = isSubEl ? classes['input-subcontainer'] : classes['input-container']; 
-    return (
-        <>
-            <div className={titleClass}>{title}</div>
-
-            <div className={containerClass}>{children}</div>
-        </>
-    );
+    let titleClass = isSubEl ? classes['input-subtitle'] : classes["input-title"];
+    let containerClass = isSubEl ? classes['input-subcontainer'] : classes['input-container'];
+    return [
+        <div key={1} className={titleClass}>{title}</div>,
+        <div key={2} className={containerClass}>{children}</div>
+    ];
 }
 
 const initialAddressState = {
-	data: null,
-	dongName: '',
-	bldName: '',
-	brTitleIdx: '0',
-	districtType: '',
-	floors: '',
+    data: null,
+    dongName: '',
+    bldName: '',
+    brTitleIdx: '0',
+    districtType: '',
+    floors: '',
 }
 
 function addressStateReducer(state, action) {
-	if (action.type === 'FETCH_ERROR') {
-		return {
-			...state,
-			error: action.payload,
-		};
-	}
+    if (action.type === 'FETCH_ERROR') {
+        return {
+            ...state,
+            error: action.payload,
+        };
+    }
 
-	if (action.type === 'FETCH_SUCCESS') {
-		let data = action.payload;
-		// console.log('addressStateReducer:', data);
+    if (action.type === 'FETCH_SUCCESS') {
+        let data = action.payload;
+        // console.log('addressStateReducer:', data);
 
-		let districtType = '';
-		let brJijigu = [];
-		if (data.brJijigu.length > 0) {
-			brJijigu = data.brJijigu.filter(item => item['jijiguGbCd'] === '1');
-			brJijigu.sort(function (a,b) {return a.jijiguCd.localeCompare(b.jijiguCd);});
-			districtType = [...(new Set(brJijigu.map(item => item.jijiguCdNm)))].join(', ');
-		}
+        let districtType = '';
+        let brJijigu = [];
+        if (data.brJijigu.length > 0) {
+            brJijigu = data.brJijigu.filter(item => item['jijiguGbCd'] === '1');
+            brJijigu.sort(function(a, b) { return a.jijiguCd.localeCompare(b.jijiguCd); });
+            districtType = [...(new Set(brJijigu.map(item => item.jijiguCdNm)))].join(', ');
+        }
 
-		let dongName = '';
-		let bldName = '';
-		if (data && data.brTitle) {
-			let brTitle = data.brTitle.length > 0 ? data.brTitle[0] : null;
-			if (brTitle) {
-				dongName = brTitle.dongNm.trim();
-				bldName = brTitle.bldNm.trim();
-			}
-		}
+        let dongName = '';
+        let bldName = '';
+        if (data && data.brTitle) {
+            let brTitle = data.brTitle.length > 0 ? data.brTitle[0] : null;
+            if (brTitle) {
+                dongName = brTitle.dongNm.trim();
+                bldName = brTitle.bldNm.trim();
+            }
+        }
 
-		let nextState = {
-			...initialAddressState,
-			dongName,
-			bldName,
-			data,
-			districtType
-		};
-		if (nextState.data && sessionStorage) sessionStorage.setItem('addressState', JSON.stringify(nextState));
-		return nextState;
-	}
+        let nextState = {
+            ...initialAddressState,
+            dongName,
+            bldName,
+            data,
+            districtType
+        };
+        if (nextState.data && sessionStorage) sessionStorage.setItem('addressState', JSON.stringify(nextState));
+        return nextState;
+    }
 
-	if (action.type === 'UPDATE_DONGNAME') {
-		let bldName = action.payload.bldName.trim();
-		let dongName = action.payload.dongName.trim();
-		let brTitleIdx = '0';
-		for (let [idx, item] of Object.entries(state.data.brTitle)) {
+    if (action.type === 'UPDATE_DONGNAME') {
+        let bldName = action.payload.bldName.trim();
+        let dongName = action.payload.dongName.trim();
+        let brTitleIdx = '0';
+        for (let [idx, item] of Object.entries(state.data.brTitle)) {
             if (dongName === item['dongNm'].trim() && bldName === item['bldNm'].trim()) {
                 brTitleIdx = idx;
-            	break;
+                break;
             }
         }
 
         let floors = '';
 
-        let nextState = { 
-        	...state,
-        	floors,
-			dongName,
-			bldName,
-			brTitleIdx
-		}
+        let nextState = {
+            ...state,
+            floors,
+            dongName,
+            bldName,
+            brTitleIdx
+        }
         if (nextState.data && sessionStorage) sessionStorage.setItem('addressState', JSON.stringify(nextState));
-		return nextState;
-	}
+        return nextState;
+    }
 
-	if (action.type === 'UPDATE_FLOOR') {
-		let floors = action.payload;
-		let nextState = {
-			...state,
-			floors,
-		};
-		if (nextState.data && sessionStorage) sessionStorage.setItem('addressState', JSON.stringify(nextState));
-		return nextState;
-	}
+    if (action.type === 'UPDATE_FLOOR') {
+        let floors = action.payload;
+        let nextState = {
+            ...state,
+            floors,
+        };
+        if (nextState.data && sessionStorage) sessionStorage.setItem('addressState', JSON.stringify(nextState));
+        return nextState;
+    }
 
-	if (action.type === 'RESTORE') {
-		let storedState = JSON.parse(sessionStorage.getItem('addressState') || '{}');
-		if (Object.keys(storedState).length === 0) {
-			return initialAddressState;
-		}
-		return storedState;
-	}
+    if (action.type === 'RESTORE') {
+        let storedState = JSON.parse(sessionStorage.getItem('addressState') || '{}');
+        if (Object.keys(storedState).length === 0) {
+            return initialAddressState;
+        }
+        return storedState;
+    }
 
-	if (action.type === 'RESET') {
-		if (sessionStorage) sessionStorage.setItem('addressState', JSON.stringify(initialAddressState));
-	}
+    if (action.type === 'RESET') {
+        if (sessionStorage) sessionStorage.setItem('addressState', JSON.stringify(initialAddressState));
+    }
 
-	return initialAddressState;
+    return initialAddressState;
 }
 
 function NewSellPost() {
@@ -136,17 +133,18 @@ function NewSellPost() {
 
     let actionData = useActionData();
     console.log('actionData:', actionData)
- 
+
     function resetAll(event) {
-    	setTradeType('');
+        setTradeType('');
         setProductType('');
         setProductSubType('');
-        dispatchAddress({type: 'RESET'});
+        dispatchAddress({ type: 'RESET' });
         sessionStorage.setItem('addressDetail', '');
+        sessionStorage.setItem('hoName', '');
     }
 
     useEffect(() => {
-    	dispatchAddress({ type: "RESTORE" });
+        dispatchAddress({ type: "RESTORE" });
     }, [])
 
     useEffect(() => {
@@ -205,8 +203,8 @@ export default NewSellPost;
 
 
 export async function action({ request }) {
-	const formData = await request.formData();
-	const postData = Object.fromEntries(formData);
-	console.log('form action: ', postData);
-	return postData
+    const formData = await request.formData();
+    const postData = Object.fromEntries(formData);
+    console.log('form action: ', postData);
+    return postData
 }

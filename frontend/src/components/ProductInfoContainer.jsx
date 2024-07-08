@@ -48,7 +48,7 @@ function ValuesToElements({ curValue, setCurValue, values }) {
         } else {
             return (
                 <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
-                    <input type='text' name={item.name} className={parentClasses["input-value"]} autoComplete='off'
+                    <input type='text' name={item.name} className={parentClasses["input-value"] + ' focusable'} autoComplete='off'
                             value={curValue[item.name]}
                             onChange={(e) => { setCurValue({...curValue, [item.name]: e.target.value}); }} />
                     <div className={parentClasses.unit}>{item.unit}</div>
@@ -64,12 +64,12 @@ function ValuesToDropDown({ eventDep, title, dataKey, values, data, isSubEl }) {
 
     useEffect(() => {
         if (dataKey) {
-            if (data) setValue(data[dataKey]);    
+            if (data) setValue(data[dataKey]);
         } else {
             if (data) setValue(data);
         }
     }, [eventDep, data, dataKey]);
-    
+
     return (
         <ItemContainer title={title} isSubEl={isSubEl}>
             <DropDownInput
@@ -89,15 +89,15 @@ function BuildingFloorEl({ brTitle }) {
     let ugrndFlrCnt = brTitle ? brTitle.ugrndFlrCnt : 0;
     let grndFlrCnt = brTitle ? brTitle.grndFlrCnt : 1;
 
-    let [floorInfo, setFloorInfo] = useState({ugrndFlrCnt, grndFlrCnt});
+    let [floorInfo, setFloorInfo] = useState({ ugrndFlrCnt, grndFlrCnt });
 
     useEffect(() => {
         setFloorInfo({ ugrndFlrCnt, grndFlrCnt });
     }, [ugrndFlrCnt, grndFlrCnt]);
 
     let inputFloorValues = [
-        {subtitle: '지하'}, {unit: '층', name: 'ugrndFlrCnt'},
-        {subtitle: '지상'}, {unit: '층', name: 'grndFlrCnt'},
+        { subtitle: '지하' }, { unit: '층', name: 'ugrndFlrCnt' },
+        { subtitle: '지상' }, { unit: '층', name: 'grndFlrCnt' },
     ];
 
     return (
@@ -124,63 +124,72 @@ function BuildingAreaEl({ brTitle }) {
     let platArea = brTitle ? Number(brTitle.platArea.toFixed(2)) : 0;
     let archArea = brTitle ? Number(brTitle.archArea.toFixed(2)) : 0;
     let totArea = brTitle ? Number(brTitle.vlRatEstmTotArea.toFixed(2)) : 0;
-    
+
     // if (archArea === 0 && totArea > 0) {
     //     archArea = brTitle ? Number((totArea / brTitle.grndFlrCnt).toFixed(2)) : 0;
     // } else if (totArea === 0 && archArea > 0) {
     //     totArea = brTitle ? Number((archArea * brTitle.grndFlrCnt).toFixed(2)) : 0;
     // }
-    
+
     // console.log(platArea, archArea, totArea)
 
-    let buildingLandRatio = platArea > 0 ? Math.round(archArea/platArea*100) : 0;
-    let floorAreaRatio = platArea > 0 ? Math.round(totArea/platArea*100) : 0;
-       
+    let buildingLandRatio = platArea > 0 ? Math.round(archArea / platArea * 100) : 0;
+    let floorAreaRatio = platArea > 0 ? Math.round(totArea / platArea * 100) : 0;
+
     let [areaInfo, setAreaInfo] = useState({
-        platArea, archArea, totArea, buildingLandRatio, floorAreaRatio
+        platArea,
+        archArea,
+        totArea,
+        buildingLandRatio,
+        floorAreaRatio
     });
     // console.log('areaInfo: ', areaInfo)
 
     // let hasBrTitleData = brTitle ? Object.keys(brTitle).length > 0 : false;
     // console.log(buildingCode, hasBrTitleData)
 
-    useEffect(()=>{
-        setAreaInfo({platArea, archArea, totArea, buildingLandRatio, floorAreaRatio});
+    useEffect(() => {
+        setAreaInfo({ platArea, archArea, totArea, buildingLandRatio, floorAreaRatio });
     }, [platArea, archArea, totArea, buildingLandRatio, floorAreaRatio]);
 
     function updateInfo(event, key) {
         setAreaInfo(prevInfo => {
-            
+
             if (key === 'archArea') {
                 let tempPlatArea = prevInfo.platArea;
                 let tempArchArea = Number(event.target.value);
-                return {...prevInfo, [key]: tempArchArea,
-                    buildingLandRatio: tempPlatArea > 0 ? Math.round(tempArchArea/tempPlatArea*100): 0};
+                return { ...prevInfo,
+                    [key]: tempArchArea,
+                    buildingLandRatio: tempPlatArea > 0 ? Math.round(tempArchArea / tempPlatArea * 100) : 0
+                };
 
             } else if (key === 'totArea') {
                 let tempPlatArea = prevInfo.platArea;
                 let tempTotArea = Number(event.target.value);
-                return {...prevInfo, [key]: tempTotArea,
-                    floorAreaRatio: tempPlatArea > 0 ? Math.round(tempTotArea/tempPlatArea*100): 0};
+                return { ...prevInfo,
+                    [key]: tempTotArea,
+                    floorAreaRatio: tempPlatArea > 0 ? Math.round(tempTotArea / tempPlatArea * 100) : 0
+                };
 
             } else if (key === 'platArea') {
                 let tempPlatArea = Number(event.target.value);
-                return {...prevInfo, [key]: tempPlatArea,
-                    buildingLandRatio: tempPlatArea > 0 ? Math.round(prevInfo.archArea/tempPlatArea*100): 0,
-                    floorAreaRatio: tempPlatArea > 0 ? Math.round(prevInfo.totArea/tempPlatArea*100): 0,
+                return { ...prevInfo,
+                    [key]: tempPlatArea,
+                    buildingLandRatio: tempPlatArea > 0 ? Math.round(prevInfo.archArea / tempPlatArea * 100) : 0,
+                    floorAreaRatio: tempPlatArea > 0 ? Math.round(prevInfo.totArea / tempPlatArea * 100) : 0,
                 };
             }
 
             return prevInfo;
         });
     }
-   
+
     let inputAreaValues = [
-        {subtitle: '대지면적'}, {unit: 'm2', name: 'platArea'}, {}, {},
-        {subtitle: '건축면적'}, {unit: 'm2', name: 'archArea'},
-        {subtitle: '건폐율'}, {unit: '%', name: 'buildingLandRatio'},
-        {subtitle: '연면적'}, {unit: 'm2', name: 'totArea'},
-        {subtitle: '용적률'}, {unit: '%', name: 'floorAreaRatio'},
+        { subtitle: '대지면적' }, { unit: 'm2', name: 'platArea' }, {}, {},
+        { subtitle: '건축면적' }, { unit: 'm2', name: 'archArea' },
+        { subtitle: '건폐율' }, { unit: '%', name: 'buildingLandRatio' },
+        { subtitle: '연면적' }, { unit: 'm2', name: 'totArea' },
+        { subtitle: '용적률' }, { unit: '%', name: 'floorAreaRatio' },
     ];
 
     return (
@@ -200,7 +209,7 @@ function BuildingAreaEl({ brTitle }) {
                             <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
                                 <input type='text'
                                     name={item.name}
-                                    className={parentClasses["input-value"]}
+                                    className={parentClasses["input-value"] + ' focusable'}
                                     value={areaInfo[item.name]}
                                     onChange={(e) => updateInfo(e, item.name)}
                                     autoComplete='off'
@@ -230,7 +239,7 @@ function BulidingRoomCntEl({ brTitle }) {
     let hhldCnt = brTitle ? brTitle.hhldCnt : 0;
     let hoCnt = brTitle ? brTitle.hoCnt : 0;
     let fmlyCnt = brTitle ? brTitle.fmlyCnt : 0;
-    
+
     let [roomCntInfo, setRoomCntInfo] = useState({ hhldCnt, hoCnt, fmlyCnt });
 
     useEffect(() => {
@@ -238,9 +247,9 @@ function BulidingRoomCntEl({ brTitle }) {
     }, [hhldCnt, hoCnt, fmlyCnt]);
 
     let inputRoomCntValues = [
-        {subtitle: '세대'}, {name: 'hhldCnt', unit: '개'},
-        {subtitle: '호'}, {name: 'hoCnt', unit: '개'},
-        {subtitle: '가구'}, {name: 'fmlyCnt', unit: '개'},
+        { subtitle: '세대' }, { name: 'hhldCnt', unit: '개' },
+        { subtitle: '호' }, { name: 'hoCnt', unit: '개' },
+        { subtitle: '가구' }, { name: 'fmlyCnt', unit: '개' },
     ];
 
     return (
@@ -263,13 +272,13 @@ function BuildingParkingEl({ brTitle }) {
 
     useEffect(() => {
         setParkingInfo({ indrAutoUtcnt, indrMechUtcnt, oudrAutoUtcnt, oudrMechUtcnt });
-    }, [indrAutoUtcnt, indrMechUtcnt,oudrAutoUtcnt, oudrMechUtcnt]);
+    }, [indrAutoUtcnt, indrMechUtcnt, oudrAutoUtcnt, oudrMechUtcnt]);
 
     let inputParkingValues = [
-        {subtitle: '실내 자주식'}, {name: 'indrAutoUtcnt', unit: '대'},
-        {subtitle: '실내 기계식'}, {name: 'indrMechUtcnt', unit: '대'},
-        {subtitle: '실외 자주식'}, {name: 'oudrAutoUtcnt', unit: '대'},
-        {subtitle: '실외 기계식'}, {name: 'oudrMechUtcnt', unit: '대'},
+        { subtitle: '실내 자주식' }, { name: 'indrAutoUtcnt', unit: '대' },
+        { subtitle: '실내 기계식' }, { name: 'indrMechUtcnt', unit: '대' },
+        { subtitle: '실외 자주식' }, { name: 'oudrAutoUtcnt', unit: '대' },
+        { subtitle: '실외 기계식' }, { name: 'oudrMechUtcnt', unit: '대' },
     ];
 
     return (
@@ -292,8 +301,8 @@ function ElevatorEl({ brTitle }) {
     }, [rideUseElvtCnt, emgenUseElvtCnt]);
 
     let inputElevatorValues = [
-        {subtitle: '승용'}, {unit: '대', name: 'rideUseElvtCnt'},
-        {subtitle: '비상용'}, {unit: '대', name: 'emgenUseElvtCnt'},
+        { subtitle: '승용' }, { unit: '대', name: 'rideUseElvtCnt' },
+        { subtitle: '비상용' }, { unit: '대', name: 'emgenUseElvtCnt' },
     ];
 
     return (
@@ -328,17 +337,31 @@ function UseAprDayEl({ brTitle }) {
         setDayValue(useAprDay ? Number(useAprDay.slice(6, 8)) : 1);
     }, [useAprDay, thisYear]);
 
-    let yearValues = Array.from({length: 100}, (x, i) => thisYear - i);
-    let monthValues = Array.from({length: 12}, (x, i) => i+1);
-    let dayValues = Array.from({length: 31}, (x, i) => i+1);
+    let yearValues = Array.from({ length: 100 }, (x, i) => thisYear - i);
+    let monthValues = Array.from({ length: 12 }, (x, i) => i + 1);
+    let dayValues = Array.from({ length: 31 }, (x, i) => i + 1);
 
-    let items = [
-        {name: 'useAprYear', value: yearValue, setValue: setYearValue,
-            values: yearValues, inputClass: classes['year-input']}, {unit: '년'},
-        {name: 'useAprMonth', value: monthValue, setValue: setMonthValue,
-            values: monthValues, inputClass: classes['month-input']}, {unit: '월'},
-        {name: 'useAprDay', value: dayValue, setValue: setDayValue, 
-            values: dayValues, inputClass: classes['day-input']}, {unit: '일'}
+    let items = [{
+            name: 'useAprYear',
+            value: yearValue,
+            setValue: setYearValue,
+            values: yearValues,
+            inputClass: classes['year-input']
+        }, { unit: '년' },
+        {
+            name: 'useAprMonth',
+            value: monthValue,
+            setValue: setMonthValue,
+            values: monthValues,
+            inputClass: classes['month-input']
+        }, { unit: '월' },
+        {
+            name: 'useAprDay',
+            value: dayValue,
+            setValue: setDayValue,
+            values: dayValues,
+            inputClass: classes['day-input']
+        }, { unit: '일' }
     ];
     return (
         <ItemContainer title='사용승인일'>
@@ -355,9 +378,9 @@ function UseAprDayEl({ brTitle }) {
                                 }}/>
                         );                        
                     } else if (item.unit) {
-                        return <div key={idx} className={parentClasses.unit}>{item.unit}</div>        
+                        return <div key={idx} className={parentClasses.unit}>{item.unit}</div>;
                     }
-
+                    return null;
                 })}
             </div>
         </ItemContainer>
@@ -371,23 +394,23 @@ function ProductInfoContainer({ addressState }) {
     let buildingCode = addressData?.buildingCode;
 
     // console.log('addressData: ', addressData)
-    
+
     let hasBrTitleData = addressData ? addressData.brTitle.length > 0 : false;
     let brTitle = hasBrTitleData ? addressData.brTitle[addressState.brTitleIdx] : null;
     // console.log('buildingCode: ', buildingCode)
     // console.log('brTitle: ', brTitle);
 
-    return (<>
-        <MainPurposeEl buildingCode={buildingCode} brTitle={brTitle} />
-        <DistrictTypeEl buildingCode={buildingCode} baseDistrictType={addressState.districtType} />
-        <BuildingFloorEl brTitle={brTitle} />
-        <BulidingRoomCntEl brTitle={brTitle} />
-        <BuildingAreaEl brTitle={brTitle} />
-        <BuildingParkingEl brTitle={brTitle} />
-        <ElevatorEl brTitle={brTitle} />
-        <StructureEl buildingCode={buildingCode} brTitle={brTitle} />
-        <UseAprDayEl brTitle={brTitle} />
-    </>);
+    return [
+        <MainPurposeEl key={1} buildingCode={buildingCode} brTitle={brTitle} />,
+        <DistrictTypeEl key={2} buildingCode={buildingCode} baseDistrictType={addressState.districtType} />,
+        <BuildingFloorEl key={3} brTitle={brTitle} />,
+        <BulidingRoomCntEl key={4} brTitle={brTitle} />,
+        <BuildingAreaEl key={5} brTitle={brTitle} />,
+        <BuildingParkingEl key={6} brTitle={brTitle} />,
+        <ElevatorEl key={7} brTitle={brTitle} />,
+        <StructureEl key={8} buildingCode={buildingCode} brTitle={brTitle} />,
+        <UseAprDayEl key={9} brTitle={brTitle} />
+    ];
 }
 
 export default memo(ProductInfoContainer, function(prevProps, nextProps) {
@@ -406,6 +429,6 @@ export default memo(ProductInfoContainer, function(prevProps, nextProps) {
     let isSameBuilding = prevState.bldName === nextState.bldName;
     let isSameDong = prevState.dongName === nextState.dongName;
     // console.log('memo of ProductInfoContainer: ', isNewData, isSameAddress, isSameBuilding, isSameDong);
-    
+
     return isSameAddress && isSameBuilding && isSameDong;
 });
