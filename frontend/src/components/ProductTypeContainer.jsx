@@ -1,6 +1,8 @@
+import { useFormContext, useWatch } from 'react-hook-form';
+
 import classes from './ProductTypeContainer.module.css';
 
-import SingleChoice from './SingleChoice';
+import SingleChoiceForm from './SingleChoiceForm';
 
 const tradeTypeMap = {
     sell: '매매',
@@ -72,34 +74,28 @@ function ItemContainer({ children, title }) {
     );
 }
 
-function ProductTypeContainer({ tradeType, setTradeType, productType, setProductType, productSubType, setProductSubType }) {
+function ProductTypeContainer() {
+
+    const { control } = useFormContext();
 
     let tradeTypeEl = (
         <ItemContainer title='거래유형'>
-            <SingleChoice
-                chosen={tradeType} setChosen={setTradeType} choiceMap={tradeTypeMap}
-                btnLabel='선택하기' name='tradeType'
-            />
+            <SingleChoiceForm name='tradeType' choiceMap={tradeTypeMap} btnLabel='선택하기' />
         </ItemContainer>
     );
     
     let productTypeEl = (
         <ItemContainer title='대분류'>
-           <SingleChoice
-                chosen={productType} setChosen={setProductType} choiceMap={productTypeMap}
-                btnLabel='선택하기' name='productType'
-            />
+            <SingleChoiceForm name='productType' choiceMap={productTypeMap} btnLabel='선택하기' />
         </ItemContainer>
     );
 
+    let productType = useWatch({control, name: 'productType'});
     let chosenTypeMap = productType && typeToSubTypeMap[productType];
 
     let productSubTypeEl = chosenTypeMap && (
         <ItemContainer title='소분류'>
-            <SingleChoice
-                chosen={productSubType} setChosen={setProductSubType} choiceMap={chosenTypeMap} 
-                btnLabel='선택하기' name='productSubType'
-            />
+            <SingleChoiceForm name='productSubType' choiceMap={chosenTypeMap} btnLabel='선택하기' />
         </ItemContainer>
     );
         

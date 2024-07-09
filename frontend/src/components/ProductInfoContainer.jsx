@@ -1,10 +1,11 @@
-import { useState, useEffect, memo } from 'react';
+import { useEffect } from 'react';
 import React from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import parentClasses from '../pages/NewSellPost.module.css';
 import classes from './ProductInfoContainer.module.css';
 
-import DropDownInput from './DropDownInput';
+import DropDownInputForm from './DropDownInputForm';
 
 import { ItemContainer } from '../pages/NewSellPost';
 
@@ -41,16 +42,21 @@ const structureTypes = [
 ];
 structureTypes.sort();
 
-function ValuesToElements({ curValue, setCurValue, values }) {
+
+function ValuesToElementsForm({ values }) {
+    const { register } = useFormContext();
+
     return values.map((item, idx) => {
         if (item.subtitle) {
             return <div key={idx} className={parentClasses['input-subtitle']}>{item.subtitle}</div>;
         } else {
             return (
                 <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
-                    <input type='text' name={item.name} className={parentClasses["input-value"] + ' focusable'} autoComplete='off'
-                            value={curValue[item.name]}
-                            onChange={(e) => { setCurValue({...curValue, [item.name]: e.target.value}); }} />
+                    <input type='text'
+                        className={parentClasses["input-value"] + ' focusable'} 
+                        autoComplete='off'
+                        {...register(item.name)} 
+                    />
                     <div className={parentClasses.unit}>{item.unit}</div>
                 </div>
             );
@@ -59,21 +65,11 @@ function ValuesToElements({ curValue, setCurValue, values }) {
 }
 
 
-function ValuesToDropDown({ eventDep, title, dataKey, values, data, isSubEl }) {
-    let [value, setValue] = useState(data ? data[dataKey] : '');
-
-    useEffect(() => {
-        if (dataKey) {
-            if (data) setValue(data[dataKey]);
-        } else {
-            if (data) setValue(data);
-        }
-    }, [eventDep, data, dataKey]);
-
+function ValuesToDropDownForm({ title, values, isSubEl, name }) {
     return (
         <ItemContainer title={title} isSubEl={isSubEl}>
-            <DropDownInput
-                localValue={value} setLocalValue={setValue} 
+            <DropDownInputForm
+                name={name}
                 values={values} 
                 options={{
                     placeholder: "직접입력",
@@ -85,112 +81,45 @@ function ValuesToDropDown({ eventDep, title, dataKey, values, data, isSubEl }) {
 }
 
 
-function BuildingFloorEl({ brTitle }) {
-    let ugrndFlrCnt = brTitle ? brTitle.ugrndFlrCnt : 0;
-    let grndFlrCnt = brTitle ? brTitle.grndFlrCnt : 1;
-
-    let [floorInfo, setFloorInfo] = useState({ ugrndFlrCnt, grndFlrCnt });
-
-    useEffect(() => {
-        setFloorInfo({ ugrndFlrCnt, grndFlrCnt });
-    }, [ugrndFlrCnt, grndFlrCnt]);
-
+function BuildingFloorEl() {
     let inputFloorValues = [
         { subtitle: '지하' }, { unit: '층', name: 'ugrndFlrCnt' },
         { subtitle: '지상' }, { unit: '층', name: 'grndFlrCnt' },
     ];
-
     return (
         <ItemContainer title='층정보'>
             <div className={parentClasses['input-subgrid'] + ' buildingFloorInfo'}>
-                <ValuesToElements curValue={floorInfo} setCurValue={setFloorInfo} values={inputFloorValues} />
+                <ValuesToElementsForm values={inputFloorValues} />
             </div>
         </ItemContainer>
     );
 }
 
 
-function MainPurposeEl({ buildingCode, brTitle }) {
-    return <ValuesToDropDown 
-        eventDep={buildingCode} title='건축물 주용도' 
-        dataKey='mainPurpsCdNm' 
-        values={buildingUsages} data={brTitle} />
-}
+function BuildingAreaEl() {
 
-
-function BuildingAreaEl({ brTitle }) {
-    // console.log('brTitle: ', brTitle)
-
-    let platArea = brTitle ? Number(brTitle.platArea.toFixed(2)) : 0;
-    let archArea = brTitle ? Number(brTitle.archArea.toFixed(2)) : 0;
-    let totArea = brTitle ? Number(brTitle.vlRatEstmTotArea.toFixed(2)) : 0;
-
-    // if (archArea === 0 && totArea > 0) {
-    //     archArea = brTitle ? Number((totArea / brTitle.grndFlrCnt).toFixed(2)) : 0;
-    // } else if (totArea === 0 && archArea > 0) {
-    //     totArea = brTitle ? Number((archArea * brTitle.grndFlrCnt).toFixed(2)) : 0;
-    // }
-
-    // console.log(platArea, archArea, totArea)
-
-    let buildingLandRatio = platArea > 0 ? Math.round(archArea / platArea * 100) : 0;
-    let floorAreaRatio = platArea > 0 ? Math.round(totArea / platArea * 100) : 0;
-
-    let [areaInfo, setAreaInfo] = useState({
-        platArea,
-        archArea,
-        totArea,
-        buildingLandRatio,
-        floorAreaRatio
-    });
-    // console.log('areaInfo: ', areaInfo)
-
-    // let hasBrTitleData = brTitle ? Object.keys(brTitle).length > 0 : false;
-    // console.log(buildingCode, hasBrTitleData)
-
-    useEffect(() => {
-        setAreaInfo({ platArea, archArea, totArea, buildingLandRatio, floorAreaRatio });
-    }, [platArea, archArea, totArea, buildingLandRatio, floorAreaRatio]);
-
-    function updateInfo(event, key) {
-        setAreaInfo(prevInfo => {
-
-            if (key === 'archArea') {
-                let tempPlatArea = prevInfo.platArea;
-                let tempArchArea = Number(event.target.value);
-                return { ...prevInfo,
-                    [key]: tempArchArea,
-                    buildingLandRatio: tempPlatArea > 0 ? Math.round(tempArchArea / tempPlatArea * 100) : 0
-                };
-
-            } else if (key === 'totArea') {
-                let tempPlatArea = prevInfo.platArea;
-                let tempTotArea = Number(event.target.value);
-                return { ...prevInfo,
-                    [key]: tempTotArea,
-                    floorAreaRatio: tempPlatArea > 0 ? Math.round(tempTotArea / tempPlatArea * 100) : 0
-                };
-
-            } else if (key === 'platArea') {
-                let tempPlatArea = Number(event.target.value);
-                return { ...prevInfo,
-                    [key]: tempPlatArea,
-                    buildingLandRatio: tempPlatArea > 0 ? Math.round(prevInfo.archArea / tempPlatArea * 100) : 0,
-                    floorAreaRatio: tempPlatArea > 0 ? Math.round(prevInfo.totArea / tempPlatArea * 100) : 0,
-                };
-            }
-
-            return prevInfo;
-        });
-    }
+    const { control, setValue, register } = useFormContext();
 
     let inputAreaValues = [
         { subtitle: '대지면적' }, { unit: 'm2', name: 'platArea' }, {}, {},
         { subtitle: '건축면적' }, { unit: 'm2', name: 'archArea' },
-        { subtitle: '건폐율' }, { unit: '%', name: 'buildingLandRatio' },
+        { subtitle: '건폐율' }, { unit: '%', name: 'buildingLandRatio'},
         { subtitle: '연면적' }, { unit: 'm2', name: 'totArea' },
         { subtitle: '용적률' }, { unit: '%', name: 'floorAreaRatio' },
     ];
+
+    let platArea = useWatch({control, name: 'platArea'});
+    let archArea = useWatch({control, name: 'archArea'});
+    let totArea = useWatch({control, name: 'totArea'});
+    // console.log('buidingArea: ', platArea, archArea, totArea);
+
+    let buildingLandRatio = platArea > 0 ? Math.round(archArea / platArea * 100) : 0;
+    let floorAreaRatio = platArea > 0 ? Math.round(totArea / platArea * 100) : 0;
+
+    useEffect(() => {
+        setValue('buildingLandRatio', buildingLandRatio);
+        setValue('floorAreaRatio', floorAreaRatio);
+    }, [platArea, archArea, totArea]);
 
     return (
         <ItemContainer title='면적정보'>
@@ -208,10 +137,8 @@ function BuildingAreaEl({ brTitle }) {
                         return ( 
                             <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
                                 <input type='text'
-                                    name={item.name}
+                                    {...register(item.name)}
                                     className={parentClasses["input-value"] + ' focusable'}
-                                    value={areaInfo[item.name]}
-                                    onChange={(e) => updateInfo(e, item.name)}
                                     autoComplete='off'
                                 />
                                 {unitEl}
@@ -227,24 +154,7 @@ function BuildingAreaEl({ brTitle }) {
 }
 
 
-function DistrictTypeEl({ buildingCode, baseDistrictType }) {
-    return <ValuesToDropDown
-        eventDep={buildingCode} title='용도지역'
-        values={districtTypes} data={baseDistrictType} />
-}
-
-
-function BulidingRoomCntEl({ brTitle }) {
-
-    let hhldCnt = brTitle ? brTitle.hhldCnt : 0;
-    let hoCnt = brTitle ? brTitle.hoCnt : 0;
-    let fmlyCnt = brTitle ? brTitle.fmlyCnt : 0;
-
-    let [roomCntInfo, setRoomCntInfo] = useState({ hhldCnt, hoCnt, fmlyCnt });
-
-    useEffect(() => {
-        setRoomCntInfo({ hhldCnt, hoCnt, fmlyCnt });
-    }, [hhldCnt, hoCnt, fmlyCnt]);
+function BulidingRoomCntEl() {
 
     let inputRoomCntValues = [
         { subtitle: '세대' }, { name: 'hhldCnt', unit: '개' },
@@ -255,24 +165,14 @@ function BulidingRoomCntEl({ brTitle }) {
     return (
         <ItemContainer title='총 세대/호'>
             <div className={parentClasses['input-subgrid'] + ' buildingRoomCnt'}>
-                <ValuesToElements curValue={roomCntInfo} setCurValue={setRoomCntInfo} values={inputRoomCntValues} />
+                <ValuesToElementsForm values={inputRoomCntValues} />
             </div>
         </ItemContainer>
     );
 }
 
-function BuildingParkingEl({ brTitle }) {
 
-    let indrAutoUtcnt = brTitle ? brTitle.indrAutoUtcnt : 0;
-    let indrMechUtcnt = brTitle ? brTitle.indrMechUtcnt : 0;
-    let oudrAutoUtcnt = brTitle ? brTitle.oudrAutoUtcnt : 0;
-    let oudrMechUtcnt = brTitle ? brTitle.oudrMechUtcnt : 0;
-
-    let [parkingInfo, setParkingInfo] = useState({ indrAutoUtcnt, indrMechUtcnt, oudrAutoUtcnt, oudrMechUtcnt });
-
-    useEffect(() => {
-        setParkingInfo({ indrAutoUtcnt, indrMechUtcnt, oudrAutoUtcnt, oudrMechUtcnt });
-    }, [indrAutoUtcnt, indrMechUtcnt, oudrAutoUtcnt, oudrMechUtcnt]);
+function BuildingParkingEl() {
 
     let inputParkingValues = [
         { subtitle: '실내 자주식' }, { name: 'indrAutoUtcnt', unit: '대' },
@@ -283,22 +183,15 @@ function BuildingParkingEl({ brTitle }) {
 
     return (
         <ItemContainer title='주차장'>
-            <div className={parentClasses['input-subgrid'] + ' buildingRoomCnt'}>
-                <ValuesToElements curValue={parkingInfo} setCurValue={setParkingInfo} values={inputParkingValues} />
+            <div className={parentClasses['input-subgrid'] + ' buildingParking'}>
+                <ValuesToElementsForm  values={inputParkingValues} />
             </div>
         </ItemContainer>
     );
 }
 
-function ElevatorEl({ brTitle }) {
-    let rideUseElvtCnt = brTitle ? brTitle.rideUseElvtCnt : 0;
-    let emgenUseElvtCnt = brTitle ? brTitle.emgenUseElvtCnt : 0;
 
-    let [elevatorInfo, setElevatorInfo] = useState({ rideUseElvtCnt, emgenUseElvtCnt });
-
-    useEffect(() => {
-        setElevatorInfo({ rideUseElvtCnt, emgenUseElvtCnt });
-    }, [rideUseElvtCnt, emgenUseElvtCnt]);
+function ElevatorEl() {
 
     let inputElevatorValues = [
         { subtitle: '승용' }, { unit: '대', name: 'rideUseElvtCnt' },
@@ -307,58 +200,35 @@ function ElevatorEl({ brTitle }) {
 
     return (
         <ItemContainer title='승강기'>
-            <div className={parentClasses['input-subgrid'] + ' buildingFloorInfo'}>
-                <ValuesToElements curValue={elevatorInfo} setCurValue={setElevatorInfo} values={inputElevatorValues} />
+            <div className={parentClasses['input-subgrid'] + ' Elevator'}>
+                <ValuesToElementsForm values={inputElevatorValues} />
             </div>
         </ItemContainer>
     );
 }
 
-function StructureEl({ buildingCode, brTitle }) {
-    return <ValuesToDropDown
-        eventDep={buildingCode} title='건축물 구조'
-        dataKey='strctCdNm'
-        values={structureTypes} data={brTitle} />
-}
 
-function UseAprDayEl({ brTitle }) {
-    let useAprDay = brTitle?.useAprDay;
+function UseAprDayEl() {
 
     let curDate = new Date();
     let thisYear = curDate.getFullYear();
-
-    let [yearValue, setYearValue] = useState(useAprDay ? Number(useAprDay.slice(0, 4)) : thisYear);
-    let [monthValue, setMonthValue] = useState(useAprDay ? Number(useAprDay.slice(4, 6)) : 1);
-    let [dayValue, setDayValue] = useState(useAprDay ? Number(useAprDay.slice(6, 8)) : 1);
-
-    useEffect(() => {
-        setYearValue(useAprDay ? Number(useAprDay.slice(0, 4)) : thisYear);
-        setMonthValue(useAprDay ? Number(useAprDay.slice(4, 6)) : 1);
-        setDayValue(useAprDay ? Number(useAprDay.slice(6, 8)) : 1);
-    }, [useAprDay, thisYear]);
 
     let yearValues = Array.from({ length: 100 }, (x, i) => thisYear - i);
     let monthValues = Array.from({ length: 12 }, (x, i) => i + 1);
     let dayValues = Array.from({ length: 31 }, (x, i) => i + 1);
 
     let items = [{
-            name: 'useAprYear',
-            value: yearValue,
-            setValue: setYearValue,
+            name: 'useAprDay.Y',
             values: yearValues,
             inputClass: classes['year-input']
         }, { unit: '년' },
         {
-            name: 'useAprMonth',
-            value: monthValue,
-            setValue: setMonthValue,
+            name: 'useAprDay.M',
             values: monthValues,
             inputClass: classes['month-input']
         }, { unit: '월' },
         {
-            name: 'useAprDay',
-            value: dayValue,
-            setValue: setDayValue,
+            name: 'useAprDay.D',
             values: dayValues,
             inputClass: classes['day-input']
         }, { unit: '일' }
@@ -369,11 +239,10 @@ function UseAprDayEl({ brTitle }) {
                 {items.map((item, idx) => {
                     if (item.name) {
                         return (
-                            <DropDownInput key={idx} name={item.name}
-                                localValue={item.value} setLocalValue={item.setValue}
+                            <DropDownInputForm key={idx} name={item.name}
                                 values={item.values}
                                 options={{
-                                    placeholder: "직접입력",
+                                    placeholder: "",
                                     custumClass: item.inputClass
                                 }}/>
                         );                        
@@ -387,48 +256,41 @@ function UseAprDayEl({ brTitle }) {
     );
 }
 
+
 function ProductInfoContainer({ addressState }) {
-    // console.log('ProductInfoContainer')
-    let addressData = addressState.data;
-
-    let buildingCode = addressData?.buildingCode;
-
-    // console.log('addressData: ', addressData)
-
-    let hasBrTitleData = addressData ? addressData.brTitle.length > 0 : false;
-    let brTitle = hasBrTitleData ? addressData.brTitle[addressState.brTitleIdx] : null;
-    // console.log('buildingCode: ', buildingCode)
-    // console.log('brTitle: ', brTitle);
+    console.log('in ProductInfoContainer')
 
     return [
-        <MainPurposeEl key={1} buildingCode={buildingCode} brTitle={brTitle} />,
-        <DistrictTypeEl key={2} buildingCode={buildingCode} baseDistrictType={addressState.districtType} />,
-        <BuildingFloorEl key={3} brTitle={brTitle} />,
-        <BulidingRoomCntEl key={4} brTitle={brTitle} />,
-        <BuildingAreaEl key={5} brTitle={brTitle} />,
-        <BuildingParkingEl key={6} brTitle={brTitle} />,
-        <ElevatorEl key={7} brTitle={brTitle} />,
-        <StructureEl key={8} buildingCode={buildingCode} brTitle={brTitle} />,
-        <UseAprDayEl key={9} brTitle={brTitle} />
+        <ValuesToDropDownForm key={1} name='mainPurpose' title='건축물 주용도' values={buildingUsages} />,
+        <ValuesToDropDownForm key={2} name='districtType' title='용도지역' values={districtTypes} />,
+        <BuildingFloorEl key={3} />,
+        <BulidingRoomCntEl key={4} />,
+        <BuildingAreaEl key={5} />,
+        <BuildingParkingEl key={6} />,
+        <ElevatorEl key={7} />,
+        <ValuesToDropDownForm key={8} name='strctCdNm' title='건축물 구조' values={structureTypes} />,
+        <UseAprDayEl key={9} />
     ];
 }
 
-export default memo(ProductInfoContainer, function(prevProps, nextProps) {
-    let prevState = prevProps.addressState;
-    let nextState = nextProps.addressState;
+export default ProductInfoContainer;
 
-    let prevData = prevState.data;
-    let nextData = nextState.data;
+// export default memo(ProductInfoContainer, function(prevProps, nextProps) {
+//     let prevState = prevProps.addressState;
+//     let nextState = nextProps.addressState;
 
-    // console.log('(', prevProps.bldName, '|', prevProps.dongName, ')');
-    // console.log('(', nextProps.bldName, '|', nextProps.dongName, ')');
-    let isNewData = prevData === null && nextData !== null;
-    if (isNewData) return false;
+//     let prevData = prevState.data;
+//     let nextData = nextState.data;
 
-    let isSameAddress = prevData?.buildingCode === nextData?.buildingCode;
-    let isSameBuilding = prevState.bldName === nextState.bldName;
-    let isSameDong = prevState.dongName === nextState.dongName;
-    // console.log('memo of ProductInfoContainer: ', isNewData, isSameAddress, isSameBuilding, isSameDong);
+//     // console.log('(', prevProps.bldName, '|', prevProps.dongName, ')');
+//     // console.log('(', nextProps.bldName, '|', nextProps.dongName, ')');
+//     let isNewData = prevData === null && nextData !== null;
+//     if (isNewData) return false;
 
-    return isSameAddress && isSameBuilding && isSameDong;
-});
+//     let isSameAddress = prevData?.buildingCode === nextData?.buildingCode;
+//     let isSameBuilding = prevState.bldName === nextState.bldName;
+//     let isSameDong = prevState.dongName === nextState.dongName;
+//     // console.log('memo of ProductInfoContainer: ', isNewData, isSameAddress, isSameBuilding, isSameDong);
+
+//     return isSameAddress && isSameBuilding && isSameDong;
+// });

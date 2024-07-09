@@ -1,5 +1,7 @@
 import classes from './AddressInput.module.css';
 
+import { useFormContext } from 'react-hook-form';
+
 let { daum, kakao } = window;
 
 const geocoder = new kakao.maps.services.Geocoder();
@@ -40,6 +42,8 @@ const addressSearch = address => {
 };
 
 function AddressInput({ addressState, dispatchAddress }) {
+
+    const { setValue, setFocus } = useFormContext();
 
     let addressData = addressState.data;
     let hasAddressData = addressData ? Object.keys(addressData).length > 0 : null;
@@ -85,6 +89,7 @@ function AddressInput({ addressState, dispatchAddress }) {
 
                 let totData = await postAddressData(newData)
                 totData['userSelectedType'] = data.userSelectedType;
+                // console.log('in execDaumPostcode 3:', totData);
 
                 dispatchAddress({ type: 'FETCH_SUCCESS', payload: totData });
 
@@ -93,16 +98,21 @@ function AddressInput({ addressState, dispatchAddress }) {
                 // 우편번호 찾기 화면이 보이기 이전으로 scroll 위치를 되돌린다.
                 // document.body.scrollTop = currentScroll;
 
-                let addressValueEl = document.getElementById('address-value');
-                if (addressValueEl) {
-                    addressValueEl.value = selectedAddress;    
+                setValue('topAddress', selectedAddress);
+
+                let currentDongName = '';
+                if (totData?.brTitle && totData.brTitle[0]) {
+                    let brTitle = totData.brTitle[0];
+                    currentDongName = (brTitle.bldNm + ' ' + brTitle.dongNm).trim();
+                }
+
+                if (currentDongName) {
+                    setValue('dongName', currentDongName);
                 }
 
                 // 커서를 상세주소 필드로 이동한다.
-                let addressDetailEl = document.getElementById('address-detail');
-                if (addressDetailEl) {
-                    addressDetailEl.focus();    
-                }
+                setFocus('addressDetail');
+
                 element_wrap.style.height = '100px';
             },
 

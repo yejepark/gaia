@@ -60,25 +60,26 @@
     font-weight: 450;
     font-size: 1rem;
 
-/*    color: blue;*/
+    /*    color: blue;*/
 }
 
 .input-subtitle {
     font-size: 0.9rem;
-/*    width: 100%;*/
+    /*    width: 100%;*/
     min-width: 100%;
 
-/*    color: red;*/
+    /*    color: red;*/
 }
 
 .input-container {
     width: 100%;
+
     &>input {
         width: 100%;
         font-size: .9rem;
     }
 
-/*    background-color: yellow;*/
+    /*    background-color: yellow;*/
 }
 
 .input-subcontainer {
@@ -93,7 +94,7 @@
         font-size: .9rem;
     }
 
-/*    background-color: green;*/
+    /*    background-color: green;*/
 }
 
 
