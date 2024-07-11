@@ -19,15 +19,15 @@ function SingleChoice({ chosen, setChosen, choiceMap, btnLabel, name }) {
         event.stopPropagation();
     }
 
-    let btnClass = chosen.length > 0 ? classes.filter + ' ' + classes.active : classes.filter;
+    let btnClass = chosen.length > 0 ? classes.filter + ' alive-btn active' : classes.filter + ' alive-btn';
     let dialogOpenClass = dialogOpen ? '' : ' ' + classes.hidden;
 
-    let inputEls = Object.keys(choiceMap).map((choice)=> {return (
+    let inputEls = Object.keys(choiceMap).map((choice)=> {return (<li>
         <label key={choice}>
             <input type="radio" value={choice} name={name} onClick={radioClickHandler} checked={chosen===choice} readOnly/>
             <span>{choiceMap[choice]}</span>
         </label>
-    ); });
+    </li>); });
 
     return (<>
         <button type="button" className={btnClass} onClick={btnClickHandler}>
@@ -37,11 +37,11 @@ function SingleChoice({ chosen, setChosen, choiceMap, btnLabel, name }) {
 
         <div className = {classes.backdrop + dialogOpenClass} onClick={btnClickHandler}> </div>
 
-        <div className={classes['positional-container']}>
-            <div className={classes.dialog + dialogOpenClass}> 
+        <div className={'positional-container'}>
+            <ol className={classes.dialog + dialogOpenClass}> 
                 {inputEls}
                 <ApplyButton clickHandler={btnClickHandler} />
-            </div> 
+            </ol> 
         </div> 
     </>)
 }

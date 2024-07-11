@@ -141,7 +141,7 @@ input[type='checkbox'] {
         outline: none;
     }
 
-    &:focus-within {
+    &:focus {
         box-shadow: 0px 0px 5px var(--focus-color);
         background-image: none;
     }
@@ -151,6 +151,68 @@ input[type='checkbox'] {
         outline-offset: -2px;
     }
 }
+
+.not-focusable {
+    &:focus {
+        outline: none;
+    }
+}
+
+.alive-btn {
+    transition: background-color 0.3s, color 0.3s;
+
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color);
+
+    
+    &:focus {
+        outline: none;
+        box-shadow: 0px 0px 5px var(--focus-color);
+    }
+
+    &:hover {
+        border-color: var(--focus-color);
+    }
+
+    &:active {
+        background-color: var(--background-active-color);
+    }
+
+    &.active {
+        border-color: var(--focus-color);
+        background-color: var(--background-active-color);
+    }
+}
+
+.inverted-alive-btn {
+    transition: background-color 0.3s, color 0.3s;
+
+    color: var(--background-color);
+    background-color: var(--focus-color);
+    border: 1px solid var(--background-color);
+
+    &:hover {
+        color: var(--focus-color);
+        border: 1px solid var(--focus-color);
+        background-color: var(--background-color);
+    }
+
+    &:active {
+        background-color: var(--background-active-color);
+    }
+}
+
+.positional-container {
+    position: relative;
+    height: 0;
+    width: 100%;
+}
+
+.subflex {
+    display: flex;
+    flex-direction: column;
+}
+
 
 /*
 .diamond-shape {

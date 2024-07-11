@@ -8,26 +8,33 @@ import classes from './Filters.module.css';
 
 function SingleChoiceForm({ choiceMap, btnLabel, name }) {
 
-    const { register, control } = useFormContext();
+    const { register, control, setFocus } = useFormContext();
 
     let [dialogOpen, setDialogOpen] = useState(false);
 
-    function btnClickHandler() {
+    function btnClickHandler(e) {
         setDialogOpen((isOpen) => { return !isOpen; });
+        setFocus(name);
+    }
+
+    function enterStrokeHandler(e) {
+        if (e.key === 'Enter') {
+            setDialogOpen((isOpen) => { return !isOpen; });    
+        }
     }
     let chosen = useWatch({ control, name });
     // console.log('--------', chosen)
 
-    let btnClass = chosen && chosen.length > 0 ? classes.filter + ' ' + classes.active : classes.filter;
+    let btnClass = chosen && chosen.length > 0 ? classes.filter + ' alive-btn active' : classes.filter + ' alive-btn';
     let dialogOpenClass = dialogOpen ? '' : ' ' + classes.hidden;
 
-    let inputEls = Object.keys(choiceMap).map((choice) => {
-        return (
-            <label key={choice}>
-            <input {...register(name)} type="radio" value={choice} name={name} />
-            <span>{choiceMap[choice]}</span>
-        </label>
-        );
+    let inputEls = Object.keys(choiceMap).map((choice, idx) => {
+        return (<li key={idx}>
+            <label>
+                <input {...register(name)} type="radio" value={choice} onKeyPress={enterStrokeHandler} className={'focusable'}/>
+                <span>{choiceMap[choice]}</span>
+            </label>
+        </li>);
     });
 
     return (<>
@@ -38,11 +45,11 @@ function SingleChoiceForm({ choiceMap, btnLabel, name }) {
 
         <div className = { classes.backdrop + dialogOpenClass } onClick = { btnClickHandler }> </div>
 
-        <div className = { classes['positional-container'] }>
-            <div className={classes.dialog + dialogOpenClass}> 
+        <div className = { 'positional-container' }>
+            <ol className={classes.dialog + dialogOpenClass}> 
                 {inputEls}
                 <ApplyButton clickHandler={btnClickHandler} />
-            </div> 
+            </ol> 
         </div>  
         </>)
     }

@@ -34,7 +34,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
     // console.log('tempMin', tempMinValue, 'min', minValue, ' ~ ', 'tempMax', tempMaxValue, 'max', maxValue);
 
     return (<>
-        <button className={filtersClasses.filter + rangeBtnClass} id="range-button" onClick={btnClickHandler}>
+        <button className={filtersClasses.filter + ' alive-btn ' + rangeBtnClass} id="range-button" onClick={btnClickHandler}>
             {btnName}
             {minValueEl}
             {intMinValue > 0 | intMaxValue > 0 ? <i className={filtersClasses.tilde}></i> : ''}
@@ -44,7 +44,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
 
         <div className={filtersClasses.backdrop + dialogOpenClass} onClick={btnClickHandler} id="range-backdrop"></div>
 
-        <div className={filtersClasses['positional-container']}>
+        <div className={'positional-container'}>
             <div className={filtersClasses.dialog + dialogOpenClass} id="range-dialog">
                 <div className={classes['range-container']}>
 

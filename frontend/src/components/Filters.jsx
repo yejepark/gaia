@@ -94,10 +94,10 @@ function Filters() {
                 <RangeFilter minValue={minArea} setMinValue={setMinArea} maxValue={maxArea} setMaxValue={setMaxArea} unit={'평'} values={areaValues} btnName={'면적'} />
             </div>
             <div className={classes['filter-container']}>
-                <button type='button' className={classes.filter} id="all-filters">모든필터 <UpDown /></button>
+                <button type='button' className={classes.filter + ' alive-btn'} id="all-filters">모든필터 <UpDown /></button>
             </div>
             <div className={classes['filter-container']}>
-                <button type='button' className={classes.filter + ' ' + classes["save-search"]}>검색저장</button>
+                <button type='button' className={classes.filter + ' inverted-alive-btn'}>검색저장</button>
             </div>
         </div>
     )

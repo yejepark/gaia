@@ -32,27 +32,27 @@ function MultipleChoice({ checkedList, setCheckedList, choiceMap, defaultBtnLabe
 	let dialogOpenClass = dialogOpen ? '' : ' ' + parentClasses.hidden;
 
     let items = Object.keys(choiceMap).map((item)=> {
-    	return (
+    	return (<li>
 			<label key={item}>
 	            <input type="checkbox" value={item} name={name} onClick={checkClickHandler} checked={checkedList.includes(item)} readOnly/>
 	            <span>{choiceMap[item]}</span>
 	        </label>
-	    );
+	    </li>);
     });
 
 	return (<div className={classes.container}>
-        <button type='button' className={parentClasses.filter + btnClass} onClick={btnClickHandler}>
+        <button type='button' className={parentClasses.filter + ' alive-btn ' + btnClass} onClick={btnClickHandler}>
             <div className={classes.string}>{btnLabel}</div>
             <UpDown up={dialogOpen}/>
         </button>
 
         <div className={parentClasses.backdrop + dialogOpenClass} onClick={btnClickHandler}></div>
 
-        <div className={parentClasses['positional-container']}>
+        <div className={'positional-container'}>
             <div className={parentClasses.dialog + dialogOpenClass}>
-                <div className={classes.dialog}>
+                <ol className={classes.dialog}>
                     {items}
-                </div>
+                </ol>
                 <ApplyButton clickHandler={btnClickHandler} />
             </div>
         </div>

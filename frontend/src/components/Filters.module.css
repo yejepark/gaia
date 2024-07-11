@@ -25,7 +25,6 @@
     width: fit-content;
     height: 100%;
     padding: 0 15px;
-    border: 1px solid var(--border-color);
     border-radius: 5px;
 
     display: flex;
@@ -33,32 +32,10 @@
     gap: 4px;
     justify-content: space-between;
 
-    background-color: var(--background-color);
-    transition: background-color 0.3s, color 0.3s;
-
     font-weight: 500;
     letter-spacing: 0.15rem;
-
-    &:hover {
-        border-color: var(--focus-color);
-    }
-
-    &:active {
-        background-color: var(--background-active-color);
-    }
-
-    &.active {
-        border-color: var(--focus-color);
-        background-color: var(--background-active-color);
-    }
 }
 
-
-.positional-container {
-    position: relative;
-    height: 0;
-    width: 100%;
-}
 
 .dialog {
     position: absolute;
@@ -79,6 +56,8 @@
 
     font-size: 1.15rem;
 
+    list-style-type: none;
+
     & label {
         padding: 10px;
         display: flex;
@@ -87,7 +66,7 @@
         cursor: pointer;
     }
 
-    & label+label {
+    & li+li {
         border-top: 1px solid var(--border-color);
     }
 
@@ -142,16 +121,3 @@
         background-color: transparent;
     }
 }
-
-.save-search {
-    background-color: var(--focus-color);
-    color: white;
-    border: 1px solid white;
-
-    &:hover {
-        background-color: var(--background-color);
-        color: var(--focus-color);
-        border: 1px solid var(--focus-color);
-    }
-}
-

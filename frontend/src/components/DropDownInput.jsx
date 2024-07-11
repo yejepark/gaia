@@ -100,7 +100,7 @@ function DropDownInput({ localValue, setLocalValue, values, name, options }) {
 
             <div className={filtersClasses.backdrop + dropdownOpenClass} onClick={containerClickHandler} id="dropdown-backdrop"></div>
             
-            <div className={filtersClasses['positional-container']}>
+            <div className={'positional-container'}>
                 <div className={classes['dropdown'] + dropdownOpenClass}>
                     {dropdownItems}
                 </div>

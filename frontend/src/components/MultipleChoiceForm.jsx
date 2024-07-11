@@ -10,13 +10,20 @@ import classes from './MultipleChoice.module.css';
 
 function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive }) {
 
-    const { control } = useFormContext();
+    const { control, setFocus } = useFormContext();
     const { field } = useController({ control, name });
 
     let [dialogOpen, setDialogOpen] = useState(false);
 
     function btnClickHandler() {
         setDialogOpen((isOpen) => { return !isOpen; });
+        setFocus(name);
+    }
+
+    function enterStrokeHandler(e) {
+        if (e.key === 'Enter') {
+            setDialogOpen((isOpen) => { return !isOpen; });
+        }
     }
 
     function onCheckChange(event, idx) {
@@ -40,34 +47,35 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive }) {
     let dialogOpenClass = dialogOpen ? '' : ' ' + parentClasses.hidden;
 
     let items = Object.keys(choiceMap).map((item, idx) => {
-        return (
-            <label key={item}>
+        return (<li key={idx}>
+            <label>
                 <input 
                     type="checkbox" 
                     value={item} 
                     onChange={(e) => onCheckChange(e, idx)}
                     checked={field.value.includes(item)}
-                    ref={field.ref}
-                    readOnly
+                    ref={idx === 0 ? field.ref : null}
+                    className={'focusable'}
+                    onKeyPress={enterStrokeHandler}
                 />
                 <span>{choiceMap[item]}</span>
             </label>
-        );
+        </li>);
     });
 
     return (<div className={classes.container}>
-        <button type='button' className={parentClasses.filter + btnClass} onClick={btnClickHandler}>
+        <button type='button' className={parentClasses.filter + ' alive-btn ' + btnClass} onClick={btnClickHandler}>
             <div className={classes.string}>{btnLabel}</div>
             <UpDown up={dialogOpen}/>
         </button>
 
         <div className={parentClasses.backdrop + dialogOpenClass} onClick={btnClickHandler}></div>
 
-        <div className={parentClasses['positional-container']}>
+        <div className={'positional-container'}>
             <div className={parentClasses.dialog + dialogOpenClass}>
-                <div className={classes.dialog}>
+                <ol className={classes.dialog} tabIndex='-1'>
                     {items}
-                </div>
+                </ol>
                 <ApplyButton clickHandler={btnClickHandler} />
             </div>
         </div>

@@ -13,8 +13,8 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe 
 
     function inputClickHandler(event) {
         event.stopPropagation();
-        let textInput = event.currentTarget.querySelector('input');
-        if (textInput) {
+        let liEl = event.currentTarget.querySelector('li');
+        if (liEl) {
             setFocus(name);
         };
     }
@@ -47,17 +47,17 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe 
     if (values.length > 0 && ((typeof values[0] === 'number') || (typeof values[0] === 'string' || values[0] instanceof String))) {
         dropdownItems = values.map((v) => {
             return (
-                <div key={v} value={v} onClick={dropdownClickHandler}>
-                   <span className={classes['dropdown-item']}>{v}{options.unit}</span>
-                </div>
+                <li key={v} value={v} onClick={dropdownClickHandler}>
+                   <button className={classes['dropdown-item']}>{v}{options.unit}</button>
+                </li>
             );
         });
     } else {
         dropdownItems = values.map((item) => {
             return (
-                <div key={item.key} value={item.value} onClick={dropdownClickHandler}>
-                   <span className={classes['dropdown-item']}>{item.text}</span>
-                </div>
+                <li key={item.key} value={item.value} onClick={dropdownClickHandler}>
+                   <button className={classes['dropdown-item']}>{item.text}</button>
+                </li>
             );
         });
     }
@@ -65,9 +65,9 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe 
     if (options.extraItems) {
         options.extraItems.forEach((item) => {
             dropdownItems.push(
-                <div key={item.key} value={item.value} onClick={dropdownClickHandler}>
-                    <span className={classes['dropdown-item']}>{item.text}</span>
-                </div>
+                <li key={item.key} value={item.value} onClick={dropdownClickHandler}>
+                    <button className={classes['dropdown-item']}>{item.text}</button>
+                </li>
             );
         })
     }
@@ -85,10 +85,10 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe 
 
             <div className={filtersClasses.backdrop + dropdownOpenClass} onClick={containerClickHandler} id="dropdown-backdrop"></div>
             
-            <div className={filtersClasses['positional-container']}>
-                <div className={classes['dropdown'] + dropdownOpenClass}>
+            <div className={'positional-container'}>
+                <ol className={classes['dropdown'] + dropdownOpenClass}>
                     {dropdownItems}
-                </div>
+                </ol>
             </div>
         </div>
     )

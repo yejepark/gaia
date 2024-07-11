@@ -44,6 +44,11 @@
     }
 }
 
+.input-inner-grid {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+}
+
 .input-subgrid {
     display: grid;
 
@@ -60,7 +65,7 @@
     font-weight: 450;
     font-size: 1rem;
 
-    /*    color: blue;*/
+/*        color: blue;*/
 }
 
 .input-subtitle {
@@ -68,7 +73,7 @@
     /*    width: 100%;*/
     min-width: 100%;
 
-    /*    color: red;*/
+/*        color: red;*/
 }
 
 .input-container {
@@ -127,7 +132,6 @@
     }
 }
 
-
 .input-value {
     height: 2rem;
     padding-left: 10px;
@@ -142,4 +146,32 @@
     display: flex;
     justify-content: center;
     gap: 20px;
+}
+
+
+.floating-btn {
+    position: absolute;
+    right: 6%;
+    top: -5px;
+
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 600;
+}
+
+.input-subflex {
+    display: flex;
+    align-items: center;
+    gap: 0px 10px;
+    & input {
+        font-size: 0.9rem;
+    }
+}
+
+.year-input {
+    width: 5rem;
+}
+
+.month-input, .day-input {
+    width: 3.5rem;
 }

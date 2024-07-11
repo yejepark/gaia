@@ -23,7 +23,7 @@
     position: absolute;
     top: 13px;
 
-    width: 100%;
+    width: max(125px, 100%);
     max-height: 11rem;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -31,6 +31,8 @@
     background-color: var(--background-color);
     border-radius: 4px;
     box-shadow: 0 5px 10px gray;
+
+    list-style-type: none;
 
     & .dropdown-item {
         width: 100%;
@@ -42,6 +44,14 @@
         justify-content: right;
 
         font-size: 1rem;
+
+        background-color: var(--background-color);
+
+        border: none;
+        &:focus {
+            outline: none;
+            background-color: var(--background-active-color);
+        }
 
         &:hover {
             background-color: var(--background-active-color);

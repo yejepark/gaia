@@ -3,8 +3,8 @@ import React from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import parentClasses from '../pages/NewSellPost.module.css';
-import classes from './ProductInfoContainer.module.css';
 
+import { ValuesToElementsForm, ValuesToDropDownForm } from '../pages/NewSellPost';
 import DropDownInputForm from './DropDownInputForm';
 
 import { ItemContainer } from '../pages/NewSellPost';
@@ -42,45 +42,6 @@ const structureTypes = [
 ];
 structureTypes.sort();
 
-
-function ValuesToElementsForm({ values }) {
-    const { register } = useFormContext();
-
-    return values.map((item, idx) => {
-        if (item.subtitle) {
-            return <div key={idx} className={parentClasses['input-subtitle']}>{item.subtitle}</div>;
-        } else {
-            return (
-                <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
-                    <input type='text'
-                        className={parentClasses["input-value"] + ' focusable'} 
-                        autoComplete='off'
-                        {...register(item.name)} 
-                    />
-                    <div className={parentClasses.unit}>{item.unit}</div>
-                </div>
-            );
-        }
-    });
-}
-
-
-function ValuesToDropDownForm({ title, values, isSubEl, name }) {
-    return (
-        <ItemContainer title={title} isSubEl={isSubEl}>
-            <DropDownInputForm
-                name={name}
-                values={values} 
-                options={{
-                    placeholder: "직접입력",
-                    custumClass: parentClasses['dropdown-container'],
-                }}
-            />
-        </ItemContainer>
-    );
-}
-
-
 function BuildingFloorEl() {
     let inputFloorValues = [
         { subtitle: '지하' }, { unit: '층', name: 'ugrndFlrCnt' },
@@ -88,7 +49,7 @@ function BuildingFloorEl() {
     ];
     return (
         <ItemContainer title='층정보'>
-            <div className={parentClasses['input-subgrid'] + ' buildingFloorInfo'}>
+            <div className={parentClasses['input-subgrid']}>
                 <ValuesToElementsForm values={inputFloorValues} />
             </div>
         </ItemContainer>
@@ -103,9 +64,9 @@ function BuildingAreaEl() {
     let inputAreaValues = [
         { subtitle: '대지면적' }, { unit: 'm2', name: 'platArea' }, {}, {},
         { subtitle: '건축면적' }, { unit: 'm2', name: 'archArea' },
-        { subtitle: '건폐율' }, { unit: '%', name: 'buildingLandRatio'},
+        { subtitle: '건폐율' }, { unit: '%', name: 'buildingLandRatio', calculated: true},
         { subtitle: '연면적' }, { unit: 'm2', name: 'totArea' },
-        { subtitle: '용적률' }, { unit: '%', name: 'floorAreaRatio' },
+        { subtitle: '용적률' }, { unit: '%', name: 'floorAreaRatio', calculated: true },
     ];
 
     let platArea = useWatch({control, name: 'platArea'});
@@ -115,18 +76,26 @@ function BuildingAreaEl() {
 
     let buildingLandRatio = platArea > 0 ? Math.round(archArea / platArea * 100) : 0;
     let floorAreaRatio = platArea > 0 ? Math.round(totArea / platArea * 100) : 0;
-
-    useEffect(() => {
-        setValue('buildingLandRatio', buildingLandRatio);
-        setValue('floorAreaRatio', floorAreaRatio);
-    }, [platArea, archArea, totArea]);
+    let calculatedValues = {buildingLandRatio, floorAreaRatio};
+   
 
     return (
         <ItemContainer title='면적정보'>
-            <div className={parentClasses['input-subgrid'] + ' buildingAreaInfo'}>
+            <div className={parentClasses['input-subgrid']}>
                 {inputAreaValues.map((item, idx) => {
                     if (item.subtitle) {
                         return <div key={idx} className={parentClasses['input-subtitle']}>{item.subtitle}</div>;
+                    } else if (item.calculated) {
+                        return ( 
+                            <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
+                                <input type='text' 
+                                    value={calculatedValues[item.name]} 
+                                    className={parentClasses["input-value"] + ' not-focusable'} 
+                                    readOnly
+                                />
+                                <div className={parentClasses.unit}>{item.unit}</div>
+                            </div>
+                         );
                     } else if (item.name) {
                         let unitEl;
                         if (item.unit === 'm2') {
@@ -164,7 +133,7 @@ function BulidingRoomCntEl() {
 
     return (
         <ItemContainer title='총 세대/호'>
-            <div className={parentClasses['input-subgrid'] + ' buildingRoomCnt'}>
+            <div className={parentClasses['input-subgrid']}>
                 <ValuesToElementsForm values={inputRoomCntValues} />
             </div>
         </ItemContainer>
@@ -183,7 +152,7 @@ function BuildingParkingEl() {
 
     return (
         <ItemContainer title='주차장'>
-            <div className={parentClasses['input-subgrid'] + ' buildingParking'}>
+            <div className={parentClasses['input-subgrid']}>
                 <ValuesToElementsForm  values={inputParkingValues} />
             </div>
         </ItemContainer>
@@ -200,7 +169,7 @@ function ElevatorEl() {
 
     return (
         <ItemContainer title='승강기'>
-            <div className={parentClasses['input-subgrid'] + ' Elevator'}>
+            <div className={parentClasses['input-subgrid']}>
                 <ValuesToElementsForm values={inputElevatorValues} />
             </div>
         </ItemContainer>
@@ -220,22 +189,22 @@ function UseAprDayEl() {
     let items = [{
             name: 'useAprDay.Y',
             values: yearValues,
-            inputClass: classes['year-input']
+            inputClass: parentClasses['year-input']
         }, { unit: '년' },
         {
             name: 'useAprDay.M',
             values: monthValues,
-            inputClass: classes['month-input']
+            inputClass: parentClasses['month-input']
         }, { unit: '월' },
         {
             name: 'useAprDay.D',
             values: dayValues,
-            inputClass: classes['day-input']
+            inputClass: parentClasses['day-input']
         }, { unit: '일' }
     ];
     return (
         <ItemContainer title='사용승인일'>
-            <div className={classes['input-subflex']}>
+            <div className={parentClasses['input-subflex']}>
                 {items.map((item, idx) => {
                     if (item.name) {
                         return (
