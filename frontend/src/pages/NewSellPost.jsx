@@ -59,28 +59,18 @@ const getDefaultValues = () => {
         hoName: '',
         floors: [],
         mainPurpose: '',
-        ugrndFlrCnt: 0,
-        grndFlrCnt: 1,
-        hoCnt: 0,
-        hhldCnt: 0,
-        fmlyCnt: 0,
-        indrAutoUtcnt: 0,
-        indrMechUtcnt: 0,
-        oudrAutoUtcnt: 0,
-        oudrMechUtcnt: 0,
-        rideUseElvtCnt: 0,
-        emgenUseElvtCnt: 0,
+        flrCnt: { ugrnd: 0, grnd: 1 },
+        roomCnt: { ho: 0, household: 0, family: 0 },
+        parkingCnt: { indrAuto: 0, indrMech: 0, oudrAuto: 0, oudrMech: 0 },
+        elvtCnt: { rideUse: 0, emgenUse: 0 },
         useAprDay: { Y: thisYear, M: thisMonth, D: thisDay },
-        platArea: 0,
-        archArea: 0,
-        totArea: 0,
-        tradePrice: 0,
-        deposit: 0,
-        monthlyRent: 0,
+        area: { plat: 0, arch: 0, total: 0 },
+        price: { sale: 0, deposit: 0, monthlyRent: 0 },
         premium: { operation: 0, facility: 0, location: 0 },
         income: { revenue: 0, cogs: 0, wage: 0, utilityCost: 0, manageCost: 0, profit: 0 },
+        loan: { pct: 0 },
         moveInDay: { Y: thisYear, M: thisMonth, D: thisDay },
-        loan: { percentage: 0 },
+        prodArea: { use: 0, contract: 0},
         ...getSavedData(),
     };
 }
@@ -178,17 +168,17 @@ function clickFillProductInfo(addressState, setValue) {
         let brTitle = addressState.data.brTitle[addressState.brTitleIdx];
         let toSet = {
             mainPurpose: 'mainPurpsCdNm',
-            ugrndFlrCnt: 'ugrndFlrCnt',
-            grndFlrCnt: 'grndFlrCnt',
-            hoCnt: 'hoCnt',
-            hhldCnt: 'hhldCnt',
-            fmlyCnt: 'fmlyCnt',
-            indrAutoUtcnt: 'indrAutoUtcnt',
-            indrMechUtcnt: 'indrMechUtcnt',
-            oudrAutoUtcnt: 'oudrAutoUtcnt',
-            oudrMechUtcnt: 'oudrMechUtcnt',
-            rideUseElvtCnt: 'rideUseElvtCnt',
-            emgenUseElvtCnt: 'emgenUseElvtCnt',
+            'flrCnt.ugrnd': 'ugrndFlrCnt',
+            'flrCnt.grnd': 'grndFlrCnt',
+            'roomCnt.ho': 'hoCnt',
+            'roomCnt.household': 'hhldCnt',
+            'roomCnt.family': 'fmlyCnt',
+            'parkingCnt.indrAuto': 'indrAutoUtcnt',
+            'parkingCnt.indrMech': 'indrMechUtcnt',
+            'parkingCnt.oudrAuto': 'oudrAutoUtcnt',
+            'parkingCnt.oudrMech': 'oudrMechUtcnt',
+            'elvtCnt.rideUse': 'rideUseElvtCnt',
+            'elvtCnt.emgenUse': 'emgenUseElvtCnt',
             strctCdNm: 'strctCdNm',
         };
         for (const [k, v] of Object.entries(toSet)) {
@@ -208,9 +198,9 @@ function clickFillProductInfo(addressState, setValue) {
         let archArea = brTitle.archArea ? Number(brTitle.archArea) : 0;
         let totArea = brTitle.vlRatEstmTotArea ? Number(brTitle.vlRatEstmTotArea) : 0;
 
-        setValue('platArea', platArea.toFixed(1));
-        setValue('archArea', archArea.toFixed(1));
-        setValue('totArea', totArea.toFixed(1));
+        setValue('area.plat', platArea.toFixed(1));
+        setValue('area.arch', archArea.toFixed(1));
+        setValue('area.total', totArea.toFixed(1));
     }
 }
 
@@ -247,7 +237,7 @@ export function ValuesToElementsForm({ values }) {
                                 autoComplete='off'
                                 {...register(item.name, item.options)} 
                             />
-                            <div className={classes.unit}>{item.unit}</div>
+                            <div className={classes.unit}>{item.unit === 'm2' ? <>m<sup>2</sup></> : item.unit}</div>
                         </div>
                         {error && <span className={'error-message'}> {error.message} </span>}
                     </div>

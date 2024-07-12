@@ -42,10 +42,25 @@ const structureTypes = [
 ];
 structureTypes.sort();
 
+
+const checkIfNum = {
+    valueAsNumber: true, 
+    validate: (v) => {
+        return !isNaN(v) || '숫자만 입력 가능합니다.' 
+    },
+};
+
+const checkIfInt = {
+    setValueAs: v => parseInt(v),
+    validate: (v) => {
+        return !isNaN(v) || '숫자만 입력 가능합니다.' 
+    },
+}
+
 function BuildingFloorEl() {
     let inputFloorValues = [
-        { subtitle: '지하' }, { unit: '층', name: 'ugrndFlrCnt' },
-        { subtitle: '지상' }, { unit: '층', name: 'grndFlrCnt' },
+        { subtitle: '지하' }, { unit: '층', name: 'flrCnt.ugrnd', options: checkIfInt },
+        { subtitle: '지상' }, { unit: '층', name: 'flrCnt.grnd', options: checkIfInt },
     ];
     return (
         <ItemContainer title='층정보'>
@@ -61,60 +76,26 @@ function BuildingAreaEl() {
 
     const { control, setValue, register } = useFormContext();
 
-    let platArea = useWatch({control, name: 'platArea'});
-    let archArea = useWatch({control, name: 'archArea'});
-    let totArea = useWatch({control, name: 'totArea'});
+    let platArea = useWatch({control, name: 'area.plat'});
+    let archArea = useWatch({control, name: 'area.arch'});
+    let totArea = useWatch({control, name: 'area.total'});
     // console.log('buidingArea: ', platArea, archArea, totArea);
 
     let buildingLandRatio = platArea > 0 ? Math.round(archArea / platArea * 100) : 0;
     let floorAreaRatio = platArea > 0 ? Math.round(totArea / platArea * 100) : 0;
 
     let inputAreaValues = [
-        { subtitle: '대지면적' }, { unit: 'm2', name: 'platArea', options: {valueAsNumber: true} }, {}, {},
-        { subtitle: '건축면적' }, { unit: 'm2', name: 'archArea', options: {valueAsNumber: true} },
+        { subtitle: '대지면적' }, { unit: 'm2', name: 'area.plat', options: checkIfNum }, {}, {},
+        { subtitle: '건축면적' }, { unit: 'm2', name: 'area.arch', options: checkIfNum },
         { subtitle: '건폐율' }, { unit: '%', name: 'buildingLandRatio', calculated: buildingLandRatio },
-        { subtitle: '연면적' }, { unit: 'm2', name: 'totArea', options: {valueAsNumber: true} },
+        { subtitle: '연면적' }, { unit: 'm2', name: 'area.total', options: checkIfNum },
         { subtitle: '용적률' }, { unit: '%', name: 'floorAreaRatio', calculated: floorAreaRatio },
     ];   
 
     return (
         <ItemContainer title='면적정보'>
             <div className={parentClasses['input-subgrid']}>
-                {inputAreaValues.map((item, idx) => {
-                    if (item.subtitle) {
-                        return <div key={idx} className={parentClasses['input-subtitle']}>{item.subtitle}</div>;
-                    } else if (Object.keys(item).includes('calculated')) {
-                        return ( 
-                            <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
-                                <input type='text' 
-                                    value={item.calculated ? item.calculated : 0} 
-                                    className={parentClasses["input-value"] + ' not-focusable'} 
-                                    readOnly
-                                />
-                                <div className={parentClasses.unit}>{item.unit}</div>
-                            </div>
-                         );
-                    } else if (item.name) {
-                        let unitEl;
-                        if (item.unit === 'm2') {
-                            unitEl = <div className={parentClasses.unit}>m<sup>2</sup></div>;
-                        } else {
-                            unitEl = <div className={parentClasses.unit}>{item.unit}</div>;
-                        }
-                        return ( 
-                            <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
-                                <input type='text'
-                                    {...register(item.name, item.options)}
-                                    className={parentClasses["input-value"] + ' focusable'}
-                                    autoComplete='off'
-                                />
-                                {unitEl}
-                         </div>
-                        );
-                    } else {
-                        return <div key={idx}></div>;                            
-                    }
-                })}
+                <ValuesToElementsForm values={inputAreaValues} />
             </div>
         </ItemContainer>
     );
@@ -124,9 +105,9 @@ function BuildingAreaEl() {
 function BulidingRoomCntEl() {
 
     let inputRoomCntValues = [
-        { subtitle: '세대' }, { name: 'hhldCnt', unit: '개' },
-        { subtitle: '호' }, { name: 'hoCnt', unit: '개' },
-        { subtitle: '가구' }, { name: 'fmlyCnt', unit: '개' },
+        { subtitle: '세대' }, { name: 'roomCnt.household', unit: '개', options: checkIfInt },
+        { subtitle: '호' }, { name: 'roomCnt.ho', unit: '개', options: checkIfInt },
+        { subtitle: '가구' }, { name: 'roomCnt.family', unit: '개', options: checkIfInt },
     ];
 
     return (
@@ -142,10 +123,10 @@ function BulidingRoomCntEl() {
 function BuildingParkingEl() {
 
     let inputParkingValues = [
-        { subtitle: '실내 자주식' }, { name: 'indrAutoUtcnt', unit: '대' },
-        { subtitle: '실내 기계식' }, { name: 'indrMechUtcnt', unit: '대' },
-        { subtitle: '실외 자주식' }, { name: 'oudrAutoUtcnt', unit: '대' },
-        { subtitle: '실외 기계식' }, { name: 'oudrMechUtcnt', unit: '대' },
+        { subtitle: '실내 자주식' }, { name: 'parkingCnt.indrAuto', unit: '대', options: checkIfInt },
+        { subtitle: '실내 기계식' }, { name: 'parkingCnt.indrMech', unit: '대', options: checkIfInt },
+        { subtitle: '실외 자주식' }, { name: 'parkingCnt.oudrAuto', unit: '대', options: checkIfInt },
+        { subtitle: '실외 기계식' }, { name: 'parkingCnt.oudrMech', unit: '대', options: checkIfInt },
     ];
 
     return (
@@ -161,8 +142,8 @@ function BuildingParkingEl() {
 function ElevatorEl() {
 
     let inputElevatorValues = [
-        { subtitle: '승용' }, { unit: '대', name: 'rideUseElvtCnt' },
-        { subtitle: '비상용' }, { unit: '대', name: 'emgenUseElvtCnt' },
+        { subtitle: '승용' }, { unit: '대', name: 'elvtCnt.rideUse', options: checkIfInt },
+        { subtitle: '비상용' }, { unit: '대', name: 'elvtCnt.emgenUse', options: checkIfInt },
     ];
 
     return (
@@ -211,7 +192,9 @@ function UseAprDayEl() {
                                 options={{
                                     placeholder: "",
                                     custumClass: item.inputClass
-                                }}/>
+                                }}
+                                readOnly={true}
+                            />
                         );                        
                     } else if (item.unit) {
                         return <div key={idx} className={parentClasses.unit}>{item.unit}</div>;

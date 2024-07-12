@@ -7,14 +7,20 @@ import DropDownInputForm from './DropDownInputForm';
 import { ItemContainer, ValuesToElementsForm } from '../pages/NewSellPost';
 import parentClasses from '../pages/NewSellPost.module.css';
 
-let posNum = { valueAsNumber: true, min: { value: 1 , message: '0 보다 커야합니다.' } };
+
+const checkIfNum = {
+    valueAsNumber: true, 
+    validate: (v) => {
+        return !isNaN(v) || '숫자만 입력 가능합니다.' 
+    },
+};
 
 function PriceEl() {
 
     let inputPriceValues = [
-        { subtitle: '매매가' }, { unit: '만원', name: 'tradePrice', options: { valueAsNumber: true } }, {}, {},
-        { subtitle: '보증금' }, { unit: '만원', name: 'deposit', options: { valueAsNumber: true } },
-        { subtitle: '월세' }, { unit: '만원', name: 'monthlyRent', options: { valueAsNumber: true } },
+        { subtitle: '매매가' }, { unit: '만원', name: 'price.sale', options: checkIfNum }, {}, {},
+        { subtitle: '보증금' }, { unit: '만원', name: 'price.deposit', options: checkIfNum },
+        { subtitle: '월세' }, { unit: '만원', name: 'price.monthlyRent', options: checkIfNum },
     ];
 
     return (
@@ -37,9 +43,9 @@ function PremiumEl() {
     // console.log(pOp, pFac, pLoc, pTot);
 
     let inputPremiumValues = [
-        { subtitle: '영업권리금' }, { name: 'premium.operation', unit: '만원', options: {valueAsNumber: true} },
-        { subtitle: '시설권리금' }, { name: 'premium.facility', unit: '만원', options: {valueAsNumber: true} },
-        { subtitle: '바닥권리금' }, { name: 'premium.location', unit: '만원', options: {valueAsNumber: true} },
+        { subtitle: '영업권리금' }, { name: 'premium.operation', unit: '만원', options: checkIfNum },
+        { subtitle: '시설권리금' }, { name: 'premium.facility', unit: '만원', options: checkIfNum },
+        { subtitle: '바닥권리금' }, { name: 'premium.location', unit: '만원', options: checkIfNum },
         { subtitle: '권리금 총합' }, { unit: '만원', calculated: pTot }
     ];
 
@@ -68,6 +74,7 @@ function PremiumEl() {
     );
 }
 
+
 function AcquireEl() {
     const { register, control } = useFormContext();
 
@@ -82,13 +89,13 @@ function AcquireEl() {
     let etc = revenue - cogs - wage - utilityCost - manageCost - profit;
 
     let inputAcquireValues = [
-        { subtitle: '월 매출' }, { name: 'income.revenue', unit: '만원', options: { valueAsNumber: true }},
-        { subtitle: '재료비' }, { name: 'income.cogs', unit: '만원', options: {valueAsNumber: true} },
-        { subtitle: '인건비' }, { name: 'income.wage', unit: '만원', options: {valueAsNumber: true} },
-        { subtitle: '공과금' }, { name: 'income.utilityCost', unit: '만원', options: {valueAsNumber: true} },
-        { subtitle: '관리비' }, { name: 'income.manageCost', unit: '만원', options: {valueAsNumber: true} },
+        { subtitle: '월 매출' }, { name: 'income.revenue', unit: '만원', options: checkIfNum },
+        { subtitle: '재료비' }, { name: 'income.cogs', unit: '만원', options: checkIfNum },
+        { subtitle: '인건비' }, { name: 'income.wage', unit: '만원', options: checkIfNum },
+        { subtitle: '공과금' }, { name: 'income.utilityCost', unit: '만원', options: checkIfNum },
+        { subtitle: '관리비' }, { name: 'income.manageCost', unit: '만원', options: checkIfNum },
         { subtitle: '기타비용' }, { unit: '만원', calculated: etc },
-        { subtitle: '월 순수익' }, { name: 'income.profit', unit: '만원', options: {valueAsNumber: true} },
+        { subtitle: '월 순수익' }, { name: 'income.profit', unit: '만원', options: checkIfNum },
     ];
 
     return (
@@ -115,16 +122,16 @@ function AcquireEl() {
     );
 }
 
+
 function LoanEl() {
     const { register, control, formState: { errors } } = useFormContext();
 
-    let [ loanExist, loanExpose, loanPct ] = useWatch({
+    let [ loanExist, loanExpose ] = useWatch({
         control, 
-        name: [ 'loan.exist', 'loan.expose', 'loan.percentage'
-        ]
+        name: [ 'loan.exist', 'loan.expose' ]
     });
     
-    let error = errors['loan'] && errors['loan']['percentage'] ? errors['loan']['percentage'] : null;
+    let error = errors['loan'] && errors['loan']['pct'] ? errors['loan']['pct'] : null;
 
     return (
         <ItemContainer title='융자 정보'>
@@ -149,8 +156,8 @@ function LoanEl() {
                                 <input type='text'
                                     className={parentClasses["input-value"] + ' focusable'} 
                                     autoComplete='off'
-                                    {...register('loan.percentage', {
-                                         valueAsNumber: true,
+                                    {...register('loan.pct', {
+                                         ...checkIfNum,
                                          min: {value: 0, message: '0 보다 작을 수 없습니다.'},
                                          max: {value: 100, message: '100 보다 클 수 없습니다.'},
                                     })} 
@@ -204,7 +211,9 @@ function MoveInDayEl() {
                                 options={{
                                     placeholder: "",
                                     custumClass: item.inputClass
-                                }}/>
+                                }}
+                                readOnly={true}
+                            />
                         );                        
                     } else if (item.unit) {
                         return <div key={idx} className={parentClasses.unit}>{item.unit}</div>;
@@ -220,6 +229,23 @@ function MoveInDayEl() {
     );
 }
 
+function AreaEl() {
+
+    let inputAreaValues = [
+        { subtitle: '전용면적' }, { unit: 'm2', name: 'prodArea.use', options: checkIfNum },
+        { subtitle: '계약면적' }, { unit: 'm2', name: 'prodArea.contract', options: checkIfNum },
+    ];
+
+    return (
+        <ItemContainer title='면적 정보'>
+            <div className={parentClasses['input-subgrid']}>
+                <ValuesToElementsForm values={inputAreaValues} />
+            </div>
+        </ItemContainer>
+    );
+}
+
+
 function ProductContainer({ addressState }) {
 
     return (
@@ -229,9 +255,8 @@ function ProductContainer({ addressState }) {
         	<AcquireEl />
             <LoanEl />
             <MoveInDayEl />
-            
-        	<div className={parentClasses["input-title"]}>면적</div> 
-        	<div>계약면적, 전용면적</div>
+            <AreaEl />
+
         	<div className={parentClasses["input-title"]}>방향</div> 
         	<div>동, 서, 남, 북, 남동, 남서, 북동, 북서 (주된 출입구 기준)</div>
         	<div className={parentClasses["input-title"]}>주차가능여부</div> 

@@ -51,7 +51,7 @@
     display: grid;
 
     grid-template-columns: 5rem 1fr 5rem 1fr;
-    grid-template-rows: 2rem;
+/*    grid-template-rows: 2rem;*/
 
     align-items: start;
 
@@ -69,10 +69,12 @@
 
 .input-subtitle {
     font-size: 0.95rem;
-    width: min(100%, 10rem);
+    width: min(100%, 8rem);
 /*    min-width: 100%;*/
 
     padding-top: 3px;
+
+    flex-shrink: 0;
 
 /*        color: red;*/
 }
@@ -109,6 +111,8 @@
 
 
 .dropdown-container {
+    width: 100%;
+
     & input {
         height: 1.3rem;
         width: 100%;

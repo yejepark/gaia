@@ -16,7 +16,7 @@ function ListItem({ value, text, unit, onClick }) {
 }
 
 
-function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe }) {
+function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe, readOnly }) {
     const { register, setValue, setFocus } = useFormContext();
 
     function inputClickHandler(event) {
@@ -74,6 +74,7 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe 
                     type='text' 
                     autoComplete="off"
                     placeholder={options.placeholder}
+                    readOnly={readOnly}
                 /> 
                 <UpDown up={dropdownOpen} />
             </div>
