@@ -130,8 +130,8 @@ function AddressInput({ addressState, dispatchAddress }) {
     }
 
     return (
-        <div>
-            <div className={classes["address-container"]}>
+        <div className={classes["address-container"]}>
+            <div className={classes["address-input-container"]}>
                 <input type="button" className='inverted-alive-btn focusable' onClick={execDaumPostcode} value="주소입력하기"></input>
                 {hasAddressData && <div id="zonecode" className={classes.zonecode}>{'우편번호: ' + addressData.zonecode}</div>}
             </div>

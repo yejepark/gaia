@@ -7,7 +7,7 @@ import parentClasses from './Filters.module.css';
 import classes from './MultipleChoice.module.css';
 
 
-function MultipleChoice({ checkedList, setCheckedList, choiceMap, defaultBtnLabel, name, notActive }) {
+function MultipleChoice({ checkedList, setCheckedList, choiceMap, defaultBtnLabel, name, notActive, fitContent }) {
  	
  	let [dialogOpen, setDialogOpen] = useState(false);
 
@@ -24,7 +24,17 @@ function MultipleChoice({ checkedList, setCheckedList, choiceMap, defaultBtnLabe
             setCheckedList((prevList) => prevList.filter((x) => x !== clicked));
         }
     }
-	let btnClass = checkedList?.length === 0 ? '' : (notActive ? '' : ' ' + parentClasses.active);
+
+    let btnClass = '';
+    if (!notActive) {
+        btnClass = btnClass + ' ' + parentClasses.active;
+        console.log(1, notActive, fitContent, btnClass)
+    }
+    if (fitContent) {
+        btnClass = btnClass + ' ' + classes.fitContent;
+        console.log(2, notActive, fitContent, btnClass)
+    }
+    console.log(3, notActive, fitContent, btnClass)
     let btnLabel = checkedList?.length === 0 ? defaultBtnLabel : (
         checkedList.map((x)=>choiceMap[x]).filter((x)=> x && x.length > 0).join(',')
     );

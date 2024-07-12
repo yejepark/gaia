@@ -61,14 +61,6 @@ function BuildingAreaEl() {
 
     const { control, setValue, register } = useFormContext();
 
-    let inputAreaValues = [
-        { subtitle: '대지면적' }, { unit: 'm2', name: 'platArea' }, {}, {},
-        { subtitle: '건축면적' }, { unit: 'm2', name: 'archArea' },
-        { subtitle: '건폐율' }, { unit: '%', name: 'buildingLandRatio', calculated: true},
-        { subtitle: '연면적' }, { unit: 'm2', name: 'totArea' },
-        { subtitle: '용적률' }, { unit: '%', name: 'floorAreaRatio', calculated: true },
-    ];
-
     let platArea = useWatch({control, name: 'platArea'});
     let archArea = useWatch({control, name: 'archArea'});
     let totArea = useWatch({control, name: 'totArea'});
@@ -76,8 +68,14 @@ function BuildingAreaEl() {
 
     let buildingLandRatio = platArea > 0 ? Math.round(archArea / platArea * 100) : 0;
     let floorAreaRatio = platArea > 0 ? Math.round(totArea / platArea * 100) : 0;
-    let calculatedValues = {buildingLandRatio, floorAreaRatio};
-   
+
+    let inputAreaValues = [
+        { subtitle: '대지면적' }, { unit: 'm2', name: 'platArea', options: {valueAsNumber: true} }, {}, {},
+        { subtitle: '건축면적' }, { unit: 'm2', name: 'archArea', options: {valueAsNumber: true} },
+        { subtitle: '건폐율' }, { unit: '%', name: 'buildingLandRatio', calculated: buildingLandRatio },
+        { subtitle: '연면적' }, { unit: 'm2', name: 'totArea', options: {valueAsNumber: true} },
+        { subtitle: '용적률' }, { unit: '%', name: 'floorAreaRatio', calculated: floorAreaRatio },
+    ];   
 
     return (
         <ItemContainer title='면적정보'>
@@ -85,11 +83,11 @@ function BuildingAreaEl() {
                 {inputAreaValues.map((item, idx) => {
                     if (item.subtitle) {
                         return <div key={idx} className={parentClasses['input-subtitle']}>{item.subtitle}</div>;
-                    } else if (item.calculated) {
+                    } else if (Object.keys(item).includes('calculated')) {
                         return ( 
                             <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
                                 <input type='text' 
-                                    value={calculatedValues[item.name]} 
+                                    value={item.calculated ? item.calculated : 0} 
                                     className={parentClasses["input-value"] + ' not-focusable'} 
                                     readOnly
                                 />
@@ -106,7 +104,7 @@ function BuildingAreaEl() {
                         return ( 
                             <div key={idx} className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
                                 <input type='text'
-                                    {...register(item.name)}
+                                    {...register(item.name, item.options)}
                                     className={parentClasses["input-value"] + ' focusable'}
                                     autoComplete='off'
                                 />

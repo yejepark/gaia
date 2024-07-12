@@ -7,6 +7,14 @@ import filtersClasses from './Filters.module.css';
 import classes from './DropDownInput.module.css';
 
 
+function ListItem({ value, text, unit, onClick }) {
+    return (
+        <li value={value} onClick={onClick}>
+            <button className={classes['dropdown-item']}>{text || value}{unit}</button>
+        </li>
+    );
+}
+
 
 function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe }) {
     const { register, setValue, setFocus } = useFormContext();
@@ -46,30 +54,17 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe 
     let dropdownItems;
     if (values.length > 0 && ((typeof values[0] === 'number') || (typeof values[0] === 'string' || values[0] instanceof String))) {
         dropdownItems = values.map((v) => {
-            return (
-                <li key={v} value={v} onClick={dropdownClickHandler}>
-                   <button className={classes['dropdown-item']}>{v}{options.unit}</button>
-                </li>
-            );
-        });
+            return <ListItem key={v} value={v} text={v} unit={options.unit} onClick={dropdownClickHandler} />});
     } else {
         dropdownItems = values.map((item) => {
-            return (
-                <li key={item.key} value={item.value} onClick={dropdownClickHandler}>
-                   <button className={classes['dropdown-item']}>{item.text}</button>
-                </li>
-            );
-        });
+            return <ListItem key={item.key} value={item.value} text={item.text} onClick={dropdownClickHandler} />});
     }
 
     if (options.extraItems) {
         options.extraItems.forEach((item) => {
             dropdownItems.push(
-                <li key={item.key} value={item.value} onClick={dropdownClickHandler}>
-                    <button className={classes['dropdown-item']}>{item.text}</button>
-                </li>
-            );
-        })
+                <ListItem key={item.key} value={item.value} text={item.text} onClick={dropdownClickHandler} />);
+        });
     }
 
     return (

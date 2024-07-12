@@ -8,13 +8,12 @@ import classes from './Filters.module.css';
 
 function SingleChoiceForm({ choiceMap, btnLabel, name }) {
 
-    const { register, control, setFocus } = useFormContext();
+    const { register, control } = useFormContext();
 
     let [dialogOpen, setDialogOpen] = useState(false);
 
     function btnClickHandler(e) {
         setDialogOpen((isOpen) => { return !isOpen; });
-        setFocus(name);
     }
 
     function enterStrokeHandler(e) {

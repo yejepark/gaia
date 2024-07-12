@@ -1,4 +1,7 @@
 .address-container {
+    width: 100%;
+}
+.address-input-container {
     display: flex;
     justify-content: space-between;
     align-items: center;

@@ -72,9 +72,9 @@ function Filters() {
 
     return (
         <div className={classes.filters}>
-            <form className={classes['search-container'] + ' focusable'}>
+            <div className={classes['search-container'] + ' focusable'}>
                 <input type="search" placeholder="지역을 입력해 주세요" name="region-search"/>
-            </form>
+            </div>
 
             <div className={classes['filter-container']}>
                 <SingleChoice chosen={listingType} setChosen={setListingType} choiceMap={listingTypeMap} 
@@ -83,7 +83,7 @@ function Filters() {
 
             <div className={classes['filter-container']}>
                 <MultipleChoice checkedList={checkedSpaceUses} setCheckedList={setCheckedSpaceUses} choiceMap={spaceUseMap} 
-                    defaultBtnLabel='용도' name='usage'/>
+                    defaultBtnLabel='용도' name='usage' fitContent={true} />
             </div>
 
             <div className={classes['filter-container']}>

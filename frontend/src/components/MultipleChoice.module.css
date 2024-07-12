@@ -1,14 +1,19 @@
 .container {
-    height: 100%;
+    height: max(2rem, 100%);
     width: 100%;
+
     & button {
-        width: 100%
+        width: max(100%, 10rem);
+    }
+
+    & button.fitContent {
+        width: fit-content;
     }
 }
 
 .dialog {
     font-size: 0.9rem;
-    max-height: 18rem;
+    max-height: 20rem;
     overflow-y: scroll;
 }
 

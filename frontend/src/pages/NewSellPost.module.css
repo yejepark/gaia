@@ -29,8 +29,6 @@
     border: solid 1px var(--border-color);
     border-radius: 10px;
 
-    align-items: top;
-
     padding: 15px 30px;
     margin: 10px 15px;
 
@@ -46,15 +44,16 @@
 
 .input-inner-grid {
     display: grid;
-    grid-template-columns: 7rem 1fr;
+    grid-template-columns: 8rem 1fr;
 }
 
 .input-subgrid {
     display: grid;
 
     grid-template-columns: 5rem 1fr 5rem 1fr;
+    grid-template-rows: 2rem;
 
-    align-items: center;
+    align-items: start;
 
     row-gap: 8px;
     column-gap: 25px;
@@ -69,16 +68,21 @@
 }
 
 .input-subtitle {
-    font-size: 0.9rem;
-    /*    width: 100%;*/
-    min-width: 100%;
+    font-size: 0.95rem;
+    width: min(100%, 10rem);
+/*    min-width: 100%;*/
+
+    padding-top: 3px;
 
 /*        color: red;*/
 }
 
 .input-container {
-    width: 100%;
+    display: flex;
+    flex-direction: row;
 
+    width: 100%;
+    height: 100%;
     &>input {
         width: 100%;
         font-size: .9rem;
@@ -89,10 +93,11 @@
 
 .input-subcontainer {
     display: flex;
-    align-items: center;
+    align-items: start;
 
     width: 100%;
-    height: 2rem;
+    height: 100%;
+/*    height: 2rem;*/
 
     &>input {
         width: 100%;
@@ -116,6 +121,7 @@
     align-items: center;
 
     position: relative;
+    max-width: 10rem;
 
     &>input {
         width: 100%;

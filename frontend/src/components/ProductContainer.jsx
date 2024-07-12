@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import SingleChoiceForm from './SingleChoiceForm';
 import DropDownInputForm from './DropDownInputForm';
@@ -7,47 +7,18 @@ import DropDownInputForm from './DropDownInputForm';
 import { ItemContainer, ValuesToElementsForm } from '../pages/NewSellPost';
 import parentClasses from '../pages/NewSellPost.module.css';
 
-
-function NumberInput({ title, name, unit }) {
-    let savedNum = sessionStorage.getItem(name);
-    let [num, setNum] = useState(savedNum ? savedNum : 0);
-
-    function textChangeHandler(event) {
-        let newText = event.target.value
-        let newNum = parseInt(newText);
-        console.log(newText, newNum)
-
-        if (!newNum || newText.length === 0) {
-            setNum('');
-            sessionStorage.setItem(name, '');
-        }
-
-        if (newNum >= 0) {
-            setNum(newNum);
-            sessionStorage.setItem(name, newNum);
-        }
-    }
-
-    return (
-        <ItemContainer title={title}>
-        	<div className={parentClasses['input-subcontainer'] + ' ' + parentClasses['input-with-unit']}>
-				<input type='text' name={name} value={num} onChange={textChangeHandler} autoComplete='off' className='focusable'/>
-				<div className={parentClasses.unit}>{unit}</div>
-			</div>
-		</ItemContainer>
-    );
-}
-
+let posNum = { valueAsNumber: true, min: { value: 1 , message: '0 보다 커야합니다.' } };
 
 function PriceEl() {
+
     let inputPriceValues = [
-        { subtitle: '매매가' }, { unit: '만원', name: 'tradePrice' }, {}, {},
-        { subtitle: '보증금' }, { unit: '만원', name: 'deposit' },
-        { subtitle: '월세' }, { unit: '만원', name: 'monthlyRent' },
+        { subtitle: '매매가' }, { unit: '만원', name: 'tradePrice', options: { valueAsNumber: true } }, {}, {},
+        { subtitle: '보증금' }, { unit: '만원', name: 'deposit', options: { valueAsNumber: true } },
+        { subtitle: '월세' }, { unit: '만원', name: 'monthlyRent', options: { valueAsNumber: true } },
     ];
 
     return (
-        <ItemContainer title='금액 정보'>
+        <ItemContainer title='가격 정보'>
             <div className={parentClasses['input-subgrid']}>
                 <ValuesToElementsForm values={inputPriceValues} />
             </div>
@@ -56,78 +27,140 @@ function PriceEl() {
 }
 
 function PremiumEl() {
-    const { register } = useFormContext();
+    const { register, control } = useFormContext();
 
-    let premiumMustMap = { noPremium: '무권리', negotiable: '권리금 협의 가능', must: '권리금 협의 불가능' };
+    let [ pOp, pFac, pLoc, pExist ] = useWatch({ 
+        control, 
+        name: [ 'premium.operation', 'premium.facility', 'premium.location', 'premium.exist' ]
+    });
+    let pTot = pOp + pFac + pLoc;
+    // console.log(pOp, pFac, pLoc, pTot);
 
     let inputPremiumValues = [
-        { subtitle: ''}
+        { subtitle: '영업권리금' }, { name: 'premium.operation', unit: '만원', options: {valueAsNumber: true} },
+        { subtitle: '시설권리금' }, { name: 'premium.facility', unit: '만원', options: {valueAsNumber: true} },
+        { subtitle: '바닥권리금' }, { name: 'premium.location', unit: '만원', options: {valueAsNumber: true} },
+        { subtitle: '권리금 총합' }, { unit: '만원', calculated: pTot }
     ];
 
-
     return (
-        <ItemContainer title='권리금'>
-            <div className={parentClasses['input-inner-grid']}>
-                <ItemContainer title='권리금 있음' subEl={true}>
-                    <label>
-                        <input type="checkbox" {...register('premiumExist')} />
-                        권리금 있음
+        <ItemContainer title='권리금 정보'>
+            <div className={'subflex-col'}>
+                <div className={'subflex-row'}>
+                    <label className={'input-checkbox'}>
+                        <input type="checkbox" {...register('premium.exist')} />
+                        <div>권리금 있음</div>
                     </label>
-                </ItemContainer>
-                <ItemContainer title='권리금 총합' subEl={true}>
-                    만원
-                </ItemContainer>
-                <ItemContainer title='바닥 권리금' subEl={true}>
-                    만원
-                </ItemContainer>
-                <ItemContainer title='영업 권리금' subEl={true}>
-                    만원
-                </ItemContainer>
-                <ItemContainer title='시설 권리금' subEl={true}>
-                    만원
-                </ItemContainer>
+                    {pExist &&
+                        <label className={'input-checkbox'}>
+                            <input type="checkbox" {...register('premium.negotiable')} />
+                            <div>협의 가능</div>
+                        </label>
+                    }
+                </div>
+                {pExist && 
+                    <div className={parentClasses['input-subgrid']}>
+                        <ValuesToElementsForm values={inputPremiumValues} />
+                    </div>
+                }
             </div>
         </ItemContainer>
     );
 }
 
-function TransferEl() {
-    let transferMustMap = { noTransfer : '양도인수 불필요', transfer: '양도인수 필수' };
+function AcquireEl() {
+    const { register, control } = useFormContext();
 
-    let inputPremiumValues = [
-        { subtitle: ''}
+    let [ revenue, cogs, wage, utilityCost, manageCost, profit, incomeExpose ] = useWatch({
+        control, 
+        name: [ 
+            'income.revenue', 'income.cogs', 'income.wage', 
+            'income.utilityCost', 'income.manageCost', 'income.profit',
+            'income.expose' 
+        ]
+    });
+    let etc = revenue - cogs - wage - utilityCost - manageCost - profit;
+
+    let inputAcquireValues = [
+        { subtitle: '월 매출' }, { name: 'income.revenue', unit: '만원', options: { valueAsNumber: true }},
+        { subtitle: '재료비' }, { name: 'income.cogs', unit: '만원', options: {valueAsNumber: true} },
+        { subtitle: '인건비' }, { name: 'income.wage', unit: '만원', options: {valueAsNumber: true} },
+        { subtitle: '공과금' }, { name: 'income.utilityCost', unit: '만원', options: {valueAsNumber: true} },
+        { subtitle: '관리비' }, { name: 'income.manageCost', unit: '만원', options: {valueAsNumber: true} },
+        { subtitle: '기타비용' }, { unit: '만원', calculated: etc },
+        { subtitle: '월 순수익' }, { name: 'income.profit', unit: '만원', options: {valueAsNumber: true} },
     ];
 
     return (
-        <ItemContainer title='양도인수'>
-            <div className={parentClasses['input-inner-grid']}>
-                <ItemContainer title='양도인수 여부' subEl={true}>
-                    <SingleChoiceForm name='transferMust' choiceMap={transferMustMap} btnLabel='선택하기' />
-                </ItemContainer>
-                <ItemContainer title='매출액' subEl={true}>
-                    만원
-                </ItemContainer>
-                <ItemContainer title='비용' subEl={true}>
-                    만원 (재료비, 인건비, 공과금, 기타경비, 관리비)
-                </ItemContainer>
-                <ItemContainer title='순수익' subEl={true}>
-                    만원
-                </ItemContainer>
+        <ItemContainer title='영업 정보'>
+            <div className={'subflex-col'}>
+                <div className={'subflex-row'}>
+                    <label className={'input-checkbox'}>
+                        <input type="checkbox" {...register('income.expose')} />
+                        <div>순수익 공개</div>
+                    </label>
+                    <label className={'input-checkbox'}>
+                        <input type="checkbox" {...register('income.mustAquire')} />
+                        <div>영업 양도인수 필수</div>
+                    </label>
+                </div>
+                {incomeExpose &&
+                    <div className={parentClasses['input-subgrid']}>
+                        <ValuesToElementsForm values={inputAcquireValues} />
+                    </div>
+                }
             </div>
+    
         </ItemContainer>
     );
 }
 
 function LoanEl() {
-    let loanExistMap = { notShow: '표시안함', noLoan : '융자없음', loanExist: '융자있음' };
+    const { register, control, formState: { errors } } = useFormContext();
 
+    let [ loanExist, loanExpose, loanPct ] = useWatch({
+        control, 
+        name: [ 'loan.exist', 'loan.expose', 'loan.percentage'
+        ]
+    });
+    
+    let error = errors['loan'] && errors['loan']['percentage'] ? errors['loan']['percentage'] : null;
 
     return (
-        <ItemContainer title='융자'>
-            <div className={parentClasses['input-inner-grid']}>
-                <ItemContainer title='융자 여부' subEl={true}>
-                    <SingleChoiceForm name='loanExist' choiceMap={loanExistMap} btnLabel='선택하기' />
-                </ItemContainer>
+        <ItemContainer title='융자 정보'>
+            <div className={'subflex-col'}>
+                <div className={'subflex-row'}>
+                        <label className={'input-checkbox'}>
+                            <input type="checkbox" {...register('loan.exist')} />
+                            <div>융자 있음</div>
+                        </label>
+                        {loanExist &&
+                            <label className={'input-checkbox'}>
+                                <input type="checkbox" {...register('loan.expose')} />
+                                <div>융자 공개</div>
+                            </label>
+                        }
+                </div>
+                {loanExpose &&
+                    <div className={parentClasses['input-container']}>
+                        <div className={parentClasses['input-subtitle']}>시세대비 융자비율</div>
+                        <div className={'subflex-col-inner'}>
+                            <div className={parentClasses['input-with-unit']}>
+                                <input type='text'
+                                    className={parentClasses["input-value"] + ' focusable'} 
+                                    autoComplete='off'
+                                    {...register('loan.percentage', {
+                                         valueAsNumber: true,
+                                         min: {value: 0, message: '0 보다 작을 수 없습니다.'},
+                                         max: {value: 100, message: '100 보다 클 수 없습니다.'},
+                                    })} 
+                                />
+                                <div className={parentClasses.unit}>%</div>
+                            </div>
+                            {error && <span className={'error-message'}> {error.message} </span>}
+                        </div>
+                    </div>
+                }
             </div>
         </ItemContainer>
     );
@@ -135,6 +168,7 @@ function LoanEl() {
 
 
 function MoveInDayEl() {
+    const { register, control } = useFormContext();
 
     let curDate = new Date();
     let thisYear = curDate.getFullYear();
@@ -177,9 +211,9 @@ function MoveInDayEl() {
                     }
                     return null;
                 })}
-                <label>
-                    <input type='checkbox' />
-                    {' 협의가능 '}
+               <label className={'input-checkbox'}>
+                    <input type="checkbox" {...register('moveInDay.negotiable')} />
+                    <div>협의 가능</div>
                 </label>
             </div>
         </ItemContainer>
@@ -192,12 +226,10 @@ function ProductContainer({ addressState }) {
         <div className={parentClasses["input-grid"]}>
             <PriceEl />
             <PremiumEl />
-        	<TransferEl />
+        	<AcquireEl />
             <LoanEl />
             <MoveInDayEl />
             
-        	<div className={parentClasses["input-title"]}>입주가능일</div> 
-        	<div>입주일지정, [초순, 중순, 하순], [협의가능]</div>
         	<div className={parentClasses["input-title"]}>면적</div> 
         	<div>계약면적, 전용면적</div>
         	<div className={parentClasses["input-title"]}>방향</div> 

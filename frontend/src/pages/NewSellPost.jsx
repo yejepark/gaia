@@ -45,7 +45,15 @@ const getSavedData = () => {
 }
 
 const getDefaultValues = () => {
+    const today = new Date();
+    let thisYear = today.getFullYear();
+    let thisMonth = today.getMonth() + 1;
+    let thisDay = today.getDate();
+
     return {
+        tradeType: '',
+        productType: '',
+        productSubType: '',
         topAddress: '',
         addressDetail: '',
         hoName: '',
@@ -62,13 +70,17 @@ const getDefaultValues = () => {
         oudrMechUtcnt: 0,
         rideUseElvtCnt: 0,
         emgenUseElvtCnt: 0,
-        useAprDay: { Y: (new Date()).getFullYear(), M: 1, D: 1 },
+        useAprDay: { Y: thisYear, M: thisMonth, D: thisDay },
         platArea: 0,
         archArea: 0,
         totArea: 0,
         tradePrice: 0,
         deposit: 0,
         monthlyRent: 0,
+        premium: { operation: 0, facility: 0, location: 0 },
+        income: { revenue: 0, cogs: 0, wage: 0, utilityCost: 0, manageCost: 0, profit: 0 },
+        moveInDay: { Y: thisYear, M: thisMonth, D: thisDay },
+        loan: { percentage: 0 },
         ...getSavedData(),
     };
 }
@@ -204,20 +216,41 @@ function clickFillProductInfo(addressState, setValue) {
 
 
 export function ValuesToElementsForm({ values }) {
-    const { register } = useFormContext();
+    const { register, formState : { errors } } = useFormContext();
 
     return values.map((item, idx) => {
         if (item.subtitle) {
             return <div key={idx} className={classes['input-subtitle']}>{item.subtitle}</div>;
-        } else if (item.name) {
-            return (
+        } else if (Object.keys(item).includes('calculated')) {
+            return ( 
                 <div key={idx} className={classes['input-subcontainer'] + ' ' + classes['input-with-unit']}>
-                    <input type='text'
-                        className={classes["input-value"] + ' focusable'} 
-                        autoComplete='off'
-                        {...register(item.name)} 
+                    <input type='text' 
+                        value={item.calculated ? item.calculated : 0} 
+                        className={classes["input-value"] + ' not-focusable'} 
+                        readOnly
                     />
                     <div className={classes.unit}>{item.unit}</div>
+                </div>
+            );
+        } else if (item.name) {
+            let error;
+            let names = item.name.split('.');
+            if (errors[names[0]]) {
+                error = names.length === 1 ? errors[names[0]] : errors[names[0]][names[1]];
+            }
+            return (
+                <div key={idx} className={classes['input-subcontainer']}>
+                    <div className={'subflex-col-inner'}>
+                        <div className={classes['input-with-unit']}>
+                            <input type='text'
+                                className={classes["input-value"] + ' focusable'} 
+                                autoComplete='off'
+                                {...register(item.name, item.options)} 
+                            />
+                            <div className={classes.unit}>{item.unit}</div>
+                        </div>
+                        {error && <span className={'error-message'}> {error.message} </span>}
+                    </div>
                 </div>
             );
         } else {
@@ -242,18 +275,13 @@ export function ValuesToDropDownForm({ title, values, isSubEl, name }) {
     );
 }
 
+let renderCount = 0;
 
 function NewSellPost() {
     console.log('NewSellPost');
 
     const [addressState, dispatchAddress] = useReducer(addressStateReducer, initialAddressState);
     console.log('addressState: ', addressState);
-
-    function resetAll(event) {
-        dispatchAddress({ type: 'RESET' });
-        // sessionStorage.setItem('addressDetail', '');
-        // sessionStorage.setItem('hoName', '');
-    }
 
     useEffect(() => {
         console.log('restore');
@@ -265,19 +293,29 @@ function NewSellPost() {
     // console.log('defaultValues :', getDefaultValues());
     const methods = useForm({ defaultValues: getDefaultValues(), });
 
-    const { register, watch, handleSubmit, getValues, setValue, formState: { errors }, } = methods;
+    const { register, watch, handleSubmit, getValues, setValue, reset, formState: { errors }, } = methods;
 
-    // -------------------------------------------------------------
+    // -------------------------------------------------------------    
+    function resetAll(event) {
+        dispatchAddress({ type: 'RESET' });
+        reset();
+        // sessionStorage.setItem('addressDetail', '');
+        // sessionStorage.setItem('hoName', '');
+    }
+
     const onSubmit = (data) => {
         console.log('(in onSubmit) data: ', data);
     }
 
     usePersistForm({ value: JSON.stringify(getValues()), storageKey: FORM_DATA_KEY });
 
+    renderCount++;
+
     return (
         <div className={classes["body-container"]}> 
         	<FormProvider {...methods}>
 	        	<form onSubmit={handleSubmit(onSubmit)} className={classes['main-container']}>
+                    <div> Render count: {renderCount} </div>
 	            	<fieldset className={classes['input-set']}>
 	            		<legend>매물 종류</legend>
 	                	<ProductTypeContainer />

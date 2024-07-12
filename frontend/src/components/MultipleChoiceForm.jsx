@@ -8,7 +8,7 @@ import parentClasses from './Filters.module.css';
 import classes from './MultipleChoice.module.css';
 
 
-function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive }) {
+function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, fitContent }) {
 
     const { control, setFocus } = useFormContext();
     const { field } = useController({ control, name });
@@ -39,7 +39,13 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive }) {
     }
     // console.log('in multiple choice form : ', field.value)
 
-    let btnClass = field.length === 0 ? '' : (notActive ? '' : ' ' + parentClasses.active);
+    let btnClass = '';
+    if (!notActive) {
+        btnClass = btnClass + ' ' + parentClasses.active;
+    }
+    if (fitContent) {
+        btnClass = btnClass + ' ' + classes.fitContent;
+    }
     let btnLabel = field.length === 0 ? defaultBtnLabel : (
         field.value.map((x) => choiceMap[x]).filter((x) => x && x.length > 0).join(',')
     );
