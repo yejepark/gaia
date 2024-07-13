@@ -5,7 +5,7 @@ import SingleChoiceForm from './SingleChoiceForm';
 import DropDownInputForm from './DropDownInputForm';
 import ApplyButton from './ApplyButton';
 
-import { ItemContainer, ValuesToElementsForm } from '../pages/NewSellPost';
+import { ItemContainer, ValuesToElementsForm, InputWithUnit } from '../pages/NewSellPost';
 import parentClasses from '../pages/NewSellPost.module.css';
 import classes from './ProductContainer.module.css';
 
@@ -132,8 +132,6 @@ function LoanEl() {
         control, 
         name: [ 'loan.exist', 'loan.expose' ]
     });
-    
-    let error = errors['loan'] && errors['loan']['pct'] ? errors['loan']['pct'] : null;
 
     return (
         <ItemContainer title='융자 정보'>
@@ -151,23 +149,14 @@ function LoanEl() {
                         }
                 </div>
                 {loanExpose &&
-                    <div className={parentClasses['input-container']}>
-                        <div className={parentClasses['input-subtitle']}>시세대비 융자비율</div>
-                        <div className={'subflex-col-inner'}>
-                            <div className={parentClasses['input-with-unit']}>
-                                <input type='text'
-                                    className={parentClasses["input-value"] + ' focusable'} 
-                                    autoComplete='off'
-                                    {...register('loan.pct', {
-                                         ...checkIfNum,
-                                         min: {value: 0, message: '0 보다 작을 수 없습니다.'},
-                                         max: {value: 100, message: '100 보다 클 수 없습니다.'},
-                                    })} 
-                                />
-                                <div className={parentClasses.unit}>%</div>
-                            </div>
-                            {error && <span className={'error-message'}> {error.message} </span>}
-                        </div>
+                    <div className={'subflex-row'}>
+                        <ItemContainer title="시세대비 융자비율" isSubEl={true}>
+                            <InputWithUnit name='loan.pct' unit='%' options={{
+                                ...checkIfNum,
+                                min: {value: 0, message: '0 보다 작을 수 없습니다.'},
+                                max: {value: 100, message: '100 보다 클 수 없습니다.'},
+                            }}/>
+                        </ItemContainer>
                     </div>
                 }
             </div>
@@ -250,7 +239,6 @@ function AreaEl() {
 function DirectionEl() {
     const { register, setValue, control } = useFormContext();
 
-
     let [dropdownOpen, setDropdownOpen] = useState(false);
 
     function btnClickHandler(event) {
@@ -271,8 +259,7 @@ function DirectionEl() {
     let buttons = directions.map((item, idx) => {
         if (item.length > 0) {
             return <button
-                        key={idx} 
-                        type='button' 
+                        key={idx} type='button'
                         className={'alive-btn' + (item === chosenDirection ? ' active' : '')}
                         value={item}
                         onClick={directionClickHandler}
@@ -309,6 +296,30 @@ function DirectionEl() {
     );
 }
 
+
+function ParkingEl() {
+    const { register, control } = useFormContext();
+
+    const parkingAvailable = useWatch({ control, name: 'parking.available' });
+
+    return (<ItemContainer title="주차 정보">
+        <div className={'subflex-col'}>
+            <label className={'input-checkbox'}>
+                <input type="checkbox" {...register('parking.available')} />
+                <div>주차 가능</div>
+            </label>
+
+            {parkingAvailable &&
+                <div className={'subflex-row'}>
+                    <ItemContainer title='사용가능 주차대수' isSubEl={true}>
+                        <InputWithUnit name={'parking.count'} options={checkIfNum} unit={'대'} />
+                    </ItemContainer>
+                </div>
+            }
+        </div>
+    </ItemContainer>);
+}
+
 function ProductContainer({ addressState }) {
 
     return (
@@ -320,9 +331,8 @@ function ProductContainer({ addressState }) {
             <MoveInDayEl />
             <AreaEl />
             <DirectionEl />
+            <ParkingEl />
 
-        	<div className={parentClasses["input-title"]}>주차가능여부</div> 
-        	<div>가능, 불가능</div>
         	<div className={parentClasses["input-title"]}>현재업종 (현재용도)</div> 
         	<div></div>
         	<div className={parentClasses["input-title"]}>추천업종 (추천용도)</div> 

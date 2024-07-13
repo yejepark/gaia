@@ -71,6 +71,7 @@ const getDefaultValues = () => {
         loan: { pct: 0 },
         moveInDay: { Y: thisYear, M: thisMonth, D: thisDay },
         prodArea: { use: 0, contract: 0},
+        parking: { count: 0 },
         ...getSavedData(),
     };
 }
@@ -204,9 +205,44 @@ function clickFillProductInfo(addressState, setValue) {
     }
 }
 
+// Common Components -----------------------------------------------------
+export function InputWithUnit({ name, options, unit }) {
+    const { register, formState: { errors } } = useFormContext();
+
+    let error;
+    let names = name.split('.');
+    if (errors[names[0]]) {
+        error = names.length === 1 ? errors[names[0]] : errors[names[0]][names[1]];
+    }
+    return (
+        <div className={'subflex-col-inner'}>
+            <div className={classes['input-with-unit']}>
+                <input type='text'
+                    className={classes["input-value"] + ' focusable'} 
+                    autoComplete='off'
+                    {...register(name, options)} 
+                />
+                <div className={classes.unit}>{unit === 'm2' ? <>m<sup>2</sup></> : unit}</div>
+            </div>
+            {error && <span className={'error-message'}> {error.message} </span>}
+        </div>
+    );
+}
+
+export function CalculatedInputWithUnit({ value, unit }) {
+    return (
+        <div className={classes['input-with-unit']}>
+            <input type='text' 
+                value={value ? value : 0} 
+                className={classes["input-value"] + ' not-focusable'} 
+                readOnly
+            />
+            <div className={classes.unit}>{unit === 'm2' ? <><sup>2</sup></> : unit}</div>
+        </div>
+    );
+}
 
 export function ValuesToElementsForm({ values }) {
-    const { register, formState : { errors } } = useFormContext();
 
     return values.map((item, idx) => {
         if (item.subtitle) {
@@ -214,35 +250,13 @@ export function ValuesToElementsForm({ values }) {
         } else if (Object.keys(item).includes('calculated')) {
             return ( 
                 <div key={idx} className={classes['input-subcontainer']}>
-                    <div className={classes['input-with-unit']}>
-                        <input type='text' 
-                            value={item.calculated ? item.calculated : 0} 
-                            className={classes["input-value"] + ' not-focusable'} 
-                            readOnly
-                        />
-                        <div className={classes.unit}>{item.unit === 'm2' ? <><sup>2</sup></> : item.unit}</div>
-                    </div>
+                    <CalculatedInputWithUnit value={item.calculated} unit={item.unit} />
                 </div>
             );
         } else if (item.name) {
-            let error;
-            let names = item.name.split('.');
-            if (errors[names[0]]) {
-                error = names.length === 1 ? errors[names[0]] : errors[names[0]][names[1]];
-            }
             return (
                 <div key={idx} className={classes['input-subcontainer']}>
-                    <div className={'subflex-col-inner'}>
-                        <div className={classes['input-with-unit']}>
-                            <input type='text'
-                                className={classes["input-value"] + ' focusable'} 
-                                autoComplete='off'
-                                {...register(item.name, item.options)} 
-                            />
-                            <div className={classes.unit}>{item.unit === 'm2' ? <>m<sup>2</sup></> : item.unit}</div>
-                        </div>
-                        {error && <span className={'error-message'}> {error.message} </span>}
-                    </div>
+                    <InputWithUnit name={item.name} options={item.options} unit={item.unit} />
                 </div>
             );
         } else {
