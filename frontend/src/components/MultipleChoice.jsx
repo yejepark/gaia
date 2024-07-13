@@ -39,7 +39,7 @@ function MultipleChoice({ checkedList, setCheckedList, choiceMap, defaultBtnLabe
         checkedList.map((x)=>choiceMap[x]).filter((x)=> x && x.length > 0).join(',')
     );
 
-	let dialogOpenClass = dialogOpen ? '' : ' ' + parentClasses.hidden;
+	let dialogOpenClass = dialogOpen ? '' : ' hidden';
 
     let items = Object.keys(choiceMap).map((item)=> {
     	return (<li>
@@ -56,7 +56,7 @@ function MultipleChoice({ checkedList, setCheckedList, choiceMap, defaultBtnLabe
             <UpDown up={dialogOpen}/>
         </button>
 
-        <div className={parentClasses.backdrop + dialogOpenClass} onClick={btnClickHandler}></div>
+        <div className={'backdrop' + dialogOpenClass} onClick={btnClickHandler}></div>
 
         <div className={'positional-container'}>
             <div className={parentClasses.dialog + dialogOpenClass}>

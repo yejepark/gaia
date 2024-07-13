@@ -50,7 +50,7 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, fitCo
         field.value.map((x) => choiceMap[x]).filter((x) => x && x.length > 0).join(',')
     );
 
-    let dialogOpenClass = dialogOpen ? '' : ' ' + parentClasses.hidden;
+    let dialogOpenClass = dialogOpen ? '' : ' hidden';
 
     let items = Object.keys(choiceMap).map((item, idx) => {
         return (<li key={idx}>
@@ -75,7 +75,7 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, fitCo
             <UpDown up={dialogOpen}/>
         </button>
 
-        <div className={parentClasses.backdrop + dialogOpenClass} onClick={btnClickHandler}></div>
+        <div className={'backdrop' + dialogOpenClass} onClick={btnClickHandler}></div>
 
         <div className={'positional-container'}>
             <div className={parentClasses.dialog + dialogOpenClass}>

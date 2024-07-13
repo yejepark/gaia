@@ -3,10 +3,11 @@ import { useFormContext, useWatch } from 'react-hook-form';
 
 import SingleChoiceForm from './SingleChoiceForm';
 import DropDownInputForm from './DropDownInputForm';
+import ApplyButton from './ApplyButton';
 
 import { ItemContainer, ValuesToElementsForm } from '../pages/NewSellPost';
 import parentClasses from '../pages/NewSellPost.module.css';
-
+import classes from './ProductContainer.module.css';
 
 const checkIfNum = {
     valueAsNumber: true, 
@@ -78,18 +79,19 @@ function PremiumEl() {
 function AcquireEl() {
     const { register, control } = useFormContext();
 
-    let [ revenue, cogs, wage, utilityCost, manageCost, profit, incomeExpose ] = useWatch({
+    let [ revenue, rent, cogs, wage, utilityCost, manageCost, profit, incomeExpose ] = useWatch({
         control, 
         name: [ 
-            'income.revenue', 'income.cogs', 'income.wage', 
+            'income.revenue', 'income.rent', 'income.cogs', 'income.wage', 
             'income.utilityCost', 'income.manageCost', 'income.profit',
             'income.expose' 
         ]
     });
-    let etc = revenue - cogs - wage - utilityCost - manageCost - profit;
+    let etc = revenue - rent - cogs - wage - utilityCost - manageCost - profit;
 
     let inputAcquireValues = [
         { subtitle: '월 매출' }, { name: 'income.revenue', unit: '만원', options: checkIfNum },
+        { subtitle: '월세' }, { name: 'income.rent', unit: '만원', options: checkIfNum },
         { subtitle: '재료비' }, { name: 'income.cogs', unit: '만원', options: checkIfNum },
         { subtitle: '인건비' }, { name: 'income.wage', unit: '만원', options: checkIfNum },
         { subtitle: '공과금' }, { name: 'income.utilityCost', unit: '만원', options: checkIfNum },
@@ -245,6 +247,67 @@ function AreaEl() {
     );
 }
 
+function DirectionEl() {
+    const { register, setValue, control } = useFormContext();
+
+
+    let [dropdownOpen, setDropdownOpen] = useState(false);
+
+    function btnClickHandler(event) {
+        setDropdownOpen((isOpen) => { return !isOpen; });
+    }
+
+    function directionClickHandler(event) {
+        let optionEl = event.currentTarget;
+        let v = optionEl.getAttribute('value');
+        setValue('direction', v);
+    }
+
+    let chosenDirection = useWatch({control, name: 'direction'});
+
+    let dropdownOpenClass = dropdownOpen ? '' : ' hidden';
+
+    let directions = [ '북서', '북', '북동', '서', '', '동', '남서', '남', '남동' ];
+    let buttons = directions.map((item, idx) => {
+        if (item.length > 0) {
+            return <button
+                        key={idx} 
+                        type='button' 
+                        className={'alive-btn' + (item === chosenDirection ? ' active' : '')}
+                        value={item}
+                        onClick={directionClickHandler}
+                    >
+                        {item}
+                    </button>
+        } else {
+            return <div key={idx}></div>
+        }
+    })
+
+    return (
+        <ItemContainer title='방향 정보'>
+            <ItemContainer title='주된 출입구 기준' isSubEl={true}>
+                <div>
+                    <input type='hidden' {...register('direction')} />
+                    <button type="button" 
+                        className={classes['direction-opener'] + ' ' + 'alive-btn'}
+                        onClick={btnClickHandler}>방향 선택</button>
+                
+                    <div className={'backdrop' + dropdownOpenClass} onClick={btnClickHandler}></div>
+                    
+                    <div className={'positional-container'}>
+                        <div className={classes['direction-selector-container'] + dropdownOpenClass} >
+                            <div className={classes['direction-selector']}>
+                                {buttons}
+                            </div>
+                            <ApplyButton clickHandler={btnClickHandler} />
+                        </div>
+                    </div>
+                </div>
+            </ItemContainer>
+        </ItemContainer>
+    );
+}
 
 function ProductContainer({ addressState }) {
 
@@ -256,9 +319,8 @@ function ProductContainer({ addressState }) {
             <LoanEl />
             <MoveInDayEl />
             <AreaEl />
+            <DirectionEl />
 
-        	<div className={parentClasses["input-title"]}>방향</div> 
-        	<div>동, 서, 남, 북, 남동, 남서, 북동, 북서 (주된 출입구 기준)</div>
         	<div className={parentClasses["input-title"]}>주차가능여부</div> 
         	<div>가능, 불가능</div>
         	<div className={parentClasses["input-title"]}>현재업종 (현재용도)</div> 

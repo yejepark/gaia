@@ -208,6 +208,23 @@ input[type='checkbox'] {
     width: 100%;
 }
 
+
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: var(--backdrop-z-index);
+}
+
+
+.hidden {
+    transform: translate(-9999px);
+}
+
+
 .subflex-row {
     display: flex;
     flex-direction: row;
@@ -246,18 +263,9 @@ input[type='checkbox'] {
 
 .error-message {
     color: var(--error-color);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     margin-top: 0.2rem;
     text-wrap: nowrap;
-
-    &::before {
-        content: url('./components/error.svg');
-        display: inline-block;
-        width: 1rem;
-        height: 100%;
-        vertical-align: middle;
-        margin-right: .5ch;
-    }
 }
 /*
 .diamond-shape {

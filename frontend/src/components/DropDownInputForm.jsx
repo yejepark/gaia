@@ -21,10 +21,7 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
 
     function inputClickHandler(event) {
         event.stopPropagation();
-        let liEl = event.currentTarget.querySelector('li');
-        if (liEl) {
-            setFocus(name);
-        };
+        setFocus(name);
     }
 
     let setValue1 = withoutPipe ? (name, v) => setValue(name, v.replace('|', ' ').trim()) : setValue;
@@ -49,7 +46,7 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
         setDropdownOpen(false);
     }
 
-    let dropdownOpenClass = dropdownOpen ? '' : ' ' + filtersClasses.hidden;
+    let dropdownOpenClass = dropdownOpen ? '' : ' hidden';
 
     let dropdownItems;
     if (values.length > 0 && ((typeof values[0] === 'number') || (typeof values[0] === 'string' || values[0] instanceof String))) {
@@ -79,7 +76,7 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
                 <UpDown up={dropdownOpen} />
             </div>
 
-            <div className={filtersClasses.backdrop + dropdownOpenClass} onClick={containerClickHandler} id="dropdown-backdrop"></div>
+            <div className={'backdrop' + dropdownOpenClass} onClick={containerClickHandler}></div>
             
             <div className={'positional-container'}>
                 <ol className={classes['dropdown'] + dropdownOpenClass}>

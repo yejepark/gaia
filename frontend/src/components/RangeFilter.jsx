@@ -20,7 +20,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
         setDialogOpen((isOpen) => { return !isOpen; });
     }
 
-    let dialogOpenClass = dialogOpen ? '' : ' ' + filtersClasses.hidden;
+    let dialogOpenClass = dialogOpen ? '' : ' hidden';
     let rangeBtnClass = tempMinValue > 0 | tempMaxValue > 0 ? ' ' + filtersClasses.active : '';
   
     let intMinValue = parseInt(tempMinValue);
@@ -42,7 +42,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
             <UpDown up={dialogOpen}/>
           </button>
 
-        <div className={filtersClasses.backdrop + dialogOpenClass} onClick={btnClickHandler} id="range-backdrop"></div>
+        <div className={'backdrop' + dialogOpenClass} onClick={btnClickHandler} id="range-backdrop"></div>
 
         <div className={'positional-container'}>
             <div className={filtersClasses.dialog + dialogOpenClass} id="range-dialog">

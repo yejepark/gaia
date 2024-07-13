@@ -1,0 +1,32 @@
+.direction-opener {
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: .9rem;
+}
+
+.direction-selector-container {
+    position: absolute;
+    top: 5px;
+
+    padding: 7px 7px 5px 7px;
+    background-color: var(--background-color);
+
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+
+    z-index: var(--dialog-z-index);
+}
+
+.direction-selector {
+    background-color: var(--border-color);
+    border-radius: 5px;
+
+    display: grid;
+    grid-template: 3rem 3rem 3rem / 3rem 3rem 3rem;    
+    place-items: stretch;
+
+    & button {
+        border-radius: 5px;
+        font-weight: 500;
+    }
+}

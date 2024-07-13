@@ -67,7 +67,7 @@ const getDefaultValues = () => {
         area: { plat: 0, arch: 0, total: 0 },
         price: { sale: 0, deposit: 0, monthlyRent: 0 },
         premium: { operation: 0, facility: 0, location: 0 },
-        income: { revenue: 0, cogs: 0, wage: 0, utilityCost: 0, manageCost: 0, profit: 0 },
+        income: { revenue: 0, rent: 0, cogs: 0, wage: 0, utilityCost: 0, manageCost: 0, profit: 0 },
         loan: { pct: 0 },
         moveInDay: { Y: thisYear, M: thisMonth, D: thisDay },
         prodArea: { use: 0, contract: 0},
@@ -213,13 +213,15 @@ export function ValuesToElementsForm({ values }) {
             return <div key={idx} className={classes['input-subtitle']}>{item.subtitle}</div>;
         } else if (Object.keys(item).includes('calculated')) {
             return ( 
-                <div key={idx} className={classes['input-subcontainer'] + ' ' + classes['input-with-unit']}>
-                    <input type='text' 
-                        value={item.calculated ? item.calculated : 0} 
-                        className={classes["input-value"] + ' not-focusable'} 
-                        readOnly
-                    />
-                    <div className={classes.unit}>{item.unit}</div>
+                <div key={idx} className={classes['input-subcontainer']}>
+                    <div className={classes['input-with-unit']}>
+                        <input type='text' 
+                            value={item.calculated ? item.calculated : 0} 
+                            className={classes["input-value"] + ' not-focusable'} 
+                            readOnly
+                        />
+                        <div className={classes.unit}>{item.unit === 'm2' ? <><sup>2</sup></> : item.unit}</div>
+                    </div>
                 </div>
             );
         } else if (item.name) {
@@ -288,6 +290,7 @@ function NewSellPost() {
     // -------------------------------------------------------------    
     function resetAll(event) {
         dispatchAddress({ type: 'RESET' });
+        sessionStorage.removeItem(FORM_DATA_KEY);
         reset();
         // sessionStorage.setItem('addressDetail', '');
         // sessionStorage.setItem('hoName', '');

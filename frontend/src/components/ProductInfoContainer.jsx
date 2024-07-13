@@ -50,17 +50,10 @@ const checkIfNum = {
     },
 };
 
-const checkIfInt = {
-    setValueAs: v => parseInt(v),
-    validate: (v) => {
-        return !isNaN(v) || '숫자만 입력 가능합니다.' 
-    },
-}
-
 function BuildingFloorEl() {
     let inputFloorValues = [
-        { subtitle: '지하' }, { unit: '층', name: 'flrCnt.ugrnd', options: checkIfInt },
-        { subtitle: '지상' }, { unit: '층', name: 'flrCnt.grnd', options: checkIfInt },
+        { subtitle: '지하' }, { unit: '층', name: 'flrCnt.ugrnd', options: checkIfNum },
+        { subtitle: '지상' }, { unit: '층', name: 'flrCnt.grnd', options: checkIfNum },
     ];
     return (
         <ItemContainer title='층정보'>
@@ -105,9 +98,9 @@ function BuildingAreaEl() {
 function BulidingRoomCntEl() {
 
     let inputRoomCntValues = [
-        { subtitle: '세대' }, { name: 'roomCnt.household', unit: '개', options: checkIfInt },
-        { subtitle: '호' }, { name: 'roomCnt.ho', unit: '개', options: checkIfInt },
-        { subtitle: '가구' }, { name: 'roomCnt.family', unit: '개', options: checkIfInt },
+        { subtitle: '세대' }, { name: 'roomCnt.household', unit: '개', options: checkIfNum },
+        { subtitle: '호' }, { name: 'roomCnt.ho', unit: '개', options: checkIfNum },
+        { subtitle: '가구' }, { name: 'roomCnt.family', unit: '개', options: checkIfNum },
     ];
 
     return (
@@ -123,10 +116,10 @@ function BulidingRoomCntEl() {
 function BuildingParkingEl() {
 
     let inputParkingValues = [
-        { subtitle: '실내 자주식' }, { name: 'parkingCnt.indrAuto', unit: '대', options: checkIfInt },
-        { subtitle: '실내 기계식' }, { name: 'parkingCnt.indrMech', unit: '대', options: checkIfInt },
-        { subtitle: '실외 자주식' }, { name: 'parkingCnt.oudrAuto', unit: '대', options: checkIfInt },
-        { subtitle: '실외 기계식' }, { name: 'parkingCnt.oudrMech', unit: '대', options: checkIfInt },
+        { subtitle: '실내 자주식' }, { name: 'parkingCnt.indrAuto', unit: '대', options: checkIfNum },
+        { subtitle: '실내 기계식' }, { name: 'parkingCnt.indrMech', unit: '대', options: checkIfNum },
+        { subtitle: '실외 자주식' }, { name: 'parkingCnt.oudrAuto', unit: '대', options: checkIfNum },
+        { subtitle: '실외 기계식' }, { name: 'parkingCnt.oudrMech', unit: '대', options: checkIfNum },
     ];
 
     return (
@@ -142,8 +135,8 @@ function BuildingParkingEl() {
 function ElevatorEl() {
 
     let inputElevatorValues = [
-        { subtitle: '승용' }, { unit: '대', name: 'elvtCnt.rideUse', options: checkIfInt },
-        { subtitle: '비상용' }, { unit: '대', name: 'elvtCnt.emgenUse', options: checkIfInt },
+        { subtitle: '승용' }, { unit: '대', name: 'elvtCnt.rideUse', options: checkIfNum },
+        { subtitle: '비상용' }, { unit: '대', name: 'elvtCnt.emgenUse', options: checkIfNum },
     ];
 
     return (

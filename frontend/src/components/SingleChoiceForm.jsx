@@ -25,7 +25,7 @@ function SingleChoiceForm({ choiceMap, btnLabel, name }) {
     // console.log('--------', chosen)
 
     let btnClass = chosen && chosen.length > 0 ? classes.filter + ' alive-btn active' : classes.filter + ' alive-btn';
-    let dialogOpenClass = dialogOpen ? '' : ' ' + classes.hidden;
+    let dialogOpenClass = dialogOpen ? '' : ' hidden';
 
     let inputEls = Object.keys(choiceMap).map((choice, idx) => {
         return (<li key={idx}>
@@ -42,7 +42,7 @@ function SingleChoiceForm({ choiceMap, btnLabel, name }) {
             <UpDown up={dialogOpen} />
         </button>
 
-        <div className = { classes.backdrop + dialogOpenClass } onClick = { btnClickHandler }> </div>
+        <div className = { 'backdrop' + dialogOpenClass } onClick = { btnClickHandler }> </div>
 
         <div className = { 'positional-container' }>
             <ol className={classes.dialog + dialogOpenClass}> 

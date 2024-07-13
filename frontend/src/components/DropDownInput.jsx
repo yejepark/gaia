@@ -56,7 +56,7 @@ function DropDownInput({ localValue, setLocalValue, values, name, options }) {
     }
 
 
-    let dropdownOpenClass = dropdownOpen ? '' : ' ' + filtersClasses.hidden;
+    let dropdownOpenClass = dropdownOpen ? '' : ' hidden';
 
     let dropdownItems;
     if (values.length > 0 && ((typeof values[0] === 'number') || (typeof values[0] === 'string' || values[0] instanceof String))) {
@@ -98,7 +98,7 @@ function DropDownInput({ localValue, setLocalValue, values, name, options }) {
                 <UpDown up={dropdownOpen} />
             </div>
 
-            <div className={filtersClasses.backdrop + dropdownOpenClass} onClick={containerClickHandler} id="dropdown-backdrop"></div>
+            <div className={'backdrop' + dropdownOpenClass} onClick={containerClickHandler} id="dropdown-backdrop"></div>
             
             <div className={'positional-container'}>
                 <div className={classes['dropdown'] + dropdownOpenClass}>
