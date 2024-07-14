@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from 'react';
-import { useForm, FormProvider, useFormContext } from 'react-hook-form';
+import { useForm, FormProvider, useFormContext, useWatch } from 'react-hook-form';
 
 import classes from './NewSellPost.module.css';
 
@@ -31,7 +31,7 @@ const usePersistForm = ({ value, storageKey }) => {
 const FORM_DATA_KEY = "app_form_local_data";
 
 const getSavedData = () => {
-    const data = sessionStorage.getItem(FORM_DATA_KEY);
+    let data = sessionStorage.getItem(FORM_DATA_KEY);
     if (data) {
         try {
             data = JSON.parse(data);
@@ -59,22 +59,24 @@ const getDefaultValues = () => {
         hoName: '',
         floors: [],
         mainPurpose: '',
-        flrCnt: { ugrnd: 0, grnd: 1 },
-        roomCnt: { ho: 0, household: 0, family: 0 },
-        parkingCnt: { indrAuto: 0, indrMech: 0, oudrAuto: 0, oudrMech: 0 },
-        elvtCnt: { rideUse: 0, emgenUse: 0 },
+        flrCnt: { ugrnd: 0, grnd: 1, ugrndUnit: '층', grndUnit: '층' },
+        roomCnt: { ho: 0, household: 0, family: 0, hoUnit: '개', householdUnit: '개', familyUnit: '개' },
+        parkingCnt: { indrAuto: 0, indrMech: 0, oudrAuto: 0, oudrMech: 0,  
+            indrAutoUnit: '대', indrMechUnit: '대', oudrAutoUnit: '대', oudrMechUnit: '대'},
+        elvtCnt: { rideUse: 0, emgenUse: 0, rideUseUnit: '대', emgenUseUnit: '대'},
         useAprDay: { Y: thisYear, M: thisMonth, D: thisDay },
-        area: { plat: 0, arch: 0, total: 0 },
-        price: { sale: 0, deposit: 0, monthlyRent: 0 },
-        premium: { operation: 0, facility: 0, location: 0 },
-        income: { revenue: 0, rent: 0, cogs: 0, wage: 0, utilityCost: 0, manageCost: 0, profit: 0 },
-        loan: { pct: 0 },
+        area: { plat: 0, arch: 0, total: 0, platUnit: 'm2', archUnit: 'm2', totalUnit: 'm2' },
+        price: { sale: 0, deposit: 0, monthlyRent: 0, saleUnit: '만원', depositUnit: '만원', monthlyRentUnit: '만원' },
+        premium: { operation: 0, facility: 0, location: 0, operationUnit: '만원', facilityUnit: '만원', locationUnit: '만원' },
+        income: { revenue: 0, rent: 0, cogs: 0, wage: 0, utilityCost: 0, manageCost: 0, profit: 0,
+            revenueUnit: '만원', rentUnit: '만원', cogsUnit: '만원', wageUnit: '만원', utilityCostUnit: '만원', manageCostUnit: '만원', profitUnit: '만원' },
+        loan: { pct: 0, pctUnit: '%' },
         moveInDay: { Y: thisYear, M: thisMonth, D: thisDay },
-        prodArea: { use: 0, contract: 0},
-        parking: { count: 0 },
+        prodArea: { use: 0, contract: 0, useUnit: 'm2', contractUnit: 'm2' },
+        parking: { count: 0, countUnit: '대' },
         businessType: { current: '', recommend: '' },
         usageType: { current: '', recommend: '' },
-        facility: { heatingMethod: '', coolingMethod: '', heatingFuel: '', electricWatts: 0 },
+        facility: { heatingMethod: '', coolingMethod: '', heatingFuel: '', electricCap: 0, electricCapUnit: 'kW' },
         ...getSavedData(),
     };
 }
@@ -209,14 +211,16 @@ function clickFillProductInfo(addressState, setValue) {
 }
 
 // Common Components -----------------------------------------------------
-export function InputWithUnit({ name, options, unit }) {
-    const { register, formState: { errors } } = useFormContext();
+export function InputWithUnit({ name, options, onUnitClick }) {
+    const { register, formState: { errors }, control } = useFormContext();
+    const unit = useWatch({ control, name: name + 'Unit' });
 
     let error;
     const names = name.split('.');
     if (errors[names[0]]) {
         error = names.length === 1 ? errors[names[0]] : errors[names[0]][names[1]];
     }
+    const unitElClass = classes.unit + (onUnitClick ? ' focusable alive-btn' : '');
     return (
         <div className={'subflex-col-inner'}>
             <div className={classes['input-with-unit']}>
@@ -225,7 +229,12 @@ export function InputWithUnit({ name, options, unit }) {
                     autoComplete='off'
                     {...register(name, options)} 
                 />
-                <div className={classes.unit}>{unit === 'm2' ? <>m<sup>2</sup></> : unit}</div>
+                
+                <input type='hidden' {...register(name + 'Unit')} />
+                
+                <div className={unitElClass} onClick={onUnitClick}>
+                    {unit === 'm2' ? <>m<sup>2</sup></> : unit}
+                </div>
             </div>
             {error && <span className={'error-message'}> {error.message} </span>}
         </div>
@@ -245,6 +254,18 @@ export function CalculatedInputWithUnit({ value, unit }) {
     );
 }
 
+
+export function onAreaUnitClick(e, name, setValue, getValues) {
+    const [value, unit] = getValues([name, name + 'Unit']);
+    if (unit === 'm2') {
+        setValue( name + 'Unit', '평' );
+        setValue( name, Number((value * 0.3025).toFixed(1)) );
+    } else {
+        setValue( name + 'Unit', 'm2' );
+        setValue( name, Number((value * 3.3058).toFixed(1)) );
+    }
+}
+
 export function ValuesToElementsForm({ values }) {
 
     return values.map((item, idx) => {
@@ -259,7 +280,7 @@ export function ValuesToElementsForm({ values }) {
         } else if (item.name) {
             return (
                 <div key={idx} className={classes['input-subcontainer']}>
-                    <InputWithUnit name={item.name} options={item.options} unit={item.unit} />
+                    <InputWithUnit name={item.name} options={item.options} onUnitClick={item.onUnitClick}/>
                 </div>
             );
         } else {

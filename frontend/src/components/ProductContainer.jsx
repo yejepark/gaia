@@ -5,7 +5,7 @@ import SingleChoiceForm from './SingleChoiceForm';
 import DropDownInputForm from './DropDownInputForm';
 import ApplyButton from './ApplyButton';
 
-import { ItemContainer, ValuesToElementsForm, ValuesToDropDownForm, InputWithUnit } from '../pages/NewSellPost';
+import { ItemContainer, ValuesToElementsForm, ValuesToDropDownForm, InputWithUnit, onAreaUnitClick } from '../pages/NewSellPost';
 import parentClasses from '../pages/NewSellPost.module.css';
 import classes from './ProductContainer.module.css';
 import BusinessTypes from './business_types.json';
@@ -20,9 +20,9 @@ const checkIfNum = {
 function PriceEl() {
 
     const inputPriceValues = [
-        { subtitle: '매매가' }, { unit: '만원', name: 'price.sale', options: checkIfNum }, {}, {},
-        { subtitle: '보증금' }, { unit: '만원', name: 'price.deposit', options: checkIfNum },
-        { subtitle: '월세' }, { unit: '만원', name: 'price.monthlyRent', options: checkIfNum },
+        { subtitle: '매매가' }, { name: 'price.sale', options: checkIfNum }, {}, {},
+        { subtitle: '보증금' }, { name: 'price.deposit', options: checkIfNum },
+        { subtitle: '월세' }, { name: 'price.monthlyRent', options: checkIfNum },
     ];
 
     return (
@@ -45,9 +45,9 @@ function PremiumEl() {
     // console.log(pOp, pFac, pLoc, pTot);
 
     const inputPremiumValues = [
-        { subtitle: '영업권리금' }, { name: 'premium.operation', unit: '만원', options: checkIfNum },
-        { subtitle: '시설권리금' }, { name: 'premium.facility', unit: '만원', options: checkIfNum },
-        { subtitle: '바닥권리금' }, { name: 'premium.location', unit: '만원', options: checkIfNum },
+        { subtitle: '영업권리금' }, { name: 'premium.operation', options: checkIfNum },
+        { subtitle: '시설권리금' }, { name: 'premium.facility', options: checkIfNum },
+        { subtitle: '바닥권리금' }, { name: 'premium.location', options: checkIfNum },
         { subtitle: '권리금 총합' }, { unit: '만원', calculated: pTot }
     ];
 
@@ -91,14 +91,14 @@ function AcquireEl() {
     const etc = revenue - rent - cogs - wage - utilityCost - manageCost - profit;
 
     const inputAcquireValues = [
-        { subtitle: '월 매출' }, { name: 'income.revenue', unit: '만원', options: checkIfNum },
-        { subtitle: '월세' }, { name: 'income.rent', unit: '만원', options: checkIfNum },
-        { subtitle: '재료비' }, { name: 'income.cogs', unit: '만원', options: checkIfNum },
-        { subtitle: '인건비' }, { name: 'income.wage', unit: '만원', options: checkIfNum },
-        { subtitle: '공과금' }, { name: 'income.utilityCost', unit: '만원', options: checkIfNum },
-        { subtitle: '관리비' }, { name: 'income.manageCost', unit: '만원', options: checkIfNum },
+        { subtitle: '월 매출' }, { name: 'income.revenue', options: checkIfNum },
+        { subtitle: '월세' }, { name: 'income.rent', options: checkIfNum },
+        { subtitle: '재료비' }, { name: 'income.cogs', options: checkIfNum },
+        { subtitle: '인건비' }, { name: 'income.wage', options: checkIfNum },
+        { subtitle: '공과금' }, { name: 'income.utilityCost', options: checkIfNum },
+        { subtitle: '관리비' }, { name: 'income.manageCost', options: checkIfNum },
         { subtitle: '기타비용' }, { unit: '만원', calculated: etc },
-        { subtitle: '월 순수익' }, { name: 'income.profit', unit: '만원', options: checkIfNum },
+        { subtitle: '월 순수익' }, { name: 'income.profit', options: checkIfNum },
     ];
 
     return (
@@ -152,7 +152,7 @@ function LoanEl() {
                 {loanExpose &&
                     <div className={'subflex-row'}>
                         <ItemContainer title="시세대비 융자비율" isSubEl={true}>
-                            <InputWithUnit name='loan.pct' unit='%' options={{
+                            <InputWithUnit name='loan.pct' options={{
                                 ...checkIfNum,
                                 min: {value: 0, message: '0 보다 작을 수 없습니다.'},
                                 max: {value: 100, message: '100 보다 클 수 없습니다.'},
@@ -222,10 +222,15 @@ function MoveInDayEl() {
 }
 
 function AreaEl() {
+    const { setValue, getValues } = useFormContext();
 
     const inputAreaValues = [
-        { subtitle: '전용면적' }, { unit: 'm2', name: 'prodArea.use', options: checkIfNum },
-        { subtitle: '계약면적' }, { unit: 'm2', name: 'prodArea.contract', options: checkIfNum },
+        { subtitle: '전용면적' },
+        { name: 'prodArea.use', options: checkIfNum,
+            onUnitClick: (e) => onAreaUnitClick(e, 'prodArea.use', setValue, getValues) },
+        { subtitle: '계약면적' },
+        { name: 'prodArea.contract', options: checkIfNum,
+            onUnitClick: (e) => onAreaUnitClick(e, 'prodArea.contract', setValue, getValues) },
     ];
 
     return (
@@ -316,7 +321,7 @@ function ParkingEl() {
                 {parkingAvailable &&
                     <div className={'subflex-row'}>
                         <ItemContainer title='사용가능 주차대수' isSubEl={true}>
-                            <InputWithUnit name={'parking.count'} options={checkIfNum} unit={'대'} />
+                            <InputWithUnit name={'parking.count'} options={checkIfNum} />
                         </ItemContainer>
                     </div>
                 }
@@ -392,7 +397,7 @@ function FacilityEl() {
                 <ValuesToDropDownForm title='냉방 방식' values={coolingMethodValues} isSubEl={true} name='facility.coolingMethod' />
                 <ValuesToDropDownForm title='난방 연료' values={heatingFuelValues} isSubEl={true} name='facility.heatingFuel' />
                 <ItemContainer title="사용 전력" isSubEl={true}>
-                    <InputWithUnit name='facility.electricWatts' unit='kW' options={{
+                    <InputWithUnit name='facility.electricCap' options={{
                         ...checkIfNum,
                         min: {value: 0, message: '0 보다 작을 수 없습니다.'},
                     }}/>

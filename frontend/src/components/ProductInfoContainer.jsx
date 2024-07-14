@@ -4,7 +4,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 
 import parentClasses from '../pages/NewSellPost.module.css';
 
-import { ValuesToElementsForm, ValuesToDropDownForm } from '../pages/NewSellPost';
+import { ValuesToElementsForm, ValuesToDropDownForm, onAreaUnitClick } from '../pages/NewSellPost';
 import DropDownInputForm from './DropDownInputForm';
 
 import { ItemContainer } from '../pages/NewSellPost';
@@ -52,8 +52,8 @@ const checkIfNum = {
 
 function BuildingFloorEl() {
     const inputFloorValues = [
-        { subtitle: '지하' }, { unit: '층', name: 'flrCnt.ugrnd', options: checkIfNum },
-        { subtitle: '지상' }, { unit: '층', name: 'flrCnt.grnd', options: checkIfNum },
+        { subtitle: '지하' }, { name: 'flrCnt.ugrnd', options: checkIfNum },
+        { subtitle: '지상' }, { name: 'flrCnt.grnd', options: checkIfNum },
     ];
     return (
         <ItemContainer title='층정보'>
@@ -67,21 +67,31 @@ function BuildingFloorEl() {
 
 function BuildingAreaEl() {
 
-    const { control, setValue, register } = useFormContext();
+    const { control, setValue, register, getValues } = useFormContext();
 
     const platArea = useWatch({control, name: 'area.plat'});
     const archArea = useWatch({control, name: 'area.arch'});
     const totArea = useWatch({control, name: 'area.total'});
+
+    const platAreaUnit = useWatch({control, name: 'area.platUnit'});
+    const archAreaUnit = useWatch({control, name: 'area.archUnit'});
+    const totAreaUnit = useWatch({control, name: 'area.totalUnit'});
     // console.log('buidingArea: ', platArea, archArea, totArea);
 
-    const buildingLandRatio = platArea > 0 ? Math.round(archArea / platArea * 100) : 0;
-    const floorAreaRatio = platArea > 0 ? Math.round(totArea / platArea * 100) : 0;
+    const buildingLandRatio = platArea > 0 ? Math.round(
+        archArea / platArea * 100 * (archAreaUnit === '평' ? 3.3058 : 1) / (platAreaUnit === '평' ? 3.3058 : 1)) : 0;
+    const floorAreaRatio = platArea > 0 ? Math.round(
+        totArea / platArea * 100 * (totAreaUnit === '평' ? 3.3058 : 1) / (platAreaUnit === '평' ? 3.3058 : 1)) : 0;
 
     const inputAreaValues = [
-        { subtitle: '대지면적' }, { unit: 'm2', name: 'area.plat', options: checkIfNum }, {}, {},
-        { subtitle: '건축면적' }, { unit: 'm2', name: 'area.arch', options: checkIfNum },
+        { subtitle: '대지면적' }, { name: 'area.plat', options: checkIfNum, 
+            onUnitClick: (e) => onAreaUnitClick(e, 'area.plat', setValue, getValues) },
+        {}, {},
+        { subtitle: '건축면적' }, { name: 'area.arch', options: checkIfNum,
+            onUnitClick: (e) => onAreaUnitClick(e, 'area.arch', setValue, getValues) },
         { subtitle: '건폐율' }, { unit: '%', name: 'buildingLandRatio', calculated: buildingLandRatio },
-        { subtitle: '연면적' }, { unit: 'm2', name: 'area.total', options: checkIfNum },
+        { subtitle: '연면적' }, { name: 'area.total', options: checkIfNum,
+            onUnitClick: (e) => onAreaUnitClick(e, 'area.total', setValue, getValues) },
         { subtitle: '용적률' }, { unit: '%', name: 'floorAreaRatio', calculated: floorAreaRatio },
     ];   
 
@@ -98,9 +108,9 @@ function BuildingAreaEl() {
 function BulidingRoomCntEl() {
 
     const inputRoomCntValues = [
-        { subtitle: '세대' }, { name: 'roomCnt.household', unit: '개', options: checkIfNum },
-        { subtitle: '호' }, { name: 'roomCnt.ho', unit: '개', options: checkIfNum },
-        // { subtitle: '가구' }, { name: 'roomCnt.family', unit: '개', options: checkIfNum },
+        { subtitle: '세대' }, { name: 'roomCnt.household', options: checkIfNum },
+        { subtitle: '호' }, { name: 'roomCnt.ho', options: checkIfNum },
+        // { subtitle: '가구' }, { name: 'roomCnt.family', options: checkIfNum },
     ];
 
     return (
@@ -116,10 +126,10 @@ function BulidingRoomCntEl() {
 function BuildingParkingEl() {
 
     const inputParkingValues = [
-        { subtitle: '실내 자주식' }, { name: 'parkingCnt.indrAuto', unit: '대', options: checkIfNum },
-        { subtitle: '실내 기계식' }, { name: 'parkingCnt.indrMech', unit: '대', options: checkIfNum },
-        { subtitle: '실외 자주식' }, { name: 'parkingCnt.oudrAuto', unit: '대', options: checkIfNum },
-        { subtitle: '실외 기계식' }, { name: 'parkingCnt.oudrMech', unit: '대', options: checkIfNum },
+        { subtitle: '실내 자주식' }, { name: 'parkingCnt.indrAuto', options: checkIfNum },
+        { subtitle: '실내 기계식' }, { name: 'parkingCnt.indrMech', options: checkIfNum },
+        { subtitle: '실외 자주식' }, { name: 'parkingCnt.oudrAuto', options: checkIfNum },
+        { subtitle: '실외 기계식' }, { name: 'parkingCnt.oudrMech', options: checkIfNum },
     ];
 
     return (
@@ -135,8 +145,8 @@ function BuildingParkingEl() {
 function ElevatorEl() {
 
     const inputElevatorValues = [
-        { subtitle: '승용' }, { unit: '대', name: 'elvtCnt.rideUse', options: checkIfNum },
-        { subtitle: '비상용' }, { unit: '대', name: 'elvtCnt.emgenUse', options: checkIfNum },
+        { subtitle: '승용' }, { name: 'elvtCnt.rideUse', options: checkIfNum },
+        { subtitle: '비상용' }, { name: 'elvtCnt.emgenUse', options: checkIfNum },
     ];
 
     return (

@@ -156,8 +156,12 @@
 
     & .unit {
         position: absolute;
-        right: 1rem;
+        right: 0.5rem;
         font-size: 0.9rem;
+
+        padding: 0 0.5rem;
+        border-radius: 5px;
+        border: 0;
 
         & sup {
             font-size: 0.6rem;
