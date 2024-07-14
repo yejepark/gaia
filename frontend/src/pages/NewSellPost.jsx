@@ -74,6 +74,7 @@ const getDefaultValues = () => {
         parking: { count: 0 },
         businessType: { current: '', recommend: '' },
         usageType: { current: '', recommend: '' },
+        facility: { heatingMethod: '', coolingMethod: '', heatingFuel: '', electricWatts: 0 },
         ...getSavedData(),
     };
 }
@@ -354,7 +355,7 @@ function NewSellPost() {
 		            				자동입력
 		            			</button>
 		            		</div>
-		            		<div className={classes["input-grid"]}>
+		            		<div className={classes["input-grid"] + ' ' + classes['hline']}>
 			                	<ProductInfoContainer addressState={addressState} />
 			                </div>
 		                </fieldset>

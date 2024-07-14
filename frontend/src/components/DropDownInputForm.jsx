@@ -34,7 +34,12 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
 
     function containerClickHandler(event) {
         inputClickHandler(event);
-        setDropdownOpen((isOpen) => { return !isOpen; });
+        setDropdownOpen((isOpen) => {
+            if (isOpen) {
+                document.activeElement.blur();
+            }
+            return !isOpen; 
+        });
     }
 
     function dropdownClickHandler(event) {

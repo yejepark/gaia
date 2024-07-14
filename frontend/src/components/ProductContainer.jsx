@@ -405,7 +405,7 @@ function FacilityEl() {
 function ProductContainer({ addressState }) {
 
     return (
-        <div className={parentClasses["input-grid"]}>
+        <div className={parentClasses["input-grid"] + ' ' + parentClasses['hline']}>
             <PriceEl />
             <PremiumEl />
         	<AcquireEl />

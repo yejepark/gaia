@@ -46,7 +46,7 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, fitCo
     if (fitContent) {
         btnClass = btnClass + ' ' + classes.fitContent;
     }
-    console.log('----', field, field.length)
+    // console.log('----', field, field.length)
     let btnLabel = field.value.length === 0 ? defaultBtnLabel : (
         field.value.map((x) => choiceMap[x]).filter((x) => x && x.length > 0).join(',')
     );
