@@ -2,10 +2,10 @@
     height: max(2rem, 100%);
 /*    height: 2rem;*/
 
-    width: 100%;
+    width: max(8rem, 100%);
 
     & button {
-        width: max(100%, 10rem);
+        width: 100%;
     }
 
     & button.fitContent {

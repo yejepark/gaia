@@ -267,6 +267,10 @@ input[type='checkbox'] {
     margin-top: 0.2rem;
     text-wrap: nowrap;
 }
+
+.notShow {
+    display: none;
+}
 /*
 .diamond-shape {
     fill: red;

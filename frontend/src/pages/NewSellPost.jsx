@@ -72,6 +72,8 @@ const getDefaultValues = () => {
         moveInDay: { Y: thisYear, M: thisMonth, D: thisDay },
         prodArea: { use: 0, contract: 0},
         parking: { count: 0 },
+        businessType: { current: '', recommend: '' },
+        usageType: { current: '', recommend: '' },
         ...getSavedData(),
     };
 }
@@ -274,7 +276,6 @@ export function ValuesToDropDownForm({ title, values, isSubEl, name }) {
                 values={values} 
                 options={{
                     placeholder: "직접입력",
-                    custumClass: classes['dropdown-container'],
                 }}
             />
         </ItemContainer>

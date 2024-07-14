@@ -3,13 +3,13 @@ import { useFormContext } from 'react-hook-form';
 
 import UpDown from './UpDown';
 
-import filtersClasses from './Filters.module.css';
+import parentClasses from '../pages/NewSellPost.module.css';
 import classes from './DropDownInput.module.css';
 
 
-function ListItem({ value, text, unit, onClick }) {
+function ListItem({ value, text, unit, onClick, customClass }) {
     return (
-        <li value={value} onClick={onClick}>
+        <li value={value} onClick={onClick} className={customClass}>
             <button className={classes['dropdown-item']}>{text || value}{unit}</button>
         </li>
     );
@@ -51,21 +51,22 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
     let dropdownItems;
     if (values.length > 0 && ((typeof values[0] === 'number') || (typeof values[0] === 'string' || values[0] instanceof String))) {
         dropdownItems = values.map((v) => {
-            return <ListItem key={v} value={v} text={v} unit={options.unit} onClick={dropdownClickHandler} />});
+            return <ListItem key={v} value={v} text={v} unit={options.unit} onClick={dropdownClickHandler}/>});
     } else {
         dropdownItems = values.map((item) => {
-            return <ListItem key={item.key} value={item.value} text={item.text} onClick={dropdownClickHandler} />});
+            return <ListItem key={item.key} value={item.value} text={item.text} onClick={dropdownClickHandler} customClass={item.customClass}/>});
     }
 
     if (options.extraItems) {
         options.extraItems.forEach((item) => {
             dropdownItems.push(
-                <ListItem key={item.key} value={item.value} text={item.text} onClick={dropdownClickHandler} />);
+                <ListItem key={item.key} value={item.value} text={item.text} onClick={dropdownClickHandler} customClass={item.customClass}/>);
         });
     }
 
+    let dropdownCustomClass = options.customClass ? options?.customClass : '';
     return (
-        <div className={options.custumClass} onClick={containerClickHandler} style={options.style}>
+        <div className={parentClasses['dropdown-container'] + ' ' + dropdownCustomClass} onClick={containerClickHandler} style={options.style}>
             <div className={classes['dropdown-input'] + ' focusable'}>
                 <input {...register(name)}
                     type='text' 

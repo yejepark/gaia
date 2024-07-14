@@ -43,8 +43,11 @@
 }
 
 .input-inner-grid {
+    width: 100%;
     display: grid;
     grid-template-columns: 8rem 1fr;
+
+    row-gap: 8px;
 }
 
 .input-subgrid {

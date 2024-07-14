@@ -42,7 +42,7 @@ function DongEl({ addressState, dispatchAddress }) {
                 values={dongNms}
                 options={{
                     placeholder: "직접입력",
-                    custumClass: parentClasses['dropdown-container'],
+                    customClass: parentClasses['dropdown-container'],
                 }}
                 setCustomValue={(bldAndDong) => {
                     let [bldName, dongName] = bldAndDong.split('|');
@@ -68,11 +68,10 @@ function FloorEl({ addressState, dispatchAddress }) {
         return ['A' + `${k}`.padStart(3, '0'), `${k}층`];
     }));
 
-    return (
-        <ItemContainer title='층 선택' isSubEl={true}>
-            <MultipleChoiceForm name='floors' choiceMap={floorMap} defaultBtnLabel='' notActive={true} />
-        </ItemContainer>
-    );
+    return (<>
+            <MultipleChoiceForm name='floors' choiceMap={floorMap} defaultBtnLabel='층 선택' notActive={true} />
+            <div></div>
+    </>);
 }
 
 

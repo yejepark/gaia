@@ -88,7 +88,7 @@ function DropDownInput({ localValue, setLocalValue, values, name, options }) {
     }
 
     return (
-        <div className={options.custumClass} onClick={containerClickHandler} style={options.style}>
+        <div className={options.customClass} onClick={containerClickHandler} style={options.style}>
             <div className={classes['dropdown-input'] + ' focusable'}>
                 <input type='text' name={name} autoComplete="off"
                     placeholder={options.placeholder}

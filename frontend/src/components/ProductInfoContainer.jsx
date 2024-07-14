@@ -100,7 +100,7 @@ function BulidingRoomCntEl() {
     let inputRoomCntValues = [
         { subtitle: '세대' }, { name: 'roomCnt.household', unit: '개', options: checkIfNum },
         { subtitle: '호' }, { name: 'roomCnt.ho', unit: '개', options: checkIfNum },
-        { subtitle: '가구' }, { name: 'roomCnt.family', unit: '개', options: checkIfNum },
+        // { subtitle: '가구' }, { name: 'roomCnt.family', unit: '개', options: checkIfNum },
     ];
 
     return (
@@ -184,7 +184,7 @@ function UseAprDayEl() {
                                 values={item.values}
                                 options={{
                                     placeholder: "",
-                                    custumClass: item.inputClass
+                                    customClass: item.inputClass
                                 }}
                                 readOnly={true}
                             />

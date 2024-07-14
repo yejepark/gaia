@@ -42,8 +42,8 @@ function MultipleChoice({ checkedList, setCheckedList, choiceMap, defaultBtnLabe
 	let dialogOpenClass = dialogOpen ? '' : ' hidden';
 
     let items = Object.keys(choiceMap).map((item)=> {
-    	return (<li>
-			<label key={item}>
+    	return (<li key={item}>
+			<label>
 	            <input type="checkbox" value={item} name={name} onClick={checkClickHandler} checked={checkedList.includes(item)} readOnly/>
 	            <span>{choiceMap[item]}</span>
 	        </label>

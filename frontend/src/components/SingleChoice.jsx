@@ -22,8 +22,8 @@ function SingleChoice({ chosen, setChosen, choiceMap, btnLabel, name }) {
     let btnClass = chosen.length > 0 ? classes.filter + ' alive-btn active' : classes.filter + ' alive-btn';
     let dialogOpenClass = dialogOpen ? '' : ' hidden';
 
-    let inputEls = Object.keys(choiceMap).map((choice)=> {return (<li>
-        <label key={choice}>
+    let inputEls = Object.keys(choiceMap).map((choice)=> {return (<li key={choice}>
+        <label>
             <input type="radio" value={choice} name={name} onClick={radioClickHandler} checked={chosen===choice} readOnly/>
             <span>{choiceMap[choice]}</span>
         </label>

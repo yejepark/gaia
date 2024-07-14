@@ -5,9 +5,10 @@ import SingleChoiceForm from './SingleChoiceForm';
 import DropDownInputForm from './DropDownInputForm';
 import ApplyButton from './ApplyButton';
 
-import { ItemContainer, ValuesToElementsForm, InputWithUnit } from '../pages/NewSellPost';
+import { ItemContainer, ValuesToElementsForm, ValuesToDropDownForm, InputWithUnit } from '../pages/NewSellPost';
 import parentClasses from '../pages/NewSellPost.module.css';
 import classes from './ProductContainer.module.css';
+import BusinessTypes from './business_types.json';
 
 const checkIfNum = {
     valueAsNumber: true, 
@@ -201,7 +202,7 @@ function MoveInDayEl() {
                                 values={item.values}
                                 options={{
                                     placeholder: "",
-                                    custumClass: item.inputClass
+                                    customClass: item.inputClass
                                 }}
                                 readOnly={true}
                             />
@@ -302,22 +303,103 @@ function ParkingEl() {
 
     const parkingAvailable = useWatch({ control, name: 'parking.available' });
 
-    return (<ItemContainer title="주차 정보">
-        <div className={'subflex-col'}>
-            <label className={'input-checkbox'}>
-                <input type="checkbox" {...register('parking.available')} />
-                <div>주차 가능</div>
-            </label>
-
-            {parkingAvailable &&
+    return (
+        <ItemContainer title="주차 정보">
+            <div className={'subflex-col'}>
                 <div className={'subflex-row'}>
-                    <ItemContainer title='사용가능 주차대수' isSubEl={true}>
-                        <InputWithUnit name={'parking.count'} options={checkIfNum} unit={'대'} />
-                    </ItemContainer>
+                    <label className={'input-checkbox'}>
+                        <input type="checkbox" {...register('parking.available')} />
+                        <div>주차 가능</div>
+                    </label>
                 </div>
-            }
-        </div>
-    </ItemContainer>);
+
+                {parkingAvailable &&
+                    <div className={'subflex-row'}>
+                        <ItemContainer title='사용가능 주차대수' isSubEl={true}>
+                            <InputWithUnit name={'parking.count'} options={checkIfNum} unit={'대'} />
+                        </ItemContainer>
+                    </div>
+                }
+            </div>
+        </ItemContainer>
+    );
+}
+
+
+function BusinessTypeEl() {
+    const values = BusinessTypes;
+
+    const { control } = useFormContext();
+
+    const currentType = useWatch({ control, name: 'businessType.current' })
+    const recommendType = useWatch({ control, name: 'businessType.recommend' })
+
+    function addCustomClass(item, target, customClass) {
+        if (!item.value.includes(target.trim())) {
+            return {...item, name: item.value, customClass: customClass};
+        } else {
+            return {...item, name: item.value};
+        }
+    }
+    let currentValues = values.map((item) => addCustomClass(item, currentType, 'notShow'));
+    let recommendValues = values.map((item) => addCustomClass(item, recommendType, 'notShow'));
+
+    return (
+        <ItemContainer title='업종 정보'>
+            <div className={parentClasses['input-inner-grid']}>
+                <ValuesToDropDownForm title='현재 업종' values={currentValues} isSubEl={true} name='businessType.current' />
+                <ValuesToDropDownForm title='추천 업종' values={recommendValues} isSubEl={true} name='businessType.recommend' />
+            </div>
+        </ItemContainer>
+    );
+}
+
+function UsageTypeEl() {
+    const { register } = useFormContext();
+
+    return (
+        <ItemContainer title='용도 정보'>
+            <div className={parentClasses['input-inner-grid']}>
+                <ItemContainer title='현재 용도' isSubEl={true}>
+                    <input {...register('usageType.current')} 
+                        type='text' 
+                        className={parentClasses['input-value'] + ' focusable'}
+                        placeholder='직접입력'
+                    />
+                </ItemContainer>
+                <ItemContainer title='추천 용도' isSubEl={true}>
+                    <input {...register('usageType.recommend')}
+                        type='text'
+                        className={parentClasses['input-value'] + ' focusable'}
+                        placeholder='직접입력'
+                    />
+                </ItemContainer>
+            </div>
+        </ItemContainer>
+    );
+}
+
+function FacilityEl() {
+
+    const heatingMethodValues = ['개별난방', '중앙난방', '지역난방'];
+    const coolingMethodValues = ['벽걸이에어컨', '스탠드에어컨', '천장에어컨'];
+    const heatingFuelValues = ['도시가스', '기름', '전기', '심야전기', '태양열', 'LPG', '열병합', '지열'];
+
+    return (
+        <ItemContainer title='시설 정보'>
+            <div className={parentClasses['input-subgrid']}>
+                <ValuesToDropDownForm title='난방 방식' values={heatingMethodValues} isSubEl={true} name='facility.heatingMethod' />
+                <ValuesToDropDownForm title='냉방 방식' values={coolingMethodValues} isSubEl={true} name='facility.coolingMethod' />
+                <ValuesToDropDownForm title='난방 연료' values={heatingFuelValues} isSubEl={true} name='facility.heatingFuel' />
+                <ItemContainer title="사용 전력" isSubEl={true}>
+                    <InputWithUnit name='facility.electricWatts' unit='kW' options={{
+                        ...checkIfNum,
+                        min: {value: 0, message: '0 보다 작을 수 없습니다.'},
+                    }}/>
+                </ItemContainer>
+            </div>
+        </ItemContainer>
+    )
 }
 
 function ProductContainer({ addressState }) {
@@ -332,15 +414,9 @@ function ProductContainer({ addressState }) {
             <AreaEl />
             <DirectionEl />
             <ParkingEl />
-
-        	<div className={parentClasses["input-title"]}>현재업종 (현재용도)</div> 
-        	<div></div>
-        	<div className={parentClasses["input-title"]}>추천업종 (추천용도)</div> 
-        	<div></div>
-        	<div className={parentClasses["input-title"]}>매물 특징</div> 
-        	<div>40글자</div>
-        	<div className={parentClasses["input-title"]}>매물 설명</div> 
-        	<div>1000글자</div>
+            <BusinessTypeEl />
+            <UsageTypeEl />
+            <FacilityEl />
         </div>
     );
 }

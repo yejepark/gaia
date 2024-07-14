@@ -54,7 +54,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
                         values={minValues} 
                         options={{
                             unit, 
-                            custumClass: classes['min-input-container'], 
+                            customClass: classes['min-input-container'], 
                             placeholder:'0',
                             validator: (v) => parseInt(v) >= 0,
                             transformer: (v) => String(parseInt(v))
@@ -69,7 +69,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
                         values={maxValues} 
                         options={{
                             unit, 
-                            custumClass: classes['max-input-container'], 
+                            customClass: classes['max-input-container'], 
                             placeholder:'제한없음',
                             validator: (v) => parseInt(v) >= 0,
                             transformer: (v) => String(parseInt(v)),
