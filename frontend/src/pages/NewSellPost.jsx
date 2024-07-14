@@ -11,8 +11,8 @@ import ProductInfoContainer from '../components/ProductInfoContainer';
 import DropDownInputForm from '../components/DropDownInputForm';
 
 export function ItemContainer({ children, title, isSubEl }) {
-    let titleClass = isSubEl ? classes['input-subtitle'] : classes["input-title"];
-    let containerClass = isSubEl ? classes['input-subcontainer'] : classes['input-container'];
+    const titleClass = isSubEl ? classes['input-subtitle'] : classes["input-title"];
+    const containerClass = isSubEl ? classes['input-subcontainer'] : classes['input-container'];
     return [
         <div key={1} className={titleClass}>{title}</div>,
         <div key={2} className={containerClass}>{children}</div>
@@ -31,7 +31,7 @@ const usePersistForm = ({ value, storageKey }) => {
 const FORM_DATA_KEY = "app_form_local_data";
 
 const getSavedData = () => {
-    let data = sessionStorage.getItem(FORM_DATA_KEY);
+    const data = sessionStorage.getItem(FORM_DATA_KEY);
     if (data) {
         try {
             data = JSON.parse(data);
@@ -46,9 +46,9 @@ const getSavedData = () => {
 
 const getDefaultValues = () => {
     const today = new Date();
-    let thisYear = today.getFullYear();
-    let thisMonth = today.getMonth() + 1;
-    let thisDay = today.getDate();
+    const thisYear = today.getFullYear();
+    const thisMonth = today.getMonth() + 1;
+    const thisDay = today.getDate();
 
     return {
         tradeType: '',
@@ -97,7 +97,7 @@ function addressStateReducer(state, action) {
     }
 
     if (action.type === 'FETCH_SUCCESS') {
-        let data = action.payload;
+        const data = action.payload;
         // console.log('addressStateReducer:', data);
 
         let districtType = '';
@@ -111,14 +111,14 @@ function addressStateReducer(state, action) {
         let dongName = '';
         let bldName = '';
         if (data && data.brTitle) {
-            let brTitle = data.brTitle.length > 0 ? data.brTitle[0] : null;
+            const brTitle = data.brTitle.length > 0 ? data.brTitle[0] : null;
             if (brTitle) {
                 dongName = brTitle.dongNm.trim();
                 bldName = brTitle.bldNm.trim();
             }
         }
 
-        let nextState = {
+        const nextState = {
             ...initialAddressState,
             dongName,
             bldName,
@@ -130,17 +130,17 @@ function addressStateReducer(state, action) {
     }
 
     if (action.type === 'UPDATE_DONGNAME') {
-        let bldName = action.payload.bldName.trim();
-        let dongName = action.payload.dongName.trim();
+        const bldName = action.payload.bldName.trim();
+        const dongName = action.payload.dongName.trim();
         let brTitleIdx = '0';
-        for (let [idx, item] of Object.entries(state.data.brTitle)) {
+        for (const [idx, item] of Object.entries(state.data.brTitle)) {
             if (dongName === item['dongNm'].trim() && bldName === item['bldNm'].trim()) {
                 brTitleIdx = idx;
                 break;
             }
         }
 
-        let nextState = {
+        const nextState = {
             ...state,
             dongName,
             bldName,
@@ -151,7 +151,7 @@ function addressStateReducer(state, action) {
     }
 
     if (action.type === 'RESTORE') {
-        let storedState = JSON.parse(sessionStorage.getItem('addressState') || '{}');
+        const storedState = JSON.parse(sessionStorage.getItem('addressState') || '{}');
         if (Object.keys(storedState).length === 0) {
             return initialAddressState;
         }
@@ -169,8 +169,8 @@ function addressStateReducer(state, action) {
 // Auto Fill Product Info ------------------------------------------
 function clickFillProductInfo(addressState, setValue) {
     if (addressState.data && addressState.data.brTitle && addressState.data.brTitle.length > 0) {
-        let brTitle = addressState.data.brTitle[addressState.brTitleIdx];
-        let toSet = {
+        const brTitle = addressState.data.brTitle[addressState.brTitleIdx];
+        const toSet = {
             mainPurpose: 'mainPurpsCdNm',
             'flrCnt.ugrnd': 'ugrndFlrCnt',
             'flrCnt.grnd': 'grndFlrCnt',
@@ -189,7 +189,7 @@ function clickFillProductInfo(addressState, setValue) {
             setValue(k, brTitle[v]);
         }
 
-        let useAprDay = brTitle['useAprDay'];
+        const useAprDay = brTitle['useAprDay'];
         setValue('useAprDay', {
             Y: Number(useAprDay.slice(0, 4)),
             M: Number(useAprDay.slice(4, 6)),
@@ -198,9 +198,9 @@ function clickFillProductInfo(addressState, setValue) {
 
         setValue('districtType', addressState.districtType);
 
-        let platArea = brTitle.platArea ? Number(brTitle.platArea) : 0;
-        let archArea = brTitle.archArea ? Number(brTitle.archArea) : 0;
-        let totArea = brTitle.vlRatEstmTotArea ? Number(brTitle.vlRatEstmTotArea) : 0;
+        const platArea = brTitle.platArea ? Number(brTitle.platArea) : 0;
+        const archArea = brTitle.archArea ? Number(brTitle.archArea) : 0;
+        const totArea = brTitle.vlRatEstmTotArea ? Number(brTitle.vlRatEstmTotArea) : 0;
 
         setValue('area.plat', platArea.toFixed(1));
         setValue('area.arch', archArea.toFixed(1));
@@ -213,7 +213,7 @@ export function InputWithUnit({ name, options, unit }) {
     const { register, formState: { errors } } = useFormContext();
 
     let error;
-    let names = name.split('.');
+    const names = name.split('.');
     if (errors[names[0]]) {
         error = names.length === 1 ? errors[names[0]] : errors[names[0]][names[1]];
     }

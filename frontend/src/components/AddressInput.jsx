@@ -2,7 +2,7 @@ import classes from './AddressInput.module.css';
 
 import { useFormContext } from 'react-hook-form';
 
-let { daum, kakao } = window;
+const { daum, kakao } = window;
 
 const geocoder = new kakao.maps.services.Geocoder();
 
@@ -12,7 +12,7 @@ function foldDaumPostcode() {
 
 async function postAddressData(data) {
     // console.log('start postAddressData');
-    let res = await fetch(
+    const res = await fetch(
         "http://localhost:8000/sell_posts/address_data/create", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -22,7 +22,7 @@ async function postAddressData(data) {
     );
     // console.log('in postAddressData', JSON.stringify(data));
 
-    let recvData = await res.json();
+    const recvData = await res.json();
     // console.log('in postAddressData', recvData)
 
     return recvData;
@@ -45,8 +45,8 @@ function AddressInput({ addressState, dispatchAddress }) {
 
     const { setValue, setFocus } = useFormContext();
 
-    let addressData = addressState.data;
-    let hasAddressData = addressData ? Object.keys(addressData).length > 0 : null;
+    const addressData = addressState.data;
+    const hasAddressData = addressData ? Object.keys(addressData).length > 0 : null;
 
     function execDaumPostcode() {
         var element_wrap = document.getElementById('postcodeWrap');
@@ -54,7 +54,7 @@ function AddressInput({ addressState, dispatchAddress }) {
         // var currentScroll = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
         new daum.Postcode({
             oncomplete: async function(data) {
-                let newData = {
+                const newData = {
                     jibunAddress: data.jibunAddress.length > 0 ? data.jibunAddress : data.autoJibunAddress,
                     roadAddress: data.roadAddress.length > 0 ? data.roadAddress : data.autoRoadAddress,
 
@@ -74,10 +74,10 @@ function AddressInput({ addressState, dispatchAddress }) {
                     buildingCode: data.buildingCode
                 }
 
-                let selectedAddress = data.userSelectedType === 'R' ? newData.roadAddress : newData.jibunAddress;
+                const selectedAddress = data.userSelectedType === 'R' ? newData.roadAddress : newData.jibunAddress;
 
                 try {
-                    let { lat, lng } = await addressSearch(newData.roadAddress);
+                    const { lat, lng } = await addressSearch(newData.roadAddress);
                     newData['latlng'] = [lat, lng];
                 } catch (error) {
                     newData['latlng'] = [];
@@ -87,7 +87,7 @@ function AddressInput({ addressState, dispatchAddress }) {
                 // console.log('in execDaumPostcode 1:', data);
                 // console.log('in execDaumPostcode 2:', newData);
 
-                let totData = await postAddressData(newData)
+                const totData = await postAddressData(newData)
                 totData['userSelectedType'] = data.userSelectedType;
                 // console.log('in execDaumPostcode 3:', totData);
 
@@ -102,7 +102,7 @@ function AddressInput({ addressState, dispatchAddress }) {
 
                 let currentDongName = '';
                 if (totData?.brTitle && totData.brTitle[0]) {
-                    let brTitle = totData.brTitle[0];
+                    const brTitle = totData.brTitle[0];
                     currentDongName = (brTitle.bldNm + ' ' + brTitle.dongNm).trim();
                 }
 

@@ -19,7 +19,7 @@ const checkIfNum = {
 
 function PriceEl() {
 
-    let inputPriceValues = [
+    const inputPriceValues = [
         { subtitle: '매매가' }, { unit: '만원', name: 'price.sale', options: checkIfNum }, {}, {},
         { subtitle: '보증금' }, { unit: '만원', name: 'price.deposit', options: checkIfNum },
         { subtitle: '월세' }, { unit: '만원', name: 'price.monthlyRent', options: checkIfNum },
@@ -37,14 +37,14 @@ function PriceEl() {
 function PremiumEl() {
     const { register, control } = useFormContext();
 
-    let [ pOp, pFac, pLoc, pExist ] = useWatch({ 
+    const [ pOp, pFac, pLoc, pExist ] = useWatch({ 
         control, 
         name: [ 'premium.operation', 'premium.facility', 'premium.location', 'premium.exist' ]
     });
-    let pTot = pOp + pFac + pLoc;
+    const pTot = pOp + pFac + pLoc;
     // console.log(pOp, pFac, pLoc, pTot);
 
-    let inputPremiumValues = [
+    const inputPremiumValues = [
         { subtitle: '영업권리금' }, { name: 'premium.operation', unit: '만원', options: checkIfNum },
         { subtitle: '시설권리금' }, { name: 'premium.facility', unit: '만원', options: checkIfNum },
         { subtitle: '바닥권리금' }, { name: 'premium.location', unit: '만원', options: checkIfNum },
@@ -80,7 +80,7 @@ function PremiumEl() {
 function AcquireEl() {
     const { register, control } = useFormContext();
 
-    let [ revenue, rent, cogs, wage, utilityCost, manageCost, profit, incomeExpose ] = useWatch({
+    const [ revenue, rent, cogs, wage, utilityCost, manageCost, profit, incomeExpose ] = useWatch({
         control, 
         name: [ 
             'income.revenue', 'income.rent', 'income.cogs', 'income.wage', 
@@ -88,9 +88,9 @@ function AcquireEl() {
             'income.expose' 
         ]
     });
-    let etc = revenue - rent - cogs - wage - utilityCost - manageCost - profit;
+    const etc = revenue - rent - cogs - wage - utilityCost - manageCost - profit;
 
-    let inputAcquireValues = [
+    const inputAcquireValues = [
         { subtitle: '월 매출' }, { name: 'income.revenue', unit: '만원', options: checkIfNum },
         { subtitle: '월세' }, { name: 'income.rent', unit: '만원', options: checkIfNum },
         { subtitle: '재료비' }, { name: 'income.cogs', unit: '만원', options: checkIfNum },
@@ -129,7 +129,7 @@ function AcquireEl() {
 function LoanEl() {
     const { register, control, formState: { errors } } = useFormContext();
 
-    let [ loanExist, loanExpose ] = useWatch({
+    const [ loanExist, loanExpose ] = useWatch({
         control, 
         name: [ 'loan.exist', 'loan.expose' ]
     });
@@ -169,14 +169,14 @@ function LoanEl() {
 function MoveInDayEl() {
     const { register, control } = useFormContext();
 
-    let curDate = new Date();
-    let thisYear = curDate.getFullYear();
+    const curDate = new Date();
+    const thisYear = curDate.getFullYear();
 
-    let yearValues = Array.from({ length: 10 }, (x, i) => thisYear + i);
-    let monthValues = Array.from({ length: 12 }, (x, i) => i + 1);
-    let dayValues = Array.from({ length: 31 }, (x, i) => i + 1);
+    const yearValues = Array.from({ length: 10 }, (x, i) => thisYear + i);
+    const monthValues = Array.from({ length: 12 }, (x, i) => i + 1);
+    const dayValues = Array.from({ length: 31 }, (x, i) => i + 1);
 
-    let items = [{
+    const items = [{
             name: 'moveInDay.Y',
             values: yearValues,
             inputClass: parentClasses['year-input']
@@ -223,7 +223,7 @@ function MoveInDayEl() {
 
 function AreaEl() {
 
-    let inputAreaValues = [
+    const inputAreaValues = [
         { subtitle: '전용면적' }, { unit: 'm2', name: 'prodArea.use', options: checkIfNum },
         { subtitle: '계약면적' }, { unit: 'm2', name: 'prodArea.contract', options: checkIfNum },
     ];
@@ -240,24 +240,24 @@ function AreaEl() {
 function DirectionEl() {
     const { register, setValue, control } = useFormContext();
 
-    let [dropdownOpen, setDropdownOpen] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     function btnClickHandler(event) {
         setDropdownOpen((isOpen) => { return !isOpen; });
     }
 
     function directionClickHandler(event) {
-        let optionEl = event.currentTarget;
-        let v = optionEl.getAttribute('value');
+        const optionEl = event.currentTarget;
+        const v = optionEl.getAttribute('value');
         setValue('direction', v);
     }
 
-    let chosenDirection = useWatch({control, name: 'direction'});
+    const chosenDirection = useWatch({control, name: 'direction'});
 
-    let dropdownOpenClass = dropdownOpen ? '' : ' hidden';
+    const dropdownOpenClass = dropdownOpen ? '' : ' hidden';
 
-    let directions = [ '북서', '북', '북동', '서', '', '동', '남서', '남', '남동' ];
-    let buttons = directions.map((item, idx) => {
+    const directions = [ '북서', '북', '북동', '서', '', '동', '남서', '남', '남동' ];
+    const buttons = directions.map((item, idx) => {
         if (item.length > 0) {
             return <button
                         key={idx} type='button'
@@ -341,8 +341,8 @@ function BusinessTypeEl() {
             return {...item, name: item.value};
         }
     }
-    let currentValues = values.map((item) => addCustomClass(item, currentType, 'notShow'));
-    let recommendValues = values.map((item) => addCustomClass(item, recommendType, 'notShow'));
+    const currentValues = values.map((item) => addCustomClass(item, currentType, 'notShow'));
+    const recommendValues = values.map((item) => addCustomClass(item, recommendType, 'notShow'));
 
     return (
         <ItemContainer title='업종 정보'>

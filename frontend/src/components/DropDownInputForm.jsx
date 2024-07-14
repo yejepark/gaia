@@ -24,13 +24,13 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
         setFocus(name);
     }
 
-    let setValue1 = withoutPipe ? (name, v) => setValue(name, v.replace('|', ' ').trim()) : setValue;
-    let setValue2 = setCustomValue ? (name, v) => {
+    const setValue1 = withoutPipe ? (name, v) => setValue(name, v.replace('|', ' ').trim()) : setValue;
+    const setValue2 = setCustomValue ? (name, v) => {
         setCustomValue(v);
         setValue1(name, v);
     } : setValue1;
 
-    let [dropdownOpen, setDropdownOpen] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     function containerClickHandler(event) {
         inputClickHandler(event);
@@ -44,14 +44,14 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
 
     function dropdownClickHandler(event) {
         event.stopPropagation();
-        let optionEl = event.currentTarget;
-        let v = optionEl.getAttribute('value');
+        const optionEl = event.currentTarget;
+        const v = optionEl.getAttribute('value');
 
         setValue2(name, v);
         setDropdownOpen(false);
     }
 
-    let dropdownOpenClass = dropdownOpen ? '' : ' hidden';
+    const dropdownOpenClass = dropdownOpen ? '' : ' hidden';
 
     let dropdownItems;
     if (values.length > 0 && ((typeof values[0] === 'number') || (typeof values[0] === 'string' || values[0] instanceof String))) {
@@ -69,7 +69,7 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
         });
     }
 
-    let dropdownCustomClass = options.customClass ? options?.customClass : '';
+    const dropdownCustomClass = options.customClass ? options?.customClass : '';
     return (
         <div className={parentClasses['dropdown-container'] + ' ' + dropdownCustomClass} onClick={containerClickHandler} style={options.style}>
             <div className={classes['dropdown-input'] + ' focusable'}>

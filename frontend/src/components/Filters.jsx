@@ -26,19 +26,19 @@ const areaValues = [...arrayRange(0, 20, 5), ...arrayRange(30, 100, 10), ...arra
 
 function Filters() {
 
-    let storedListingType = sessionStorage.getItem('listingType');
-    let storedCheckedSpaceUses = sessionStorage.getItem('checkedSpaceUses');
-    let storedMinRent = sessionStorage.getItem('minRent');
-    let storedMaxRent = sessionStorage.getItem('maxRent');
-    let storedMinArea = sessionStorage.getItem('minArea');
-    let storedMaxArea = sessionStorage.getItem('maxArea');
+    const storedListingType = sessionStorage.getItem('listingType');
+    const storedCheckedSpaceUses = sessionStorage.getItem('checkedSpaceUses');
+    const storedMinRent = sessionStorage.getItem('minRent');
+    const storedMaxRent = sessionStorage.getItem('maxRent');
+    const storedMinArea = sessionStorage.getItem('minArea');
+    const storedMaxArea = sessionStorage.getItem('maxArea');
 
-    let [listingType, setListingType] = useState( storedListingType ? storedListingType : 'rent' );
-    let [checkedSpaceUses, setCheckedSpaceUses] = useState( storedCheckedSpaceUses ? storedCheckedSpaceUses.split(',') : []);
-    let [minRent, setMinRent] = useState( storedMinRent | '' );
-    let [maxRent, setMaxRent] = useState( storedMaxRent | '' );
-    let [minArea, setMinArea] = useState( storedMinArea | '' );
-    let [maxArea, setMaxArea] = useState( storedMaxArea | '' );
+    const [listingType, setListingType] = useState( storedListingType ? storedListingType : 'rent' );
+    const [checkedSpaceUses, setCheckedSpaceUses] = useState( storedCheckedSpaceUses ? storedCheckedSpaceUses.split(',') : []);
+    const [minRent, setMinRent] = useState( storedMinRent | '' );
+    const [maxRent, setMaxRent] = useState( storedMaxRent | '' );
+    const [minArea, setMinArea] = useState( storedMinArea | '' );
+    const [maxArea, setMaxArea] = useState( storedMaxArea | '' );
 
     useEffect(()=>{
         if (sessionStorage) {

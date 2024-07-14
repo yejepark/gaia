@@ -24,22 +24,22 @@ const { kakao } = window;
 
 
 function makeCustomMarkers(positions, dataIds, kakaoMap) {
-    let nav = document.getElementById("cardNav");
-    let cardContainer = nav.firstChild;
-    let baseOffset = nav.offsetTop + parseInt(getComputedStyle(cardContainer).marginTop) + 10;
+    const nav = document.getElementById("cardNav");
+    const cardContainer = nav.firstChild;
+    const baseOffset = nav.offsetTop + parseInt(getComputedStyle(cardContainer).marginTop) + 10;
     // console.log(baseOffset)
 
     return positions.map((pos, idx) => {
 
-        let content = document.createElement('div');
+        const content = document.createElement('div');
 
         // content.innerHTML = DiamondHtml;
 
         content.id = dataIds[idx];
 
-        let id = content.id.split('-')[1];
-        let cardId = `card-${id}`;
-        let card = document.getElementById(cardId);
+        const id = content.id.split('-')[1];
+        const cardId = `card-${id}`;
+        const card = document.getElementById(cardId);
 
         if (card) {
             content.className = classes["price-tag"];
@@ -73,11 +73,11 @@ function makeCustomMarkers(positions, dataIds, kakaoMap) {
 }
 
 function KakaoMap({ assets }) {
-    let [kakaoMap, setKakaoMap] = useState(null);
-    let [markers, setMarkers] = useState([]);
-    let [positions, setPositions] = useState([]);
+    const [kakaoMap, setKakaoMap] = useState(null);
+    const [markers, setMarkers] = useState([]);
+    const [positions, setPositions] = useState([]);
 
-    let container = useRef();
+    const container = useRef();
 
     const centerMap = useCallback(function(positions) {
         if (positions.length > 0) {
@@ -109,9 +109,9 @@ function KakaoMap({ assets }) {
 
         if (kakaoMap === null) { return; }
 
-        let dataIds = assets.map(data => `marker-${data.id}`);
-        let latlngs = assets.map(data => data.latlng);
-        let newPositions = latlngs.map(pos => new kakao.maps.LatLng(...pos));
+        const dataIds = assets.map(data => `marker-${data.id}`);
+        const latlngs = assets.map(data => data.latlng);
+        const newPositions = latlngs.map(pos => new kakao.maps.LatLng(...pos));
         setPositions(newPositions);
 
         setMarkers((markers) => {
@@ -125,7 +125,7 @@ function KakaoMap({ assets }) {
 
     // useEffect(() => {
     //     if (positions.length > 0) {
-    //         let resizeHandler = debounce((event) => { centerMap(positions); } , 200);
+    //         const resizeHandler = debounce((event) => { centerMap(positions); } , 200);
     //         window.addEventListener('resize', resizeHandler);
     //         return () => { window.removeEventListener('resize', resizeHandler); }    
     //     }

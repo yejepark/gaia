@@ -78,22 +78,22 @@ function ProductTypeContainer() {
 
     const { control } = useFormContext();
 
-    let tradeTypeEl = (
+    const tradeTypeEl = (
         <ItemContainer title='거래유형'>
             <SingleChoiceForm name='tradeType' choiceMap={tradeTypeMap} btnLabel='선택하기' />
         </ItemContainer>
     );
     
-    let productTypeEl = (
+    const productTypeEl = (
         <ItemContainer title='대분류'>
             <SingleChoiceForm name='productType' choiceMap={productTypeMap} btnLabel='선택하기' />
         </ItemContainer>
     );
 
-    let productType = useWatch({control, name: 'productType'});
-    let chosenTypeMap = productType && typeToSubTypeMap[productType];
+    const productType = useWatch({control, name: 'productType'});
+    const chosenTypeMap = productType && typeToSubTypeMap[productType];
 
-    let productSubTypeEl = chosenTypeMap && (
+    const productSubTypeEl = chosenTypeMap && (
         <ItemContainer title='소분류'>
             <SingleChoiceForm name='productSubType' choiceMap={chosenTypeMap} btnLabel='선택하기' />
         </ItemContainer>

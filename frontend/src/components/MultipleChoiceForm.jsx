@@ -13,7 +13,7 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, fitCo
     const { control, setFocus } = useFormContext();
     const { field } = useController({ control, name });
 
-    let [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     function btnClickHandler() {
         setDialogOpen((isOpen) => { return !isOpen; });
@@ -27,10 +27,10 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, fitCo
     }
 
     function onCheckChange(event, idx) {
-        let inputEl = event.currentTarget;
-        let clicked = inputEl.value;
+        const inputEl = event.currentTarget;
+        const clicked = inputEl.value;
         if (!field.value.includes(clicked)) {
-            let newList = [...field.value, clicked];
+            const newList = [...field.value, clicked];
             newList.sort();
             field.onChange(newList);
         } else {
@@ -47,13 +47,13 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, fitCo
         btnClass = btnClass + ' ' + classes.fitContent;
     }
     // console.log('----', field, field.length)
-    let btnLabel = field.value.length === 0 ? defaultBtnLabel : (
+    const btnLabel = field.value.length === 0 ? defaultBtnLabel : (
         field.value.map((x) => choiceMap[x]).filter((x) => x && x.length > 0).join(',')
     );
 
-    let dialogOpenClass = dialogOpen ? '' : ' hidden';
+    const dialogOpenClass = dialogOpen ? '' : ' hidden';
 
-    let items = Object.keys(choiceMap).map((item, idx) => {
+    const items = Object.keys(choiceMap).map((item, idx) => {
         return (<li key={idx}>
             <label>
                 <input 

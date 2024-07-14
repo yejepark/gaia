@@ -51,7 +51,7 @@ const checkIfNum = {
 };
 
 function BuildingFloorEl() {
-    let inputFloorValues = [
+    const inputFloorValues = [
         { subtitle: '지하' }, { unit: '층', name: 'flrCnt.ugrnd', options: checkIfNum },
         { subtitle: '지상' }, { unit: '층', name: 'flrCnt.grnd', options: checkIfNum },
     ];
@@ -69,15 +69,15 @@ function BuildingAreaEl() {
 
     const { control, setValue, register } = useFormContext();
 
-    let platArea = useWatch({control, name: 'area.plat'});
-    let archArea = useWatch({control, name: 'area.arch'});
-    let totArea = useWatch({control, name: 'area.total'});
+    const platArea = useWatch({control, name: 'area.plat'});
+    const archArea = useWatch({control, name: 'area.arch'});
+    const totArea = useWatch({control, name: 'area.total'});
     // console.log('buidingArea: ', platArea, archArea, totArea);
 
-    let buildingLandRatio = platArea > 0 ? Math.round(archArea / platArea * 100) : 0;
-    let floorAreaRatio = platArea > 0 ? Math.round(totArea / platArea * 100) : 0;
+    const buildingLandRatio = platArea > 0 ? Math.round(archArea / platArea * 100) : 0;
+    const floorAreaRatio = platArea > 0 ? Math.round(totArea / platArea * 100) : 0;
 
-    let inputAreaValues = [
+    const inputAreaValues = [
         { subtitle: '대지면적' }, { unit: 'm2', name: 'area.plat', options: checkIfNum }, {}, {},
         { subtitle: '건축면적' }, { unit: 'm2', name: 'area.arch', options: checkIfNum },
         { subtitle: '건폐율' }, { unit: '%', name: 'buildingLandRatio', calculated: buildingLandRatio },
@@ -97,7 +97,7 @@ function BuildingAreaEl() {
 
 function BulidingRoomCntEl() {
 
-    let inputRoomCntValues = [
+    const inputRoomCntValues = [
         { subtitle: '세대' }, { name: 'roomCnt.household', unit: '개', options: checkIfNum },
         { subtitle: '호' }, { name: 'roomCnt.ho', unit: '개', options: checkIfNum },
         // { subtitle: '가구' }, { name: 'roomCnt.family', unit: '개', options: checkIfNum },
@@ -115,7 +115,7 @@ function BulidingRoomCntEl() {
 
 function BuildingParkingEl() {
 
-    let inputParkingValues = [
+    const inputParkingValues = [
         { subtitle: '실내 자주식' }, { name: 'parkingCnt.indrAuto', unit: '대', options: checkIfNum },
         { subtitle: '실내 기계식' }, { name: 'parkingCnt.indrMech', unit: '대', options: checkIfNum },
         { subtitle: '실외 자주식' }, { name: 'parkingCnt.oudrAuto', unit: '대', options: checkIfNum },
@@ -134,7 +134,7 @@ function BuildingParkingEl() {
 
 function ElevatorEl() {
 
-    let inputElevatorValues = [
+    const inputElevatorValues = [
         { subtitle: '승용' }, { unit: '대', name: 'elvtCnt.rideUse', options: checkIfNum },
         { subtitle: '비상용' }, { unit: '대', name: 'elvtCnt.emgenUse', options: checkIfNum },
     ];
@@ -151,14 +151,14 @@ function ElevatorEl() {
 
 function UseAprDayEl() {
 
-    let curDate = new Date();
-    let thisYear = curDate.getFullYear();
+    const curDate = new Date();
+    const thisYear = curDate.getFullYear();
 
-    let yearValues = Array.from({ length: 100 }, (x, i) => thisYear - i);
-    let monthValues = Array.from({ length: 12 }, (x, i) => i + 1);
-    let dayValues = Array.from({ length: 31 }, (x, i) => i + 1);
+    const yearValues = Array.from({ length: 100 }, (x, i) => thisYear - i);
+    const monthValues = Array.from({ length: 12 }, (x, i) => i + 1);
+    const dayValues = Array.from({ length: 31 }, (x, i) => i + 1);
 
-    let items = [{
+    const items = [{
             name: 'useAprDay.Y',
             values: yearValues,
             inputClass: parentClasses['year-input']

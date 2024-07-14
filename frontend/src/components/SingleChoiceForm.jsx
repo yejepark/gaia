@@ -10,7 +10,7 @@ function SingleChoiceForm({ choiceMap, btnLabel, name }) {
 
     const { register, control } = useFormContext();
 
-    let [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     function btnClickHandler(e) {
         setDialogOpen((isOpen) => { return !isOpen; });
@@ -21,13 +21,13 @@ function SingleChoiceForm({ choiceMap, btnLabel, name }) {
             setDialogOpen((isOpen) => { return !isOpen; });    
         }
     }
-    let chosen = useWatch({ control, name });
+    const chosen = useWatch({ control, name });
     // console.log('--------', chosen)
 
-    let btnClass = chosen && chosen.length > 0 ? classes.filter + ' alive-btn active' : classes.filter + ' alive-btn';
-    let dialogOpenClass = dialogOpen ? '' : ' hidden';
+    const btnClass = chosen && chosen.length > 0 ? classes.filter + ' alive-btn active' : classes.filter + ' alive-btn';
+    const dialogOpenClass = dialogOpen ? '' : ' hidden';
 
-    let inputEls = Object.keys(choiceMap).map((choice, idx) => {
+    const inputEls = Object.keys(choiceMap).map((choice, idx) => {
         return (<li key={idx}>
             <label>
                 <input {...register(name)} type="radio" value={choice} onKeyPress={enterStrokeHandler} className={'focusable'}/>

@@ -24,8 +24,8 @@ function TopEl({ register }) {
 
 function DongEl({ addressState, dispatchAddress }) {
 
-    let dongNms = addressState.data.brTitle.map((item, idx) => {
-        let dongNm = item.bldNm === item.dongNm ? ' ' : item.dongNm;
+    const dongNms = addressState.data.brTitle.map((item, idx) => {
+        const dongNm = item.bldNm === item.dongNm ? ' ' : item.dongNm;
         return {
             text: (item.bldNm + ' ' + dongNm).trim(),
             value: item.bldNm + '|' + dongNm,
@@ -35,7 +35,7 @@ function DongEl({ addressState, dispatchAddress }) {
 
     dongNms.sort(function(a, b) { return ('' + a.value).localeCompare(b.value); });
 
-    let dongEl = (
+    const dongEl = (
         <ItemContainer title='동 명칭'>
             <DropDownInputForm
                 name='dongName'
@@ -45,7 +45,7 @@ function DongEl({ addressState, dispatchAddress }) {
                     customClass: parentClasses['dropdown-container'],
                 }}
                 setCustomValue={(bldAndDong) => {
-                    let [bldName, dongName] = bldAndDong.split('|');
+                    const [bldName, dongName] = bldAndDong.split('|');
                     dispatchAddress({ type: 'UPDATE_DONGNAME', payload: {bldName, dongName} });
                 }}
                 withoutPipe={true}
@@ -58,12 +58,12 @@ function DongEl({ addressState, dispatchAddress }) {
 
 
 function FloorEl({ addressState, dispatchAddress }) {
-    let brTitle = addressState.data.brTitle[addressState.brTitleIdx]
+    const brTitle = addressState.data.brTitle[addressState.brTitleIdx]
 
-    let ugrndFlrKeys = Array.from({ length: brTitle.ugrndFlrCnt }, (x, i) => -(i + 1));
-    let grndFlrKeys = Array.from({ length: brTitle.grndFlrCnt }, (x, i) => i + 1);
-    let flrKeys = grndFlrKeys.concat(ugrndFlrKeys);
-    let floorMap = Object.fromEntries(flrKeys.map(k => {
+    const ugrndFlrKeys = Array.from({ length: brTitle.ugrndFlrCnt }, (x, i) => -(i + 1));
+    const grndFlrKeys = Array.from({ length: brTitle.grndFlrCnt }, (x, i) => i + 1);
+    const flrKeys = grndFlrKeys.concat(ugrndFlrKeys);
+    const floorMap = Object.fromEntries(flrKeys.map(k => {
         if (k < 0) return ['B' + `${-k}`.padStart(3, '0'), `지하${-k}층`];
         return ['A' + `${k}`.padStart(3, '0'), `${k}층`];
     }));
@@ -78,20 +78,20 @@ function FloorEl({ addressState, dispatchAddress }) {
 function AddressContainer({ addressState, dispatchAddress, register, watch }) {
     // console.log('in AddressContainer')
 
-    let hasAddressData = addressState.data ? Object.keys(addressState.data).length > 0 : null;
+    const hasAddressData = addressState.data ? Object.keys(addressState.data).length > 0 : null;
 
     let brTitle;
     if (addressState.data && addressState.data.brTitle.length > 0) {
         brTitle = addressState.data.brTitle[addressState.brTitleIdx];
     }
 
-    let searchBtn = (
+    const searchBtn = (
         <ItemContainer title='주소'>
             <AddressInput addressState={addressState} dispatchAddress={dispatchAddress} />
         </ItemContainer>
     );
 
-    let hoEl = (
+    const hoEl = (
         <ItemContainer title='호 명칭' isSubEl={true}>
             <div className={parentClasses['input-with-unit']}>
                 <input {...register('hoName')} type='text' className={parentClasses["input-value"] + ' focusable'} />
@@ -100,8 +100,8 @@ function AddressContainer({ addressState, dispatchAddress, register, watch }) {
         </ItemContainer>
     );
 
-    let oneOrLessFloor = watch('floors').length === 1;
-    let midEl = (
+    const oneOrLessFloor = watch('floors').length === 1;
+    const midEl = (
         <ItemContainer>
             <div className={parentClasses['input-subgrid']}>
                 {brTitle && <FloorEl addressState={addressState} dispatchAddress={dispatchAddress} />}
@@ -110,7 +110,7 @@ function AddressContainer({ addressState, dispatchAddress, register, watch }) {
         </ItemContainer>
     );
 
-    let detailEl = (
+    const detailEl = (
         <ItemContainer title='상세주소'>
             <input {...register('addressDetail')} type='text' className={parentClasses["input-value"] + ' focusable'} />
         </ItemContainer>

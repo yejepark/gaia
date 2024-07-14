@@ -15,13 +15,13 @@ function UpDown() {
 
 function CardContainer({ assets }) {
 
-    let cards = assets.map((data, dataIdx) =>
+    const cards = assets.map((data, dataIdx) =>
         <CardItem key={dataIdx} data={data} />
     );
 
     useEffect(() => {
-        let button = document.querySelector('.' + classes.sort);
-        let arrowEl = button.querySelector('i');
+        const button = document.querySelector('.' + classes.sort);
+        const arrowEl = button.querySelector('i');
         button.addEventListener('click', function() { arrowEl.classList.toggle(classes['up']); });
     }, []);
 

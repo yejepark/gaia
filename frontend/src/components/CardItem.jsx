@@ -17,13 +17,13 @@ function Arrow() {
 
 function CardItem({ data }) {
 
-    let [imgPos, setImgPos] = useState(0);
+    const [imgPos, setImgPos] = useState(0);
 
-    let urls = data.pic_urls;
+    const urls = data.pic_urls;
 
-    let cardId = 'card-' + data.id;
+    const cardId = 'card-' + data.id;
     // console.log(cardId)
-    let imgCarousel = document.querySelector('#' + cardId + ' .' + classes['img-carousel']); 
+    const imgCarousel = document.querySelector('#' + cardId + ' .' + classes['img-carousel']); 
 
     function cardClickHandler(event) {
         console.log('card', event.target);
@@ -47,25 +47,25 @@ function CardItem({ data }) {
 
     // Make the marker larger when a mouse is over a corresponding card:
     function mouseOverHandler(event) {
-        let markerId = 'marker-' + event.currentTarget.id.split('-')[1];
-        let marker = document.getElementById(markerId);
+        const markerId = 'marker-' + event.currentTarget.id.split('-')[1];
+        const marker = document.getElementById(markerId);
         // if (marker) { marker.firstChild.classList.add('large'); }
         if (marker) { marker.style.setProperty('--tag-background', '#B00000'); }
         event.stopPropagation();
     }
 
     function mouseOutHandler(event) {
-        let markerId = 'marker-' + event.currentTarget.id.split('-')[1];
-        let marker = document.getElementById(markerId);
+        const markerId = 'marker-' + event.currentTarget.id.split('-')[1];
+        const marker = document.getElementById(markerId);
         // if (marker) { marker.firstChild.classList.remove('large'); }
         if (marker) { marker.style.setProperty('--tag-background', '#4285F4'); }
         event.stopPropagation();
     }
 
-    let imgElements = [];
+    const imgElements = [];
     if (urls && urls.length > 0) {
         urls.forEach((url, imgIdx) => {
-            let key = data.id + '-' + imgIdx;
+            const key = data.id + '-' + imgIdx;
             if (url.startsWith('http')) {
                 imgElements.push(<img alt={key} id={'pic-' + key} key={key} src={url}/>)    
             } else {
@@ -78,7 +78,7 @@ function CardItem({ data }) {
     useEffect(() => {
         // if (!imgCarousel) { imgCarousel = document.querySelector('#' + cardId + ' .' + classes['img-carousel']); }
         if (imgCarousel) { 
-            let width = imgCarousel.firstChild.getBoundingClientRect().width;
+            const width = imgCarousel.firstChild.getBoundingClientRect().width;
             imgCarousel.style.transform = `translate(${-width*imgPos}px)`;
         }
     }, [imgPos, imgCarousel]);
@@ -86,7 +86,7 @@ function CardItem({ data }) {
     // When the window is resized, reset the image carousel:
     useEffect(() => {
         if (imgCarousel) {
-            let resizeHandler = debounce((event) => {
+            const resizeHandler = debounce((event) => {
                 imgCarousel.style.transform = "translate(0px)";
                 setImgPos(0);
             }, 200);
