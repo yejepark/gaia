@@ -110,7 +110,7 @@ function BulidingRoomCntEl() {
     const inputRoomCntValues = [
         { subtitle: '세대' }, { name: 'roomCnt.household', options: checkIfNum },
         { subtitle: '호' }, { name: 'roomCnt.ho', options: checkIfNum },
-        // { subtitle: '가구' }, { name: 'roomCnt.family', options: checkIfNum },
+        { subtitle: '가구' }, { name: 'roomCnt.family', options: checkIfNum },
     ];
 
     return (

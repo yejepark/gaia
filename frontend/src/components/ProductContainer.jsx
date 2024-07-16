@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import SingleChoiceForm from './SingleChoiceForm';
@@ -336,6 +336,9 @@ function BusinessTypeEl() {
 
     const { control } = useFormContext();
 
+    const [currentValues, setCurrentValues] = useState(values);
+    const [recommendValues, setRecommendValues] = useState(values);
+
     const currentType = useWatch({ control, name: 'businessType.current' })
     const recommendType = useWatch({ control, name: 'businessType.recommend' })
 
@@ -346,12 +349,29 @@ function BusinessTypeEl() {
             return {...item, name: item.value};
         }
     }
-    const currentValues = values.map((item) => addCustomClass(item, currentType, 'notShow'));
-    const recommendValues = values.map((item) => addCustomClass(item, recommendType, 'notShow'));
+
+    useEffect(() => {
+        let timer;
+        timer = setTimeout(() => {
+            setCurrentValues( values.map((item) => addCustomClass(item, currentType, 'notShow')) );
+        }, 200);
+        return () => { clearTimeout(timer); };
+    }, [currentType]);
+
+    useEffect(() => {
+        let timer;
+        timer = setTimeout(() => {
+            setRecommendValues( values.map((item) => addCustomClass(item, recommendType, 'notShow')) );
+        }, 200);
+        return () => { clearTimeout(timer); };
+    }, [recommendType]);
 
     return (
         <ItemContainer title='업종 정보'>
             <div className={parentClasses['input-inner-grid']}>
+                <ItemContainer title='상호명' isSubEl={true}>
+                    <input type='text' className={parentClasses['input-value'] + ' focusable'} placeholder='직접입력'/>
+                </ItemContainer>
                 <ValuesToDropDownForm title='현재 업종' values={currentValues} isSubEl={true} name='businessType.current' />
                 <ValuesToDropDownForm title='추천 업종' values={recommendValues} isSubEl={true} name='businessType.recommend' />
             </div>

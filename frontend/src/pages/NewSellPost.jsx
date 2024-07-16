@@ -72,7 +72,7 @@ const getDefaultValues = () => {
             revenueUnit: '만원', rentUnit: '만원', cogsUnit: '만원', wageUnit: '만원', utilityCostUnit: '만원', manageCostUnit: '만원', profitUnit: '만원' },
         loan: { pct: 0, pctUnit: '%' },
         moveInDay: { Y: thisYear, M: thisMonth, D: thisDay },
-        prodArea: { use: 0, contract: 0, useUnit: 'm2', contractUnit: 'm2' },
+        prodArea: { use: 0, contract: 0, useUnit: '평', contractUnit: '평' },
         parking: { count: 0, countUnit: '대' },
         businessType: { current: '', recommend: '' },
         usageType: { current: '', recommend: '' },
