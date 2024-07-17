@@ -17,6 +17,8 @@
     font-size: 0.9rem;
     max-height: 20rem;
     overflow-y: scroll;
+
+    list-style-type: none;
 }
 
 .string {

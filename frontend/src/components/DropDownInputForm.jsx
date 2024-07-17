@@ -69,7 +69,7 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
         });
     }
 
-    const dropdownCustomClass = options.customClass ? options?.customClass : '';
+    const dropdownCustomClass = options.customClass ? options.customClass : '';
     return (
         <div className={parentClasses['dropdown-container'] + ' ' + dropdownCustomClass} onClick={containerClickHandler} style={options.style}>
             <div className={classes['dropdown-input'] + ' focusable'}>

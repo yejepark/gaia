@@ -1,15 +1,21 @@
 import { useEffect, useState } from 'react';
+import { useForm, FormProvider, useFormContext, useWatch } from 'react-hook-form';
 
 import classes from './Filters.module.css';
 
 import { arrayRange } from '../utilities/methods';
 
 import UpDown from './UpDown';
-import SingleChoice from './SingleChoice';
-import MultipleChoice from './MultipleChoice';
-import RangeFilter from './RangeFilter';
+import SingleChoiceForm from './SingleChoiceForm';
+import MultipleChoiceForm from './MultipleChoiceForm';
+import RangeFilterForm from './RangeFilterForm';
 
-const listingTypeMap = { rent: '임대', trade: '매매', 'direct-rent': '직거래' };
+const tradeTypeMap = {
+    sell: '매매',
+    jeonse: '전세',
+    lease: '월세',
+    shortLease: '단기임대'
+}
 
 const spaceUseMap = {
     office: '사무실',
@@ -24,82 +30,57 @@ const spaceUseMap = {
 const rentValues = [...arrayRange(0, 300, 20), ...arrayRange(350, 600, 50), ...arrayRange(700, 1000, 100)];
 const areaValues = [...arrayRange(0, 20, 5), ...arrayRange(30, 100, 10), ...arrayRange(200, 400, 100)];
 
+let renderCount = 0;
+
 function Filters() {
 
-    const storedListingType = sessionStorage.getItem('listingType');
-    const storedCheckedSpaceUses = sessionStorage.getItem('checkedSpaceUses');
-    const storedMinRent = sessionStorage.getItem('minRent');
-    const storedMaxRent = sessionStorage.getItem('maxRent');
-    const storedMinArea = sessionStorage.getItem('minArea');
-    const storedMaxArea = sessionStorage.getItem('maxArea');
+    const methods = useForm({ defaultValues: {
+        tradeType: 'lease',
+        usage: '',
+        rentMin: '0', rentMax: '',
+        areaMin: '0', areaMax: '',
+    } });
+    const { register, watch, handleSubmit, getValues, setValue, reset, formState: { errors }, } = methods;
 
-    const [listingType, setListingType] = useState( storedListingType ? storedListingType : 'rent' );
-    const [checkedSpaceUses, setCheckedSpaceUses] = useState( storedCheckedSpaceUses ? storedCheckedSpaceUses.split(',') : []);
-    const [minRent, setMinRent] = useState( storedMinRent | '' );
-    const [maxRent, setMaxRent] = useState( storedMaxRent | '' );
-    const [minArea, setMinArea] = useState( storedMinArea | '' );
-    const [maxArea, setMaxArea] = useState( storedMaxArea | '' );
+    const onSubmit = (data) => {
+        console.log('(in onSubmit) data: ', data);
+    }
 
-    useEffect(()=>{
-        if (sessionStorage) {
-            // console.log('listing type')
-            sessionStorage.setItem('listingType', listingType);
-        }
-    }, [listingType]);
-
-    useEffect(()=>{
-        // console.log('space use')
-        if (sessionStorage) {
-            sessionStorage.setItem('checkedSpaceUses', checkedSpaceUses);
-        }
-    }, [checkedSpaceUses]);
-
-    useEffect(()=>{
-        // console.log('rent range')
-        if (sessionStorage) {
-            sessionStorage.setItem('minRent', minRent);
-            sessionStorage.setItem('maxRent', maxRent);
-        }
-    }, [minRent, maxRent]);
-
-    useEffect(()=>{
-        // console.log('area range')
-        if (sessionStorage) {
-            sessionStorage.setItem('minArea', minArea);
-            sessionStorage.setItem('maxArea', maxArea);
-        }
-    }, [minArea, maxArea]);
-
+    renderCount++;
+    console.log(renderCount);
     return (
-        <div className={classes.filters}>
-            <div className={classes['search-container'] + ' focusable'}>
-                <input type="search" placeholder="지역을 입력해 주세요" name="region-search"/>
-            </div>
+        <FormProvider {...methods}>
+            <form className={classes.filters} onSubmit={handleSubmit(onSubmit)}>
+                <div className={classes['search-container'] + ' focusable'}>
+                    <input type="search" placeholder="지역을 입력해 주세요" name="region-search"/>
+                </div>
 
-            <div className={classes['filter-container']}>
-                <SingleChoice chosen={listingType} setChosen={setListingType} choiceMap={listingTypeMap} 
-                    btnLabel='거래' name='listingType' />
-            </div>
+                <div className={classes['filter-container']}>
+                    <SingleChoiceForm name='tradeType' choiceMap={tradeTypeMap} btnLabel='거래' />
+                </div>
 
-            <div className={classes['filter-container']}>
-                <MultipleChoice checkedList={checkedSpaceUses} setCheckedList={setCheckedSpaceUses} choiceMap={spaceUseMap} 
-                    defaultBtnLabel='용도' name='usage' fitContent={true} />
-            </div>
+                <div className={classes['filter-container']}>
+                    <MultipleChoiceForm name='usage' choiceMap={spaceUseMap} defaultBtnLabel='용도' fitContent={true} notActive={false}/>
+                </div>
 
-            <div className={classes['filter-container']}>
-                <RangeFilter minValue={minRent} setMinValue={setMinRent} maxValue={maxRent} setMaxValue={setMaxRent} unit={'만'} values={rentValues} btnName={'월세'} />
-            </div>
+                <div className={classes['filter-container']}>
+                    <RangeFilterForm name='rent' unit='만원' values={rentValues} btnName={'월세'} />
+                </div>
 
-            <div className={classes['filter-container']}>
-                <RangeFilter minValue={minArea} setMinValue={setMinArea} maxValue={maxArea} setMaxValue={setMaxArea} unit={'평'} values={areaValues} btnName={'면적'} />
-            </div>
-            <div className={classes['filter-container']}>
-                <button type='button' className={classes.filter + ' alive-btn'} id="all-filters">모든필터 <UpDown /></button>
-            </div>
-            <div className={classes['filter-container']}>
-                <button type='button' className={classes.filter + ' inverted-alive-btn'}>검색저장</button>
-            </div>
-        </div>
+                <div className={classes['filter-container']}>
+                    <RangeFilterForm name='area' unit='평' values={areaValues} btnName={'면적'} />
+                </div>
+                {/*<div className={classes['filter-container']}>
+                    <button type='button' className={classes.filter + ' alive-btn'} id="all-filters">모든필터 <UpDown /></button>
+                </div>*/}
+                <div className={classes['filter-container']}>
+                    <button type='button' className={classes.filter + ' inverted-alive-btn'}>검색저장</button>
+                </div>
+                <div className={classes['filter-container']}>
+                    <button type='submit' className={classes.filter + ' inverted-alive-btn'}>테스트</button>
+                </div>
+            </form>
+        </FormProvider>
     )
 }
 

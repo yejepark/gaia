@@ -40,8 +40,8 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, fitCo
     // console.log('in multiple choice form : ', field.value)
 
     let btnClass = '';
-    if (!notActive) {
-        btnClass = btnClass + ' ' + parentClasses.active;
+    if (!notActive && field.value.length > 0) {
+        btnClass = btnClass + ' active';
     }
     if (fitContent) {
         btnClass = btnClass + ' ' + classes.fitContent;

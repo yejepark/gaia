@@ -16,7 +16,10 @@ function MainNavigation() {
 			</ul>
 			<ul>
 				<NavLink end to="/">
-					<div className={classes.logo}>L<sup>3</sup></div>
+					<div className={classes.logo}>
+						{/*L<sup>3</sup>*/}
+						Sky Real
+					</div>
 				</NavLink>
 			</ul>
 			<ul className={classes.right}>

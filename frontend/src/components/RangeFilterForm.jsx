@@ -1,27 +1,28 @@
-import { useState, memo } from 'react';
+import { useState } from 'react';
+import { useWatch, useFormContext } from 'react-hook-form';
 
 import UpDown from './UpDown';
 import ApplyButton from './ApplyButton';
-import DropDownInput from './DropDownInput';
+import DropDownInputForm from './DropDownInputForm';
 
 import filtersClasses from './Filters.module.css';
 import classes from './RangeFilter.module.css';
 
 
-function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, values, btnName }) {
+function RangeFilterForm({ name, unit, values, btnName }) {
 
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [tempMinValue, setTempMinValue] = useState(minValue);
-    const [tempMaxValue, setTempMaxValue] = useState(maxValue);
 
     function btnClickHandler() {
-        setMinValue(String(tempMinValue));
-        setMaxValue(String(tempMaxValue));
         setDialogOpen((isOpen) => { return !isOpen; });
     }
 
+    const { control } = useFormContext();
+    const tempMinValue = useWatch({ control, name: name + 'Min'});
+    const tempMaxValue = useWatch({ control, name: name + 'Max'});
+
     const dialogOpenClass = dialogOpen ? '' : ' hidden';
-    const rangeBtnClass = tempMinValue > 0 | tempMaxValue > 0 ? ' ' + filtersClasses.active : '';
+    const rangeBtnClass = tempMinValue > 0 | tempMaxValue > 0 ? ' active' : '';
   
     const intMinValue = parseInt(tempMinValue);
     const intMaxValue = parseInt(tempMaxValue);
@@ -34,7 +35,7 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
     // console.log('tempMin', tempMinValue, 'min', minValue, ' ~ ', 'tempMax', tempMaxValue, 'max', maxValue);
 
     return (<>
-        <button className={filtersClasses.filter + ' alive-btn ' + rangeBtnClass} id="range-button" onClick={btnClickHandler}>
+        <button type='button' className={filtersClasses.filter + ' alive-btn ' + rangeBtnClass} id="range-button" onClick={btnClickHandler}>
             {btnName}
             {minValueEl}
             {intMinValue > 0 | intMaxValue > 0 ? <i className={filtersClasses.tilde}></i> : ''}
@@ -49,30 +50,22 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
                 <div className={classes['range-container']}>
 
                     <div className={classes['min-header']}>최소</div>
-                    <DropDownInput
-                        localValue={tempMinValue} setLocalValue={setTempMinValue} 
-                        values={minValues} 
+                    <DropDownInputForm name={name + 'Min'} values={minValues}
                         options={{
                             unit, 
                             customClass: classes['min-input-container'], 
                             placeholder:'0',
-                            validator: (v) => parseInt(v) >= 0,
-                            transformer: (v) => String(parseInt(v))
                         }}
                     />
-
+    
                     <div className={classes.dash}>-</div>
 
                     <div className={classes['max-header']}>최대</div>
-                    <DropDownInput
-                        localValue={tempMaxValue} setLocalValue={setTempMaxValue} 
-                        values={maxValues} 
+                    <DropDownInputForm name={name + 'Max'} values={maxValues}
                         options={{
                             unit, 
                             customClass: classes['max-input-container'], 
                             placeholder:'제한없음',
-                            validator: (v) => parseInt(v) >= 0,
-                            transformer: (v) => String(parseInt(v)),
                             extraItems: [{key:-1, value: '', text: '제한없음'}]
                         }}
                     />
@@ -84,4 +77,4 @@ function RangeFilter({ minValue, setMinValue, maxValue, setMaxValue, unit, value
     </>)
 }
 
-export default memo(RangeFilter);
+export default RangeFilterForm;
