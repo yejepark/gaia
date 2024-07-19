@@ -36,10 +36,10 @@ function PostsLayout() {
         <div className={classes['posts-layout-parent']}>
             <Filters />
             <div className={classes['posts-layout']}>
-                <main id="mapSection">
+                <main id="mapSection" className={classes['map-section']}>
                     {showMap && <KakaoMap assets={assets}/>}
                 </main>
-                <nav id="cardNav">
+                <nav id="cardNav" className={classes['card-nav']}>
                     <CardContainer assets={assets} />
                 </nav>
             </div>
@@ -50,6 +50,7 @@ function PostsLayout() {
 export default PostsLayout;
 
 export async function loader() {
+    console.log('In PostsLayout loader');
     // let res = await fetch(jsonServer + '/assets.json');
     let res = await fetch("http://localhost:8000/sell_posts/list_all")
     let data = await res.json();

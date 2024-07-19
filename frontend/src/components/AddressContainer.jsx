@@ -1,3 +1,5 @@
+import { useFormContext } from 'react-hook-form';
+
 import parentClasses from '../pages/NewSellPost.module.css';
 
 import AddressInput from './AddressInput';
@@ -58,6 +60,8 @@ function DongEl({ addressState, dispatchAddress }) {
 
 
 function FloorEl({ addressState, dispatchAddress }) {
+    const { register } = useFormContext();
+
     const brTitle = addressState.data.brTitle[addressState.brTitleIdx]
 
     const ugrndFlrKeys = Array.from({ length: brTitle.ugrndFlrCnt }, (x, i) => -(i + 1));
@@ -69,8 +73,11 @@ function FloorEl({ addressState, dispatchAddress }) {
     }));
 
     return (<>
-            <MultipleChoiceForm name='floors' choiceMap={floorMap} defaultBtnLabel='층 선택' notActive={true} />
-            <div></div>
+            <label className={'input-checkbox'}>
+                <input type="checkbox" {...register('entireBuilding')} />
+                <div>건물 전체</div>
+            </label>
+            <MultipleChoiceForm name='floors' choiceMap={floorMap} defaultBtnLabel='층 선택' notActive={true} fitContent={true}/>
     </>);
 }
 
@@ -102,11 +109,14 @@ function AddressContainer({ addressState, dispatchAddress, register, watch }) {
 
     const oneOrLessFloor = watch('floors').length === 1;
     const midEl = (
-        <ItemContainer>
-            <div className={parentClasses['input-subgrid']}>
+        <ItemContainer title='층 정보'>
+                <div className={'subflex-row'}>
+                    {brTitle && <FloorEl addressState={addressState} dispatchAddress={dispatchAddress} />}
+                </div>
+{/*            <div className={parentClasses['input-subgrid']}>
                 {brTitle && <FloorEl addressState={addressState} dispatchAddress={dispatchAddress} />}
                 {brTitle && oneOrLessFloor && hoEl}                
-            </div>
+            </div>*/}
         </ItemContainer>
     );
 

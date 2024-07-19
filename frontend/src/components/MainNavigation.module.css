@@ -1,18 +1,40 @@
 .main-nav {
     width: 100%;
-    padding: 0px 30px;
+    height: var(--header-height);;
+    padding: 0 30px;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
 
+    gap: .5rem;
     &>* {
-        flex-basis: 33%;
-        flex-shrink: 1;
+        text-align: center;
+    }
+
+    & a {
+        text-decoration: none;
+    }
+
+    &.narrow-screen {
+        display: none;
+    }
+}
+
+@media (max-width: 900px) {
+    .main-nav.wide-screen {
+        display: none;
+    }
+    .main-nav.narrow-screen {
+        display: flex;
+        height: var(--filters-height);
+        padding: 0 10px;
     }
 }
 
 .main-nav>ul {
+/*    height: 100%;*/
+
     list-style: none;
 
     display: flex;
@@ -30,7 +52,6 @@
 }
 
 .main-nav>ul a {
-    text-decoration: none;
     color: black;
     text-wrap: nowrap;
 
@@ -40,31 +61,69 @@
 }
 
 .logo {
-    position: relative;
-
-    height: calc(var(--header-height) - 5px);
-
-    padding: 0;
+/*    height: calc(var(--header-height) - 5px);*/
 
     font-family: 'Rubik', sans-serif;
     font-weight: 900;
-    font-size: 40px;
+    font-size: 2.1rem;
     color: black;
     text-transform: uppercase;
 
     transition: text-shadow 0.2s;
-
+/*
     &>sup {
         position: relative;
         font-size: 30px;
         left: -10px;
         top: 2px;
     }
-
+*/
     &:hover {
         border: none;
         background-color: white;
         text-shadow: 2px 3px 4px gray;
     }
 
+}
+
+.leftBtn, .rightBtn {
+    width: fit-content;
+    padding: 5px;
+
+    display: flex;
+    place-items: center;
+}
+
+
+.dialog-menu {
+    position: absolute;
+    width: 100vw;
+    height: calc(100vh - var(--header-height));
+    @media (min-width: 900) {
+        & {
+            height: calc(100vh - var(--filters-height));
+        }
+    }
+
+    z-index: var(--dialog-z-index);
+
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--background-color);
+
+    &>li {
+        width: 100%;
+        height: 3.5rem;
+
+        display: flex;
+        align-items: center;
+
+        padding-left:1.5rem;
+    }
+
+    &>li>a {
+        text-decoration: none;
+        color: black;
+    }
 }

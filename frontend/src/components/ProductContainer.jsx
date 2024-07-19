@@ -90,16 +90,21 @@ function AcquireEl() {
     });
     const etc = revenue - rent - cogs - wage - utilityCost - manageCost - profit;
 
-    const inputAcquireValues = [
-        { subtitle: '월 매출' }, { name: 'income.revenue', options: checkIfNum },
-        { subtitle: '월세' }, { name: 'income.rent', options: checkIfNum },
-        { subtitle: '재료비' }, { name: 'income.cogs', options: checkIfNum },
-        { subtitle: '인건비' }, { name: 'income.wage', options: checkIfNum },
-        { subtitle: '공과금' }, { name: 'income.utilityCost', options: checkIfNum },
-        { subtitle: '관리비' }, { name: 'income.manageCost', options: checkIfNum },
-        { subtitle: '기타비용' }, { unit: '만원', calculated: etc },
-        { subtitle: '월 순수익' }, { name: 'income.profit', options: checkIfNum },
+    let inputAcquireValues = [
+         { subtitle: '관리비' }, { name: 'income.manageCost', options: checkIfNum },
     ];
+
+    if (incomeExpose) {
+        inputAcquireValues = inputAcquireValues.concat([
+            { subtitle: '월 매출' }, { name: 'income.revenue', options: checkIfNum },
+            { subtitle: '월세' }, { name: 'income.rent', options: checkIfNum },
+            { subtitle: '재료비' }, { name: 'income.cogs', options: checkIfNum },
+            { subtitle: '인건비' }, { name: 'income.wage', options: checkIfNum },
+            { subtitle: '공과금' }, { name: 'income.utilityCost', options: checkIfNum },
+            { subtitle: '기타비용' }, { unit: '만원', calculated: etc },
+            { subtitle: '월 순수익' }, { name: 'income.profit', options: checkIfNum },
+        ]);
+    }
 
     return (
         <ItemContainer title='영업 정보'>
@@ -114,11 +119,10 @@ function AcquireEl() {
                         <div>영업 양도인수 필수</div>
                     </label>
                 </div>
-                {incomeExpose &&
-                    <div className={parentClasses['input-subgrid']}>
-                        <ValuesToElementsForm values={inputAcquireValues} />
-                    </div>
-                }
+                
+                <div className={parentClasses['input-subgrid']}>
+                    <ValuesToElementsForm values={inputAcquireValues} />
+                </div>
             </div>
     
         </ItemContainer>

@@ -1,13 +1,19 @@
+@media (max-width: 900px) {
+    .wide-screen {
+        display: none;
+    }
+}
+
 .filters {
     display: flex;
-    gap: 10px;
+    gap: 0 10px;
     align-items: center;
 
     height: var(--filters-height);
     width: 100%;
 
     border-bottom: 1px solid var(--border-color);
-    padding-left: 5px;
+    padding: 0 8px;
 
     background-color: var(--background-color);
 
@@ -36,6 +42,12 @@
     letter-spacing: 0.15rem;
 }
 
+@media (max-width: 600px)
+{
+    .removable {
+        display: none;
+    }
+}
 
 .dialog {
     position: absolute;
@@ -83,27 +95,4 @@
     background-repeat: no-repeat;
     background-size: 0.9rem 0.9rem;
     background-position: bottom;
-}
-
-.search-container {
-    padding: 5px 8px 5px 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-
-    height: 80%;
-    width: 280px;
-
-    background-color: var(--background-color);
-    background-image: url('./search_icon.svg');
-    background-repeat: no-repeat;
-    background-position: 96% 50%;
-    background-size: 18px 18px;
-
-    & input {
-        padding-top: 3px;
-        width: 100%;
-        border: none;
-        font-size: 1.05rem;
-        background-color: transparent;
-    }
 }

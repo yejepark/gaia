@@ -39,8 +39,9 @@ html {
 
     --map-height: calc(100vh - var(--header-height) - var(--filters-height));
 
-    height: 100vh;
+    min-height: 100%;
     width: 100vw;
+/*    background-color: blue;*/
 }
 
 * {
@@ -69,7 +70,14 @@ header {
     height: var(--header-height);
     width: 100%;
 
-    display: flex;
+    position: relative;
+
+    @media(max-width: 900px) {
+        & {
+            height: var(--filters-height);
+        } 
+    }
+
 }
 
 /* clears the ‘X’ from Internet Explorer */
@@ -229,6 +237,7 @@ input[type='checkbox'] {
     display: flex;
     flex-direction: row;
     column-gap: 25px;
+    width: 100%
 }
 
 .subflex-col {
@@ -251,8 +260,11 @@ input[type='checkbox'] {
     align-items: center;
     column-gap: 5px;
 
+    width: fit-content;
+
     & div {
         font-size: 0.9rem;
+/*        width: 100%;*/
     }
 
     & input {

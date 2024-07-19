@@ -1,0 +1,22 @@
+.search-container {
+    padding: 5px 8px 5px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+
+    height: 80%;
+    width: clamp(280px, 100%, 560px);
+    
+    background-color: var(--background-color);
+    background-image: url('./search_icon.svg');
+    background-repeat: no-repeat;
+    background-position: 96% 50%;
+    background-size: 18px 18px;
+
+    & input {
+        padding-top: 3px;
+        width: 100%;
+        border: none;
+        font-size: 1.05rem;
+        background-color: transparent;
+    }
+}

@@ -57,7 +57,7 @@ const productTypeMap = {
     sangga: '상가점포',
     office: '사무실',
     factory: '공장/창고',
-    intIndCenter: '지삭산업센터',
+    intIndCenter: '지식산업센터',
     // land: '토지/임야',
     building: '빌딩/건물',
     sanggaBuilding: '상가건물',

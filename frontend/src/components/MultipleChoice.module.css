@@ -1,8 +1,9 @@
 .container {
-    height: max(2rem, 100%);
+/*    height: max(2rem, 100%);*/
 /*    height: 2rem;*/
+    height: 100%;
 
-    width: max(8rem, 100%);
+/*    width: max(8rem, 100%);*/
 
     & button {
         width: 100%;
