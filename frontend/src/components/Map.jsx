@@ -121,6 +121,8 @@ function KakaoMap({ assets }) {
 
         centerMap(newPositions);
 
+        // console.log('end of setBounds');
+
     }, [kakaoMap, assets, centerMap]);
 
     // useEffect(() => {

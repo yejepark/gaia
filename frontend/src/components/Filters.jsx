@@ -35,7 +35,6 @@ const areaValues = [...arrayRange(0, 20, 5), ...arrayRange(30, 100, 10), ...arra
 
 let renderCount = 0;
 
-
 function Filters() {
 
     const methods = useForm({ defaultValues: {
@@ -54,7 +53,7 @@ function Filters() {
     // console.log(height, width);
 
     renderCount++;
-    console.log(renderCount);
+    // console.log(renderCount);
     return (
         <FormProvider {...methods}>
             <form className={classes.filters} onSubmit={handleSubmit(onSubmit)}>

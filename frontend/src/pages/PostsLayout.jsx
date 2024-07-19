@@ -15,8 +15,9 @@ import { debounce } from '../utilities/methods';
 
 
 function PostsLayout() {
+    // console.log('in PostsLayout');
 
-    let [showMap, setShowMap] = useState(true);
+    let [showMap, setShowMap] = useState(window.matchMedia('(min-width: 900px)').matches);
 
     let assets = useLoaderData();
 
@@ -25,13 +26,14 @@ function PostsLayout() {
     // Create the map component only if the screen is large enough:
     useEffect(() => {
         let resizeHandler = debounce(() => {
-            let largeScreen = window.matchMedia('(min-width: 900px)').matches;
-            setShowMap(largeScreen);
+            let isLargeScreen = window.matchMedia('(min-width: 900px)').matches;
+            setShowMap(isLargeScreen);
         }, 200);
         window.addEventListener('resize', resizeHandler);
         return () => { window.removeEventListener('resize', resizeHandler); };
     }, []);
 
+    // console.log('showMap', showMap);
     return (
         <div className={classes['posts-layout-parent']}>
             <Filters />

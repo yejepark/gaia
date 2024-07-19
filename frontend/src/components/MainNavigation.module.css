@@ -33,8 +33,6 @@
 }
 
 .main-nav>ul {
-/*    height: 100%;*/
-
     list-style: none;
 
     display: flex;
@@ -61,8 +59,6 @@
 }
 
 .logo {
-/*    height: calc(var(--header-height) - 5px);*/
-
     font-family: 'Rubik', sans-serif;
     font-weight: 900;
     font-size: 2.1rem;
@@ -70,14 +66,7 @@
     text-transform: uppercase;
 
     transition: text-shadow 0.2s;
-/*
-    &>sup {
-        position: relative;
-        font-size: 30px;
-        left: -10px;
-        top: 2px;
-    }
-*/
+
     &:hover {
         border: none;
         background-color: white;
@@ -97,8 +86,10 @@
 
 .dialog-menu {
     position: absolute;
+
     width: 100vw;
     height: calc(100vh - var(--header-height));
+
     @media (min-width: 900) {
         & {
             height: calc(100vh - var(--filters-height));
@@ -118,11 +109,17 @@
 
         display: flex;
         align-items: center;
-
-        padding-left:1.5rem;
     }
 
     &>li>a {
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        align-items: center;
+
+        padding-left:1.5rem;
+
         text-decoration: none;
         color: black;
     }

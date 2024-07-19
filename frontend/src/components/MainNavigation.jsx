@@ -59,7 +59,7 @@ function MainNavigation() {
 		{ link: '/account', text: '내 계정'}
 	];
 
-	const allItems = leftItems.concat(rightItems);
+	const allItems = [ { link: '/', text: '홈페이지' } ].concat(leftItems).concat(rightItems);
 
 	return (
 		<>
