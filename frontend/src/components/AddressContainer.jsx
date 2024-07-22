@@ -1,4 +1,4 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import parentClasses from '../pages/NewSellPost.module.css';
 
@@ -10,8 +10,9 @@ import { ItemContainer } from '../pages/NewSellPost';
 
 
 function TopEl({ register }) {
-    return (
-        <ItemContainer>
+    return (<>
+        <div></div>
+        <div className={parentClasses['input-subcontainer']}>
             <input 
                 {...register('topAddress')}
                 type="text"  
@@ -19,8 +20,8 @@ function TopEl({ register }) {
                 placeholder='직접입력' 
                 autoComplete="off"
             />
-        </ItemContainer>
-    );
+        </div>
+    </>);
 }
 
 
@@ -44,7 +45,6 @@ function DongEl({ addressState, dispatchAddress }) {
                 values={dongNms}
                 options={{
                     placeholder: "직접입력",
-                    customClass: parentClasses['dropdown-container'],
                 }}
                 setCustomValue={(bldAndDong) => {
                     const [bldName, dongName] = bldAndDong.split('|');
@@ -60,7 +60,9 @@ function DongEl({ addressState, dispatchAddress }) {
 
 
 function FloorEl({ addressState, dispatchAddress }) {
-    const { register } = useFormContext();
+    const { register, control } = useFormContext();
+    const entireBuliding = useWatch({ control, name: 'floors.entireBuilding' });
+    const pickedFloors = useWatch({ control, name: 'floors.picked' });
 
     const brTitle = addressState.data.brTitle[addressState.brTitleIdx]
 
@@ -72,13 +74,28 @@ function FloorEl({ addressState, dispatchAddress }) {
         return ['A' + `${k}`.padStart(3, '0'), `${k}층`];
     }));
 
-    return (<>
-            <label className={'input-checkbox'}>
-                <input type="checkbox" {...register('entireBuilding')} />
+    const oneOrLessFloor = pickedFloors.length === 1;
+    return (
+        <div className={parentClasses['input-subflex-row']}>
+            <label className={parentClasses['input-checkbox']}>
+                <input type="checkbox" {...register('floors.entireBuilding')} />
                 <div>건물 전체</div>
             </label>
-            <MultipleChoiceForm name='floors' choiceMap={floorMap} defaultBtnLabel='층 선택' notActive={true} fitContent={true}/>
-    </>);
+            {brTitle && !entireBuliding &&
+                <div style={{height: '2rem'}}>
+                    <MultipleChoiceForm name='floors.picked' choiceMap={floorMap} defaultBtnLabel='층 선택' notActive={true} />
+                </div>
+            }
+            {brTitle && !entireBuliding && oneOrLessFloor &&
+                <div style={{width: '10rem'}}>
+                    <div className={parentClasses['input-with-unit']}>
+                        <input {...register('hoName')} type='text' className={parentClasses["input-value"] + ' focusable'} />
+                        <div className={parentClasses.unit}>호</div>
+                    </div>
+                </div>
+            }
+        </div>
+    );
 }
 
 
@@ -98,31 +115,19 @@ function AddressContainer({ addressState, dispatchAddress, register, watch }) {
         </ItemContainer>
     );
 
-    const hoEl = (
-        <ItemContainer title='호 명칭' isSubEl={true}>
-            <div className={parentClasses['input-with-unit']}>
-                <input {...register('hoName')} type='text' className={parentClasses["input-value"] + ' focusable'} />
-                <div className={parentClasses.unit}>호</div>
-            </div>
-        </ItemContainer>
-    );
-
-    const oneOrLessFloor = watch('floors').length === 1;
-    const midEl = (
-        <ItemContainer title='층 정보'>
-                <div className={'subflex-row'}>
-                    {brTitle && <FloorEl addressState={addressState} dispatchAddress={dispatchAddress} />}
-                </div>
-{/*            <div className={parentClasses['input-subgrid']}>
-                {brTitle && <FloorEl addressState={addressState} dispatchAddress={dispatchAddress} />}
-                {brTitle && oneOrLessFloor && hoEl}                
-            </div>*/}
+    const floorEl = (
+        <ItemContainer title=''>
+            <FloorEl addressState={addressState} dispatchAddress={dispatchAddress} />
         </ItemContainer>
     );
 
     const detailEl = (
         <ItemContainer title='상세주소'>
-            <input {...register('addressDetail')} type='text' className={parentClasses["input-value"] + ' focusable'} />
+            <input {...register('addressDetail')} 
+                type='text' 
+                className={parentClasses["input-value"] + ' focusable'} 
+                style={{width: '100%', fontSize: '.9rem'}}
+            />
         </ItemContainer>
     );
 
@@ -130,7 +135,7 @@ function AddressContainer({ addressState, dispatchAddress, register, watch }) {
         {searchBtn}
         {hasAddressData && <TopEl register={register} />}
         {hasAddressData && <DongEl addressState={addressState} dispatchAddress={dispatchAddress} />}
-        {hasAddressData && midEl}
+        {hasAddressData && floorEl}
         {hasAddressData && detailEl}
     </>)
 }

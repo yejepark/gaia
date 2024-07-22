@@ -53,14 +53,14 @@ function PremiumEl() {
 
     return (
         <ItemContainer title='권리금 정보'>
-            <div className={'subflex-col'}>
-                <div className={'subflex-row'}>
-                    <label className={'input-checkbox'}>
+            <div className={parentClasses['input-subflex-col']}>
+                <div className={parentClasses['input-subflex-row']}>
+                    <label className={parentClasses['input-checkbox']}>
                         <input type="checkbox" {...register('premium.exist')} />
                         <div>권리금 있음</div>
                     </label>
                     {pExist &&
-                        <label className={'input-checkbox'}>
+                        <label className={parentClasses['input-checkbox']}>
                             <input type="checkbox" {...register('premium.negotiable')} />
                             <div>협의 가능</div>
                         </label>
@@ -108,13 +108,13 @@ function AcquireEl() {
 
     return (
         <ItemContainer title='영업 정보'>
-            <div className={'subflex-col'}>
-                <div className={'subflex-row'}>
-                    <label className={'input-checkbox'}>
+            <div className={parentClasses['input-subflex-col']}>
+                <div className={parentClasses['input-subflex-row']}>
+                    <label className={parentClasses['input-checkbox']}>
                         <input type="checkbox" {...register('income.expose')} />
                         <div>순수익 공개</div>
                     </label>
-                    <label className={'input-checkbox'}>
+                    <label className={parentClasses['input-checkbox']}>
                         <input type="checkbox" {...register('income.mustAquire')} />
                         <div>영업 양도인수 필수</div>
                     </label>
@@ -140,27 +140,29 @@ function LoanEl() {
 
     return (
         <ItemContainer title='융자 정보'>
-            <div className={'subflex-col'}>
-                <div className={'subflex-row'}>
-                        <label className={'input-checkbox'}>
+            <div className={parentClasses['input-subflex-col']}>
+                <div className={parentClasses['input-subflex-row']}>
+                        <label className={parentClasses['input-checkbox']}>
                             <input type="checkbox" {...register('loan.exist')} />
                             <div>융자 있음</div>
                         </label>
                         {loanExist &&
-                            <label className={'input-checkbox'}>
+                            <label className={parentClasses['input-checkbox']}>
                                 <input type="checkbox" {...register('loan.expose')} />
                                 <div>융자 공개</div>
                             </label>
                         }
                 </div>
                 {loanExpose &&
-                    <div className={'subflex-row'}>
+                    <div className={parentClasses['input-subflex-row']}>
                         <ItemContainer title="시세대비 융자비율" isSubEl={true}>
-                            <InputWithUnit name='loan.pct' options={{
-                                ...checkIfNum,
-                                min: {value: 0, message: '0 보다 작을 수 없습니다.'},
-                                max: {value: 100, message: '100 보다 클 수 없습니다.'},
-                            }}/>
+                            <div style={{width: '12rem'}}>
+                                <InputWithUnit name='loan.pct' options={{
+                                    ...checkIfNum,
+                                    min: {value: 0, message: '0 보다 작을 수 없습니다.'},
+                                    max: {value: 100, message: '100 보다 클 수 없습니다.'},
+                                }}/>
+                            </div>
                         </ItemContainer>
                     </div>
                 }
@@ -198,7 +200,7 @@ function MoveInDayEl() {
     ];
     return (
         <ItemContainer title='입주가능일'>
-            <div className={parentClasses['input-subflex']}>
+            <div className={parentClasses['input-subflex-date']}>
                 {items.map((item, idx) => {
                     if (item.name) {
                         return (
@@ -216,7 +218,7 @@ function MoveInDayEl() {
                     }
                     return null;
                 })}
-               <label className={'input-checkbox'}>
+               <label className={parentClasses['input-checkbox']}>
                     <input type="checkbox" {...register('moveInDay.negotiable')} />
                     <div>협의 가능</div>
                 </label>
@@ -314,18 +316,20 @@ function ParkingEl() {
 
     return (
         <ItemContainer title="주차 정보">
-            <div className={'subflex-col'}>
-                <div className={'subflex-row'}>
-                    <label className={'input-checkbox'}>
+            <div className={parentClasses['input-subflex-col']}>
+                <div className={parentClasses['subflex-row']}>
+                    <label className={parentClasses['input-checkbox']}>
                         <input type="checkbox" {...register('parking.available')} />
                         <div>주차 가능</div>
                     </label>
                 </div>
 
                 {parkingAvailable &&
-                    <div className={'subflex-row'}>
+                    <div className={parentClasses['input-subflex-row']}>
                         <ItemContainer title='사용가능 주차대수' isSubEl={true}>
-                            <InputWithUnit name={'parking.count'} options={checkIfNum} />
+                            <div style={{width: '12rem'}}>
+                                <InputWithUnit name={'parking.count'} options={checkIfNum} />
+                            </div>
                         </ItemContainer>
                     </div>
                 }
@@ -357,7 +361,7 @@ function BusinessTypeEl() {
     useEffect(() => {
         let timer;
         timer = setTimeout(() => {
-            setCurrentValues( values.map((item) => addCustomClass(item, currentType, 'notShow')) );
+            setCurrentValues( values.map((item) => addCustomClass(item, currentType, 'not-show')) );
         }, 200);
         return () => { clearTimeout(timer); };
     }, [currentType]);
@@ -365,14 +369,14 @@ function BusinessTypeEl() {
     useEffect(() => {
         let timer;
         timer = setTimeout(() => {
-            setRecommendValues( values.map((item) => addCustomClass(item, recommendType, 'notShow')) );
+            setRecommendValues( values.map((item) => addCustomClass(item, recommendType, 'not-show')) );
         }, 200);
         return () => { clearTimeout(timer); };
     }, [recommendType]);
 
     return (
         <ItemContainer title='업종 정보'>
-            <div className={parentClasses['input-inner-grid']}>
+            <div className={parentClasses['input-long-subgrid']}>
                 <ItemContainer title='상호명' isSubEl={true}>
                     <input type='text' className={parentClasses['input-value'] + ' focusable'} placeholder='직접입력'/>
                 </ItemContainer>
@@ -388,7 +392,7 @@ function UsageTypeEl() {
 
     return (
         <ItemContainer title='용도 정보'>
-            <div className={parentClasses['input-inner-grid']}>
+            <div className={parentClasses['input-long-subgrid']}>
                 <ItemContainer title='현재 용도' isSubEl={true}>
                     <input {...register('usageType.current')} 
                         type='text' 

@@ -57,7 +57,7 @@ const getDefaultValues = () => {
         topAddress: '',
         addressDetail: '',
         hoName: '',
-        floors: [],
+        floors: { picked: [], entireBuilding: false },
         mainPurpose: '',
         flrCnt: { ugrnd: 0, grnd: 1, ugrndUnit: '층', grndUnit: '층' },
         roomCnt: { ho: 0, household: 0, family: 0, hoUnit: '개', householdUnit: '개', familyUnit: '개' },
@@ -222,7 +222,7 @@ export function InputWithUnit({ name, options, onUnitClick }) {
     }
     const unitElClass = classes.unit + (onUnitClick ? ' focusable alive-btn' : '');
     return (
-        <div className={'subflex-col-inner'}>
+        <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
             <div className={classes['input-with-unit']}>
                 <input type='text'
                     className={classes["input-value"] + ' focusable'} 

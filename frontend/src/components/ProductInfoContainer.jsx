@@ -186,7 +186,7 @@ function UseAprDayEl() {
     ];
     return (
         <ItemContainer title='사용승인일'>
-            <div className={parentClasses['input-subflex']}>
+            <div className={parentClasses['input-subflex-date']}>
                 {items.map((item, idx) => {
                     if (item.name) {
                         return (

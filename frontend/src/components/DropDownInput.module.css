@@ -1,19 +1,26 @@
-.dropdown-input {
-    padding: 5px 8px 5px 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
+.dropdown-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
-    & input {
-        width: 100%;
-        border: none;
-        font-size: .9rem;
-    }
+    width: 100%;
+    height: 100%;
 }
-
 
 .dropdown-input {
     display: flex;
     align-items: center;
+
+    padding: 5px 8px 5px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+
+    &>input {
+        width: 100%;
+        height: 1.3rem;
+        border: none;
+        font-size: var(--input-font-size);
+    }
 }
 
 
@@ -51,7 +58,7 @@
         align-items: center;
         justify-content: right;
 
-        font-size: 1rem;
+        font-size: var(--input-font-size);
 
         background-color: var(--background-color);
 

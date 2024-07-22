@@ -45,7 +45,7 @@ function SingleChoiceForm({ choiceMap, btnLabel, name }) {
         <div className = { 'backdrop' + dialogOpenClass } onClick = { btnClickHandler }> </div>
 
         <div className = { 'positional-container' }>
-            <ol className={classes.dialog + dialogOpenClass}> 
+            <ol className={ 'dialog' + dialogOpenClass }> 
                 {inputEls}
                 <ApplyButton clickHandler={btnClickHandler} />
             </ol> 

@@ -8,7 +8,7 @@ import parentClasses from './Filters.module.css';
 import classes from './MultipleChoice.module.css';
 
 
-function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, fitContent }) {
+function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive }) {
 
     const { control, setFocus } = useFormContext();
     const { field } = useController({ control, name });
@@ -43,9 +43,7 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, fitCo
     if (!notActive && field.value.length > 0) {
         btnClass = btnClass + ' active';
     }
-    if (fitContent) {
-        btnClass = btnClass + ' ' + classes.fitContent;
-    }
+
     // console.log('----', field, field.length)
     const btnLabel = field.value.length === 0 ? defaultBtnLabel : (
         field.value.map((x) => choiceMap[x]).filter((x) => x && x.length > 0).join(',')
@@ -79,7 +77,7 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, fitCo
         <div className={'backdrop' + dialogOpenClass} onClick={btnClickHandler}></div>
 
         <div className={'positional-container'}>
-            <div className={parentClasses.dialog + dialogOpenClass}>
+            <div className={ 'dialog' + dialogOpenClass }>
                 <ol className={classes.dialog} tabIndex='-1'>
                     {items}
                 </ol>

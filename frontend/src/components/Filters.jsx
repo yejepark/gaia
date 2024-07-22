@@ -64,7 +64,7 @@ function Filters() {
                 </div>
 
                 <div className={classes['filter-container'] + ' ' + classes.removable}>
-                    <MultipleChoiceForm name='usage' choiceMap={spaceUseMap} defaultBtnLabel='용도' fitContent={true} notActive={false}/>
+                    <MultipleChoiceForm name='usage' choiceMap={spaceUseMap} defaultBtnLabel='용도' notActive={false}/>
                 </div>
 
                 <div className={classes['filter-container'] + ' ' + classes.removable}>

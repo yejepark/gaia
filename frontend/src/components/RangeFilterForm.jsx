@@ -46,7 +46,7 @@ function RangeFilterForm({ name, unit, values, btnName }) {
         <div className={'backdrop' + dialogOpenClass} onClick={btnClickHandler} id="range-backdrop"></div>
 
         <div className={'positional-container'}>
-            <div className={filtersClasses.dialog + dialogOpenClass} id="range-dialog">
+            <div className={ 'dialog' + dialogOpenClass }>
                 <div className={classes['range-container']}>
 
                     <div className={classes['min-header']}>최소</div>
