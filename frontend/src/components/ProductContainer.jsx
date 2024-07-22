@@ -18,19 +18,27 @@ const checkIfNum = {
 };
 
 function PriceEl() {
+    const { control } = useFormContext();
+    const tradeType = useWatch({ control, name: 'tradeType' });
 
-    const inputPriceValues = [
-        { subtitle: '매매가' }, { name: 'price.sale', options: checkIfNum }, {}, {},
-        { subtitle: '보증금' }, { name: 'price.deposit', options: checkIfNum },
-        { subtitle: '월세' }, { name: 'price.monthlyRent', options: checkIfNum },
-    ];
+    let inputPriceValues = [];
+    if (tradeType === 'sell') {
+        inputPriceValues = [{ subtitle: '매매가' }, { name: 'price.sale', options: checkIfNum }];
+    } else if (tradeType === 'jeonse') {
+        inputPriceValues = [{ subtitle: '보증금' }, { name: 'price.deposit', options: checkIfNum }];
+    } else {
+        inputPriceValues = [
+            { subtitle: '보증금' }, { name: 'price.deposit', options: checkIfNum },
+            { subtitle: '월세' }, { name: 'price.monthlyRent', options: checkIfNum },
+        ];
+    }
 
     return (
         <ItemContainer title='가격 정보'>
             <div className={parentClasses['input-subgrid']}>
                 <ValuesToElementsForm values={inputPriceValues} />
             </div>
-        </ItemContainer>
+        </ItemContainer>    
     );
 }
 
@@ -283,6 +291,8 @@ function DirectionEl() {
         }
     })
 
+    const btnLabel = chosenDirection ? chosenDirection + '향' : '방향 선택';
+
     return (
         <ItemContainer title='방향 정보'>
             <ItemContainer title='주된 출입구 기준' isSubEl={true}>
@@ -290,7 +300,7 @@ function DirectionEl() {
                     <input type='hidden' {...register('direction')} />
                     <button type="button" 
                         className={classes['direction-opener'] + ' ' + 'alive-btn'}
-                        onClick={btnClickHandler}>방향 선택</button>
+                        onClick={btnClickHandler}>{btnLabel}</button>
                 
                     <div className={'backdrop' + dropdownOpenClass} onClick={btnClickHandler}></div>
                     
@@ -436,7 +446,6 @@ function FacilityEl() {
 }
 
 function ProductContainer({ addressState }) {
-
     return (
         <div className={parentClasses["input-grid"] + ' ' + parentClasses['hline']}>
             <PriceEl />

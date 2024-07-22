@@ -1,8 +1,8 @@
 .input-grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
 
-	padding: 10px 0;
+    padding: 10px 0 10px 40px;
 }
 
 .input-container {
@@ -14,14 +14,14 @@
 }
 
 .input-item {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    column-gap: 10px;
 }
 
 .input-title {
-	width: fit-content;
-	font-size: var(--input-title-font-size);
-	text-wrap: nowrap;
+    width: fit-content;
+    font-size: var(--input-title-font-size);
+    text-wrap: nowrap;
 }

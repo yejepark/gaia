@@ -360,10 +360,12 @@ function NewSellPost() {
 		                </div>
 	                </fieldset>
 
-	                <fieldset className={classes['input-set']}>
-	            		<legend>매물 정보</legend>
-	                	<ProductContainer addressState={addressState} />
-	                </fieldset>
+                    { watch('tradeType') && 
+    	                <fieldset className={classes['input-set']}>
+    	            		<legend>매물 정보</legend>
+    	                	<ProductContainer addressState={addressState} />
+    	                </fieldset>
+                    }
 
 	                { watch('topAddress') &&
 	                	<fieldset className={classes['input-set']}>
