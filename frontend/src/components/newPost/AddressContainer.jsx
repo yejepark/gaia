@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import parentClasses from '../pages/NewSellPost.module.css';
+import parentClasses from '../../pages/NewSellPost.module.css';
 
 import AddressInput from './AddressInput';
-import DropDownInputForm from './DropDownInputForm';
-import MultipleChoiceForm from './MultipleChoiceForm';
+import DropDownInputForm from '../menu/DropDownInputForm';
+import MultipleChoiceForm from '../menu/MultipleChoiceForm';
 
-import { ItemContainer } from '../pages/NewSellPost';
+import { ItemContainer } from '../../pages/NewSellPost';
 
 const isRequired = {required: '필수 항목입니다.'};
 

@@ -4,12 +4,12 @@ import { useLocation } from 'react-router-dom';
 
 import classes from './NewSellPost.module.css';
 
-import ProductTypeContainer from '../components/ProductTypeContainer';
-import AddressContainer from '../components/AddressContainer';
-import ProductContainer from '../components/ProductContainer';
-import ProductInfoContainer from '../components/ProductInfoContainer';
+import ProductTypeContainer from '../components/newPost/ProductTypeContainer';
+import AddressContainer from '../components/newPost/AddressContainer';
+import ProductContainer from '../components/newPost/ProductContainer';
+import ProductInfoContainer from '../components/newPost/ProductInfoContainer';
 
-import DropDownInputForm from '../components/DropDownInputForm';
+import DropDownInputForm from '../components/menu/DropDownInputForm';
 
 export function ItemContainer({ children, title, isSubEl, required }) {
     const titleClass = isSubEl ? classes['input-subtitle'] : classes["input-title"];

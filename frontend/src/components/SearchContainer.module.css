@@ -7,7 +7,7 @@
     width: clamp(280px, 100%, 560px);
     
     background-color: var(--background-color);
-    background-image: url('./search_icon.svg');
+    background-image: url('./images/search_icon.svg');
     background-repeat: no-repeat;
     background-position: 96% 50%;
     background-size: 18px 18px;

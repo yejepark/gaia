@@ -103,7 +103,11 @@ function AddressInput({ addressState, dispatchAddress }) {
                 let currentDongName = '';
                 if (totData?.brTitle && totData.brTitle[0]) {
                     const brTitle = totData.brTitle[0];
-                    currentDongName = (brTitle.bldNm + ' ' + brTitle.dongNm).trim();
+                    if (brTitle.bldNm.trim() !== brTitle.dongNm.trim()) {
+                        currentDongName = (brTitle.bldNm + ' ' + brTitle.dongNm).trim();
+                    } else {
+                        currentDongName = brTitle.dongNm.trim();    
+                    }
                 }
 
                 if (currentDongName) {

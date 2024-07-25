@@ -45,7 +45,7 @@
     width: 24px;
     height: 24px;
 
-    background-image: url('./close-square.svg');
+    background-image: url('../images/close-square.svg');
     background-size: 24px 24px;
     background-repeat: no-repeat;
 }

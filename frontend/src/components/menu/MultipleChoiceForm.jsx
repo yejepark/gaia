@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 
-import UpDown from './UpDown';
-import ApplyButton from './ApplyButton';
+import UpDown from '../simple/UpDown';
+import ApplyButton from '../simple/ApplyButton';
 
-import parentClasses from './Filters.module.css';
+import parentClasses from '../Filters.module.css';
 import classes from './MultipleChoice.module.css';
 
 

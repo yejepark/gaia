@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import parentClasses from '../pages/NewSellPost.module.css';
+import parentClasses from '../../pages/NewSellPost.module.css';
 
-import { ValuesToElementsForm, ValuesToDropDownForm, onAreaUnitClick } from '../pages/NewSellPost';
-import DropDownInputForm from './DropDownInputForm';
+import { ValuesToElementsForm, ValuesToDropDownForm, onAreaUnitClick } from '../../pages/NewSellPost';
+import DropDownInputForm from '../menu/DropDownInputForm';
 
-import { ItemContainer } from '../pages/NewSellPost';
+import { ItemContainer } from '../../pages/NewSellPost';
 
 const buildingUsages = [
     "단독주택", "공동주택", "제1종근린생활시설", "제2종근린생활시설",
@@ -125,7 +125,7 @@ function BulidingRoomCntEl() {
     }
 
     const inputRoomCntValues = [
-        { subtitle: (productTypeToSubtitle[productType] && entireBuilding) ? productTypeToSubtitle[productType] : '호수' }, 
+        { subtitle: productTypeToSubtitle[productType] ? productTypeToSubtitle[productType] : '호수' }, 
         { name: 'roomCnt.ho', options: checkIfNum }, {}, {},
     ];
 

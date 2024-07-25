@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import UpDown from './UpDown';
+import UpDown from '../simple/UpDown';
 
-import parentClasses from '../pages/NewSellPost.module.css';
+import parentClasses from '../../pages/NewSellPost.module.css';
 import classes from './DropDownInput.module.css';
 
 

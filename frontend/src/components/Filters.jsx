@@ -7,13 +7,13 @@ import classes from './Filters.module.css';
 import { arrayRange } from '../utilities/methods';
 import { useWindowDimensions } from '../utilities/customHooks';
 
-import UpDown from './UpDown';
-import SingleChoiceForm from './SingleChoiceForm';
-import MultipleChoiceForm from './MultipleChoiceForm';
-import RangeFilterForm from './RangeFilterForm';
+import UpDown from './simple/UpDown';
+import SingleChoiceForm from './menu/SingleChoiceForm';
+import MultipleChoiceForm from './menu/MultipleChoiceForm';
+import RangeFilterForm from './menu/RangeFilterForm';
 import SearchContainer from './SearchContainer';
 
-import { productTypeMap, tradeTypeMap } from './ProductTypeContainer';
+import { productTypeMap, tradeTypeMap } from './newPost/ProductTypeContainer';
 
 const rentValues = [...arrayRange(0, 300, 20), ...arrayRange(350, 600, 50), ...arrayRange(700, 1000, 100)];
 const areaValues = [...arrayRange(0, 20, 5), ...arrayRange(30, 100, 10), ...arrayRange(200, 400, 100)];
@@ -24,7 +24,7 @@ function Filters() {
 
     const methods = useForm({ defaultValues: {
         tradeType: 'lease',
-        usage: '',
+        productType: '',
         rentMin: '0', rentMax: '',
         areaMin: '0', areaMax: '',
     } });

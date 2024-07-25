@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useWatch, useFormContext } from 'react-hook-form';
 
-import UpDown from './UpDown';
-import ApplyButton from './ApplyButton';
+import UpDown from '../simple/UpDown';
+import ApplyButton from '../simple/ApplyButton';
 
-import classes from './Filters.module.css';
+import classes from '../Filters.module.css';
 
 function SingleChoiceForm({ choiceMap, btnLabel, name, options }) {
 

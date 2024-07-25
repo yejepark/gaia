@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import SearchContainer from './SearchContainer';
-import Hamburger from './Hamburger';
+import Hamburger from './simple/Hamburger';
 import { useWindowDimensions } from '../utilities/customHooks';
 
 import classes from './MainNavigation.module.css';

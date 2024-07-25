@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import SingleChoiceForm from './SingleChoiceForm';
-import DropDownInputForm from './DropDownInputForm';
-import ApplyButton from './ApplyButton';
+import SingleChoiceForm from '../menu/SingleChoiceForm';
+import DropDownInputForm from '../menu/DropDownInputForm';
+import ApplyButton from '../simple/ApplyButton';
 
-import { ItemContainer, ValuesToElementsForm, ValuesToDropDownForm, InputWithUnit, onAreaUnitClick } from '../pages/NewSellPost';
-import parentClasses from '../pages/NewSellPost.module.css';
+import { ItemContainer, ValuesToElementsForm, ValuesToDropDownForm, InputWithUnit, onAreaUnitClick } from '../../pages/NewSellPost';
+import parentClasses from '../../pages/NewSellPost.module.css';
 import classes from './ProductContainer.module.css';
 
 // import BusinessTypes from './business_types.json';
 
-import CommerceTypes from './commerce_types.json';
+import CommerceTypes from '../commerce_types.json';
 const LodgingTypes = CommerceTypes.filter(x => x.key.startsWith('I1'));
 
 const checkIfNum = {
@@ -26,20 +26,19 @@ const isRequired = {required: '필수 입력 항목입니다.'};
 function PriceEl() {
     const tradeType = useWatch({ name: 'tradeType' });
 
-    const isAgent = useWatch({ name: 'isAgent' });
-    const options = isAgent ? {...isRequired, ...checkIfNum} : checkIfNum;
+    const options = {...isRequired, ...checkIfNum};
 
     let inputPriceValues = [];
     if (tradeType === 'sale') {
         inputPriceValues = [
-            { subtitle: '매매가', required: isAgent }, { name: 'price.sale', options }, {},{},
+            { subtitle: '매매가', required: true }, { name: 'price.sale', options }, {},{},
             { subtitle: '기보증금' }, { name: 'price.deposit', options: checkIfNum },
             { subtitle: '기월세금' }, { name: 'price.monthlyRent', options: checkIfNum },
         ];
     } else {
         inputPriceValues = [
-            { subtitle: '보증금', required: isAgent }, { name: 'price.deposit', options },
-            { subtitle: '월세가', required: isAgent }, { name: 'price.monthlyRent', options },
+            { subtitle: '보증금', required: true }, { name: 'price.deposit', options },
+            { subtitle: '월세가', required: true }, { name: 'price.monthlyRent', options },
         ];
     }
 
@@ -202,7 +201,6 @@ function LoanEl() {
 
 function MoveInDayEl() {
     const { register } = useFormContext();
-    const isAgent = useWatch({ name: 'isAgent' });
 
     const curDate = new Date();
     const thisYear = curDate.getFullYear();
@@ -228,7 +226,7 @@ function MoveInDayEl() {
         }, { unit: '일' }
     ];
     return (
-        <ItemContainer title='입주가능일' required={isAgent}>
+        <ItemContainer title='입주가능일' required={true}>
             <div className={parentClasses['input-subflex-date']}>
                 {items.map((item, idx) => {
                     if (item.name) {
@@ -256,8 +254,7 @@ function MoveInDayEl() {
 function AreaEl() {
     const { setValue, getValues } = useFormContext();
 
-    const isAgent = useWatch({ name: 'isAgent' });
-    const options = isAgent ? {...checkIfNum, ...isRequired} : checkIfNum;
+    const options = {...checkIfNum, ...isRequired};
 
     const useArea = useWatch({ name: 'prodArea.use' });
     const contractArea = useWatch({ name: 'prodArea.contract' });
@@ -273,7 +270,7 @@ function AreaEl() {
 
 
     return (
-        <ItemContainer title='면적 정보' required={isAgent}>
+        <ItemContainer title='면적 정보' required={true}>
             <div className={parentClasses['input-subgrid']}>
                 <ValuesToElementsForm values={inputAreaValues} />
             </div>

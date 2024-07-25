@@ -3,7 +3,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 
 import classes from './ProductTypeContainer.module.css';
 
-import SingleChoiceForm from './SingleChoiceForm';
+import SingleChoiceForm from '../menu/SingleChoiceForm';
 
 export const tradeTypeMap = {
     sale: '매매',
