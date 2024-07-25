@@ -8,7 +8,11 @@ import ApplyButton from './ApplyButton';
 import { ItemContainer, ValuesToElementsForm, ValuesToDropDownForm, InputWithUnit, onAreaUnitClick } from '../pages/NewSellPost';
 import parentClasses from '../pages/NewSellPost.module.css';
 import classes from './ProductContainer.module.css';
-import BusinessTypes from './business_types.json';
+
+// import BusinessTypes from './business_types.json';
+
+import CommerceTypes from './commerce_types.json';
+const LodgingTypes = CommerceTypes.filter(x => x.key.startsWith('I1'));
 
 const checkIfNum = {
     valueAsNumber: true, 
@@ -17,19 +21,25 @@ const checkIfNum = {
     },
 };
 
+const isRequired = {required: '필수 입력 항목입니다.'};
+
 function PriceEl() {
-    const { control } = useFormContext();
-    const tradeType = useWatch({ control, name: 'tradeType' });
+    const tradeType = useWatch({ name: 'tradeType' });
+
+    const isAgent = useWatch({ name: 'isAgent' });
+    const options = isAgent ? {...isRequired, ...checkIfNum} : checkIfNum;
 
     let inputPriceValues = [];
-    if (tradeType === 'sell') {
-        inputPriceValues = [{ subtitle: '매매가' }, { name: 'price.sale', options: checkIfNum }];
-    } else if (tradeType === 'jeonse') {
-        inputPriceValues = [{ subtitle: '보증금' }, { name: 'price.deposit', options: checkIfNum }];
+    if (tradeType === 'sale') {
+        inputPriceValues = [
+            { subtitle: '매매가', required: isAgent }, { name: 'price.sale', options }, {},{},
+            { subtitle: '기보증금' }, { name: 'price.deposit', options: checkIfNum },
+            { subtitle: '기월세금' }, { name: 'price.monthlyRent', options: checkIfNum },
+        ];
     } else {
         inputPriceValues = [
-            { subtitle: '보증금' }, { name: 'price.deposit', options: checkIfNum },
-            { subtitle: '월세' }, { name: 'price.monthlyRent', options: checkIfNum },
+            { subtitle: '보증금', required: isAgent }, { name: 'price.deposit', options },
+            { subtitle: '월세가', required: isAgent }, { name: 'price.monthlyRent', options },
         ];
     }
 
@@ -43,19 +53,19 @@ function PriceEl() {
 }
 
 function PremiumEl() {
-    const { register, control } = useFormContext();
+    const { register } = useFormContext();
 
     const [ pOp, pFac, pLoc, pExist ] = useWatch({ 
-        control, 
         name: [ 'premium.operation', 'premium.facility', 'premium.location', 'premium.exist' ]
     });
     const pTot = pOp + pFac + pLoc;
     // console.log(pOp, pFac, pLoc, pTot);
 
+    const options = checkIfNum;
     const inputPremiumValues = [
-        { subtitle: '영업권리금' }, { name: 'premium.operation', options: checkIfNum },
-        { subtitle: '시설권리금' }, { name: 'premium.facility', options: checkIfNum },
-        { subtitle: '바닥권리금' }, { name: 'premium.location', options: checkIfNum },
+        { subtitle: '영업권리금' }, { name: 'premium.operation', options },
+        { subtitle: '시설권리금' }, { name: 'premium.facility', options },
+        { subtitle: '바닥권리금' }, { name: 'premium.location', options },
         { subtitle: '권리금 총합' }, { unit: '만원', calculated: pTot }
     ];
 
@@ -85,34 +95,44 @@ function PremiumEl() {
 }
 
 
+function UpkeepEl() {
+
+    const inputUpkeepValues = [
+        { subtitle: '관리비' }, { name: 'upkeep.cost', checkIfNum }
+    ];
+
+    return (
+        <ItemContainer title='관리비 정보'>
+            <div className={parentClasses['input-subgrid']}>
+                <ValuesToElementsForm values={inputUpkeepValues} />
+            </div>
+        </ItemContainer>    
+    );
+}
+
+
 function AcquireEl() {
-    const { register, control } = useFormContext();
+    const { register } = useFormContext();
 
     const [ revenue, rent, cogs, wage, utilityCost, manageCost, profit, incomeExpose ] = useWatch({
-        control, 
         name: [ 
             'income.revenue', 'income.rent', 'income.cogs', 'income.wage', 
-            'income.utilityCost', 'income.manageCost', 'income.profit',
+            'income.utilityCost', 'upkeep.cost', 'income.profit',
             'income.expose' 
         ]
     });
     const etc = revenue - rent - cogs - wage - utilityCost - manageCost - profit;
 
-    let inputAcquireValues = [
-         { subtitle: '관리비' }, { name: 'income.manageCost', options: checkIfNum },
+    const inputAcquireValues = [
+        { subtitle: '월 매출' }, { name: 'income.revenue', options: checkIfNum },
+        { subtitle: '기월세금' }, { name: 'income.rent', options: checkIfNum },
+        { subtitle: '재료비' }, { name: 'income.cogs', options: checkIfNum },
+        { subtitle: '인건비' }, { name: 'income.wage', options: checkIfNum },
+        { subtitle: '공과금' }, { name: 'income.utilityCost', options: checkIfNum },
+        { subtitle: '기타비용' }, { unit: '만원', calculated: etc },
+        { subtitle: '월 순수익' }, { name: 'income.profit', options: checkIfNum },
     ];
-
-    if (incomeExpose) {
-        inputAcquireValues = inputAcquireValues.concat([
-            { subtitle: '월 매출' }, { name: 'income.revenue', options: checkIfNum },
-            { subtitle: '월세' }, { name: 'income.rent', options: checkIfNum },
-            { subtitle: '재료비' }, { name: 'income.cogs', options: checkIfNum },
-            { subtitle: '인건비' }, { name: 'income.wage', options: checkIfNum },
-            { subtitle: '공과금' }, { name: 'income.utilityCost', options: checkIfNum },
-            { subtitle: '기타비용' }, { unit: '만원', calculated: etc },
-            { subtitle: '월 순수익' }, { name: 'income.profit', options: checkIfNum },
-        ]);
-    }
+    
 
     return (
         <ItemContainer title='영업 정보'>
@@ -127,10 +147,11 @@ function AcquireEl() {
                         <div>영업 양도인수 필수</div>
                     </label>
                 </div>
-                
-                <div className={parentClasses['input-subgrid']}>
-                    <ValuesToElementsForm values={inputAcquireValues} />
-                </div>
+                {incomeExpose &&
+                    <div className={parentClasses['input-subgrid']}>
+                        <ValuesToElementsForm values={inputAcquireValues} />
+                    </div>
+                }
             </div>
     
         </ItemContainer>
@@ -139,10 +160,9 @@ function AcquireEl() {
 
 
 function LoanEl() {
-    const { register, control, formState: { errors } } = useFormContext();
+    const { register, formState: { errors } } = useFormContext();
 
     const [ loanExist, loanExpose ] = useWatch({
-        control, 
         name: [ 'loan.exist', 'loan.expose' ]
     });
 
@@ -181,7 +201,8 @@ function LoanEl() {
 
 
 function MoveInDayEl() {
-    const { register, control } = useFormContext();
+    const { register } = useFormContext();
+    const isAgent = useWatch({ name: 'isAgent' });
 
     const curDate = new Date();
     const thisYear = curDate.getFullYear();
@@ -207,17 +228,14 @@ function MoveInDayEl() {
         }, { unit: '일' }
     ];
     return (
-        <ItemContainer title='입주가능일'>
+        <ItemContainer title='입주가능일' required={isAgent}>
             <div className={parentClasses['input-subflex-date']}>
                 {items.map((item, idx) => {
                     if (item.name) {
                         return (
                             <DropDownInputForm key={idx} name={item.name}
                                 values={item.values}
-                                options={{
-                                    placeholder: "",
-                                    customClass: item.inputClass
-                                }}
+                                options={{ customClass: item.inputClass }}
                                 readOnly={true}
                             />
                         );                        
@@ -238,17 +256,24 @@ function MoveInDayEl() {
 function AreaEl() {
     const { setValue, getValues } = useFormContext();
 
+    const isAgent = useWatch({ name: 'isAgent' });
+    const options = isAgent ? {...checkIfNum, ...isRequired} : checkIfNum;
+
+    const useArea = useWatch({ name: 'prodArea.use' });
+    const contractArea = useWatch({ name: 'prodArea.contract' });
+
     const inputAreaValues = [
         { subtitle: '전용면적' },
-        { name: 'prodArea.use', options: checkIfNum,
+        { name: 'prodArea.use', options,
             onUnitClick: (e) => onAreaUnitClick(e, 'prodArea.use', setValue, getValues) },
         { subtitle: '계약면적' },
-        { name: 'prodArea.contract', options: checkIfNum,
+        { name: 'prodArea.contract', options: {...options, min: {value: useArea, message: '전용면적보다 작을 수 없습니다.'}},
             onUnitClick: (e) => onAreaUnitClick(e, 'prodArea.contract', setValue, getValues) },
     ];
 
+
     return (
-        <ItemContainer title='면적 정보'>
+        <ItemContainer title='면적 정보' required={isAgent}>
             <div className={parentClasses['input-subgrid']}>
                 <ValuesToElementsForm values={inputAreaValues} />
             </div>
@@ -257,7 +282,9 @@ function AreaEl() {
 }
 
 function DirectionEl() {
-    const { register, setValue, control } = useFormContext();
+    const { register, setValue, formState: { errors } } = useFormContext();
+
+    const chosenDirection = useWatch({ name: 'direction'});
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -271,48 +298,42 @@ function DirectionEl() {
         setValue('direction', v);
     }
 
-    const chosenDirection = useWatch({control, name: 'direction'});
-
     const dropdownOpenClass = dropdownOpen ? '' : ' hidden';
 
     const directions = [ '북서', '북', '북동', '서', '', '동', '남서', '남', '남동' ];
-    const buttons = directions.map((item, idx) => {
-        if (item.length > 0) {
-            return <button
-                        key={idx} type='button'
-                        className={'alive-btn' + (item === chosenDirection ? ' active' : '')}
-                        value={item}
-                        onClick={directionClickHandler}
-                    >
-                        {item}
-                    </button>
-        } else {
-            return <div key={idx}></div>
-        }
-    })
+    const buttons = directions.map((item, idx) => 
+        <button
+            key={idx} type='button'
+            className={'alive-btn' + (item === chosenDirection ? ' active' : '')}
+            value={item}
+            onClick={directionClickHandler}> {item} </button>
+    );
 
     const btnLabel = chosenDirection ? chosenDirection + '향' : '방향 선택';
 
+    const isAgent = useWatch({ name: 'isAgent' });
+    const options = isAgent ? {required: '필수 선택 항목입니다.'} : {};
+    let error = errors['direction'];
+
     return (
-        <ItemContainer title='방향 정보'>
+        <ItemContainer title='방향 정보' required={isAgent}>
             <ItemContainer title='주된 출입구 기준' isSubEl={true}>
-                <div>
-                    <input type='hidden' {...register('direction')} />
-                    <button type="button" 
-                        className={classes['direction-opener'] + ' ' + 'alive-btn'}
-                        onClick={btnClickHandler}>{btnLabel}</button>
+                <input type='text' {...register('direction', options)} style={{height: '0', width: '0', border: 'none'}}/>
+                <button type="button" 
+                    className={classes['direction-opener'] + ' ' + 'alive-btn'}
+                    onClick={btnClickHandler}>{btnLabel}</button>
+            
+                <div className={'backdrop' + dropdownOpenClass} onClick={btnClickHandler}></div>
                 
-                    <div className={'backdrop' + dropdownOpenClass} onClick={btnClickHandler}></div>
-                    
-                    <div className={'positional-container'}>
-                        <div className={classes['direction-selector-container'] + dropdownOpenClass} >
-                            <div className={classes['direction-selector']}>
-                                {buttons}
-                            </div>
-                            <ApplyButton clickHandler={btnClickHandler} />
+                <div className={'positional-container'}>
+                    <div className={classes['direction-selector-container'] + dropdownOpenClass} >
+                        <div className={classes['direction-selector']}>
+                            {buttons}
                         </div>
+                        <ApplyButton clickHandler={btnClickHandler} />
                     </div>
                 </div>
+                {!chosenDirection && error && <span className={'error-message'}> {error.message} </span>}
             </ItemContainer>
         </ItemContainer>
     );
@@ -320,12 +341,13 @@ function DirectionEl() {
 
 
 function ParkingEl() {
-    const { register, control } = useFormContext();
+    const { register } = useFormContext();
 
-    const parkingAvailable = useWatch({ control, name: 'parking.available' });
-
+    const parkingAvailable = useWatch({ name: 'parking.available' });
+    
+    const isAgent = useWatch({ name: 'isAgent' });
     return (
-        <ItemContainer title="주차 정보">
+        <ItemContainer title="주차 정보" required={isAgent}>
             <div className={parentClasses['input-subflex-col']}>
                 <div className={parentClasses['subflex-row']}>
                     <label className={parentClasses['input-checkbox']}>
@@ -350,15 +372,16 @@ function ParkingEl() {
 
 
 function BusinessTypeEl() {
-    const values = BusinessTypes;
 
-    const { control } = useFormContext();
+    const productType = useWatch({ name: 'productType' });
 
+    const values = productType === 'lodging' ? LodgingTypes : CommerceTypes;
+    
     const [currentValues, setCurrentValues] = useState(values);
     const [recommendValues, setRecommendValues] = useState(values);
 
-    const currentType = useWatch({ control, name: 'businessType.current' })
-    const recommendType = useWatch({ control, name: 'businessType.recommend' })
+    const currentType = useWatch({ name: 'businessType.current' })
+    const recommendType = useWatch({ name: 'businessType.recommend' })
 
     function addCustomClass(item, target, customClass) {
         if (!item.value.includes(target.trim())) {
@@ -428,36 +451,85 @@ function FacilityEl() {
     const coolingMethodValues = ['벽걸이에어컨', '스탠드에어컨', '천장에어컨'];
     const heatingFuelValues = ['도시가스', '기름', '전기', '심야전기', '태양열', 'LPG', '열병합', '지열'];
 
+    const productType = useWatch({ name: 'productType' });
+
     return (
         <ItemContainer title='시설 정보'>
             <div className={parentClasses['input-subgrid']}>
                 <ValuesToDropDownForm title='난방 방식' values={heatingMethodValues} isSubEl={true} name='facility.heatingMethod' />
                 <ValuesToDropDownForm title='냉방 방식' values={coolingMethodValues} isSubEl={true} name='facility.coolingMethod' />
                 <ValuesToDropDownForm title='난방 연료' values={heatingFuelValues} isSubEl={true} name='facility.heatingFuel' />
-                <ItemContainer title="사용 전력" isSubEl={true}>
-                    <InputWithUnit name='facility.electricCap' options={{
-                        ...checkIfNum,
-                        min: {value: 0, message: '0 보다 작을 수 없습니다.'},
-                    }}/>
-                </ItemContainer>
+                {(productType === 'industrial' || productType === 'intIndCenter') &&
+                    <ItemContainer title="사용 전력" isSubEl={true}>
+                        <InputWithUnit name='facility.electricCap' options={{
+                            ...checkIfNum,
+                            min: {value: 0, message: '0 보다 작을 수 없습니다.'},
+                        }}/>
+                    </ItemContainer>
+                }
+            </div>
+        </ItemContainer>
+    )
+}
+
+function ShortLeaseEl() {
+    const { register } = useFormContext();
+
+    const leaseLengthValues = Array.from({ length: 23 }, (x, i) => i + 1);
+    
+    const isAgent = useWatch({ name: 'isAgent' });
+    const negotiable = useWatch({ name: 'shortLease.negotiable' });
+    const leaseLength = useWatch({ name: 'shortLease.length' });
+    return (
+        <ItemContainer title='단기임대기간' required={isAgent}>
+            <div className={parentClasses['input-subflex-date']}>
+                <DropDownInputForm name='shortLease.length' 
+                    values={leaseLengthValues} 
+                    options={{ customClass: parentClasses['month-input'] }}
+                    readOnly={true}
+                />
+                <div className={parentClasses.unit}>개월</div>
+            
+                <label className={parentClasses['input-checkbox']}>
+                    <input type="checkbox" {...register('shortLease.negotiable')} />
+                    <div>협의 가능</div>
+                </label>
+
+                {negotiable && <>
+                    <label className={parentClasses['input-checkbox']}>
+                        <input type="radio" value='more' {...register('shortLease.moreOrLess')} />
+                        <div>{leaseLength}개월 이상</div>
+                    </label>
+
+                    <label className={parentClasses['input-checkbox']}>
+                        <input type="radio" value='less' {...register('shortLease.moreOrLess')} />
+                        <div>{leaseLength}개월 이내</div>
+                    </label>
+                </>}
             </div>
         </ItemContainer>
     )
 }
 
 function ProductContainer({ addressState }) {
+    const tradeType = useWatch({ name: 'tradeType' });
+    const productType = useWatch({ name: 'productType' });
+    const entireBuilding = useWatch({ name: 'floors.entireBuilding' });
+
     return (
         <div className={parentClasses["input-grid"] + ' ' + parentClasses['hline']}>
             <PriceEl />
-            <PremiumEl />
-        	<AcquireEl />
+            <UpkeepEl />
+            {(productType === 'commercial' || productType === 'lodging') && <PremiumEl />}
+        	{tradeType !== 'sale' && <AcquireEl />}
             <LoanEl />
             <MoveInDayEl />
-            <AreaEl />
+            {tradeType === 'shortLease' && <ShortLeaseEl />}
+            {!entireBuilding && <AreaEl />}
+            {(productType === 'commercial' || productType === 'lodging') && <BusinessTypeEl />}
+            {!(productType === 'commercial' || productType === 'lodging') && <UsageTypeEl />}
             <DirectionEl />
-            <ParkingEl />
-            <BusinessTypeEl />
-            <UsageTypeEl />
+            {!entireBuilding && <ParkingEl />}
             <FacilityEl />
         </div>
     );

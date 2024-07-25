@@ -6,9 +6,9 @@ import ApplyButton from './ApplyButton';
 
 import classes from './Filters.module.css';
 
-function SingleChoiceForm({ choiceMap, btnLabel, name }) {
+function SingleChoiceForm({ choiceMap, btnLabel, name, options }) {
 
-    const { register, control } = useFormContext();
+    const { register, control, formState: { errors } } = useFormContext();
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -30,11 +30,17 @@ function SingleChoiceForm({ choiceMap, btnLabel, name }) {
     const inputEls = Object.keys(choiceMap).map((choice, idx) => {
         return (<li key={idx}>
             <label>
-                <input {...register(name)} type="radio" value={choice} onKeyPress={enterStrokeHandler} className={'focusable'}/>
+                <input {...register(name, options)} type="radio" value={choice} onKeyPress={enterStrokeHandler} className={'focusable'}/>
                 <span>{choiceMap[choice]}</span>
             </label>
         </li>);
     });
+
+    let error;
+    const names = name.split('.');
+    if (errors[names[0]]) {
+        error = names.length === 1 ? errors[names[0]] : errors[names[0]][names[1]];
+    }
 
     return (<>
         <button type="button" className={btnClass} onClick={btnClickHandler}>
@@ -49,7 +55,8 @@ function SingleChoiceForm({ choiceMap, btnLabel, name }) {
                 {inputEls}
                 <ApplyButton clickHandler={btnClickHandler} />
             </ol> 
-        </div>  
+        </div>
+        {error && <span className={'error-message'}> {error.message} </span>}
         </>)
     }
 

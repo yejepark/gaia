@@ -10,14 +10,14 @@ import classes from './DropDownInput.module.css';
 function ListItem({ value, text, unit, onClick, customClass }) {
     return (
         <li value={value} onClick={onClick} className={customClass}>
-            <button className={classes['dropdown-item']}>{text || value}{unit}</button>
+            <button type='button' className={classes['dropdown-item']}>{text || value}{unit}</button>
         </li>
     );
 }
 
 
 function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe, readOnly }) {
-    const { register, setValue, setFocus } = useFormContext();
+    const { register, setValue, setFocus, formState: { errors } } = useFormContext();
 
     function inputClickHandler(event) {
         event.stopPropagation();
@@ -70,10 +70,17 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
     }
 
     const dropdownCustomClass = options.customClass ? options.customClass : '';
+
+    let error;
+    const names = name.split('.');
+    if (errors[names[0]]) {
+        error = names.length === 1 ? errors[names[0]] : errors[names[0]][names[1]];
+    }
+
     return (
         <div className={classes['dropdown-container'] + ' ' + dropdownCustomClass} onClick={containerClickHandler} style={options.style}>
             <div className={classes['dropdown-input'] + ' focusable'}>
-                <input {...register(name)}
+                <input {...register(name, options.registerOptions)}
                     type='text' 
                     autoComplete="off"
                     placeholder={options.placeholder}
@@ -89,6 +96,7 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
                     {dropdownItems}
                 </ol>
             </div>
+            {error && <span className={'error-message'}> {error.message} </span>}
         </div>
     )
 }

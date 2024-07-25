@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import React from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import parentClasses from '../pages/NewSellPost.module.css';
@@ -50,13 +49,21 @@ const checkIfNum = {
     },
 };
 
+const isRequired = {required: '필수 입력 항목입니다.'};
+
+const isPositive = {min: {value: 0.0001, message: '0 이상이어야 합니다.'}};
+
 function BuildingFloorEl() {
+    const isAgent = useWatch({ name: 'isAgent' });
+
+    const options = isAgent ? {...checkIfNum, ...isRequired} : checkIfNum;
     const inputFloorValues = [
-        { subtitle: '지하' }, { name: 'flrCnt.ugrnd', options: checkIfNum },
-        { subtitle: '지상' }, { name: 'flrCnt.grnd', options: checkIfNum },
+        { subtitle: '지하' }, { name: 'flrCnt.ugrnd', options },
+        { subtitle: '지상' }, { name: 'flrCnt.grnd', options },
     ];
+
     return (
-        <ItemContainer title='층정보'>
+        <ItemContainer title='층 정보' required={isAgent}>
             <div className={parentClasses['input-subgrid']}>
                 <ValuesToElementsForm values={inputFloorValues} />
             </div>
@@ -67,15 +74,15 @@ function BuildingFloorEl() {
 
 function BuildingAreaEl() {
 
-    const { control, setValue, register, getValues } = useFormContext();
+    const { setValue, register, getValues } = useFormContext();
 
-    const platArea = useWatch({control, name: 'area.plat'});
-    const archArea = useWatch({control, name: 'area.arch'});
-    const totArea = useWatch({control, name: 'area.total'});
+    const platArea = useWatch({ name: 'area.plat' });
+    const archArea = useWatch({ name: 'area.arch' });
+    const totArea = useWatch({ name: 'area.total' });
 
-    const platAreaUnit = useWatch({control, name: 'area.platUnit'});
-    const archAreaUnit = useWatch({control, name: 'area.archUnit'});
-    const totAreaUnit = useWatch({control, name: 'area.totalUnit'});
+    const platAreaUnit = useWatch({ name: 'area.platUnit' });
+    const archAreaUnit = useWatch({ name: 'area.archUnit' });
+    const totAreaUnit = useWatch({ name: 'area.totalUnit' });
     // console.log('buidingArea: ', platArea, archArea, totArea);
 
     const buildingLandRatio = platArea > 0 ? Math.round(
@@ -83,20 +90,23 @@ function BuildingAreaEl() {
     const floorAreaRatio = platArea > 0 ? Math.round(
         totArea / platArea * 100 * (totAreaUnit === '평' ? 3.3058 : 1) / (platAreaUnit === '평' ? 3.3058 : 1)) : 0;
 
+    const isAgent = useWatch({ name: 'isAgent' });
+    const entireBuilding = useWatch({ name: 'floors.entireBuilding' });
+    const options = isAgent && entireBuilding ? {...checkIfNum, ...isPositive, ...isRequired} : checkIfNum;
     const inputAreaValues = [
-        { subtitle: '대지면적' }, { name: 'area.plat', options: checkIfNum, 
+        { subtitle: '대지면적', required: isAgent && entireBuilding }, { name: 'area.plat', options, 
             onUnitClick: (e) => onAreaUnitClick(e, 'area.plat', setValue, getValues) },
         {}, {},
         { subtitle: '건축면적' }, { name: 'area.arch', options: checkIfNum,
             onUnitClick: (e) => onAreaUnitClick(e, 'area.arch', setValue, getValues) },
         { subtitle: '건폐율' }, { unit: '%', name: 'buildingLandRatio', calculated: buildingLandRatio },
-        { subtitle: '연면적' }, { name: 'area.total', options: checkIfNum,
+        { subtitle: '연면적', required: isAgent && entireBuilding }, { name: 'area.total', options,
             onUnitClick: (e) => onAreaUnitClick(e, 'area.total', setValue, getValues) },
         { subtitle: '용적률' }, { unit: '%', name: 'floorAreaRatio', calculated: floorAreaRatio },
     ];   
 
     return (
-        <ItemContainer title='면적정보'>
+        <ItemContainer title='면적 정보'>
             <div className={parentClasses['input-subgrid']}>
                 <ValuesToElementsForm values={inputAreaValues} />
             </div>
@@ -106,12 +116,25 @@ function BuildingAreaEl() {
 
 
 function BulidingRoomCntEl() {
+    const entireBuilding = useWatch({ name: 'floors.entireBuilding' });
+    const productType = useWatch({ name: 'productType' });
+
+    const productTypeToSubtitle = {
+        commercial: '점포수',
+        office: '사무실수',
+    }
 
     const inputRoomCntValues = [
-        { subtitle: '세대' }, { name: 'roomCnt.household', options: checkIfNum },
-        { subtitle: '호' }, { name: 'roomCnt.ho', options: checkIfNum },
-        { subtitle: '가구' }, { name: 'roomCnt.family', options: checkIfNum },
+        { subtitle: (productTypeToSubtitle[productType] && entireBuilding) ? productTypeToSubtitle[productType] : '호수' }, 
+        { name: 'roomCnt.ho', options: checkIfNum }, {}, {},
     ];
+
+    if (entireBuilding) {
+        inputRoomCntValues.push(
+            { subtitle: '세대수' }, { name: 'roomCnt.household', options: checkIfNum },
+            { subtitle: '가구수' }, { name: 'roomCnt.family', options: checkIfNum }
+        );
+    }
 
     return (
         <ItemContainer title='총 세대/호'>
@@ -132,8 +155,10 @@ function BuildingParkingEl() {
         { subtitle: '실외 기계식' }, { name: 'parkingCnt.oudrMech', options: checkIfNum },
     ];
 
+    const isAgent = useWatch({ name: 'isAgent' });
+
     return (
-        <ItemContainer title='주차장'>
+        <ItemContainer title='주차장' required={isAgent}>
             <div className={parentClasses['input-subgrid']}>
                 <ValuesToElementsForm  values={inputParkingValues} />
             </div>
@@ -184,18 +209,17 @@ function UseAprDayEl() {
             inputClass: parentClasses['day-input']
         }, { unit: '일' }
     ];
+
+    const isAgent = useWatch({ name: 'isAgent' });
     return (
-        <ItemContainer title='사용승인일'>
+        <ItemContainer title='사용승인일' required={isAgent}>
             <div className={parentClasses['input-subflex-date']}>
                 {items.map((item, idx) => {
                     if (item.name) {
                         return (
                             <DropDownInputForm key={idx} name={item.name}
                                 values={item.values}
-                                options={{
-                                    placeholder: "",
-                                    customClass: item.inputClass
-                                }}
+                                options={{ customClass: item.inputClass }}
                                 readOnly={true}
                             />
                         );                        
@@ -211,19 +235,26 @@ function UseAprDayEl() {
 
 
 function ProductInfoContainer({ addressState }) {
-    console.log('in ProductInfoContainer')
+    // console.log('in ProductInfoContainer')
+    const isAgent = useWatch({ name: 'isAgent' });
+    const registerOptions = isAgent ? isRequired : {};
 
-    return [
-        <ValuesToDropDownForm key={1} name='mainPurpose' title='건축물 주용도' values={buildingUsages} />,
-        <ValuesToDropDownForm key={2} name='districtType' title='용도지역' values={districtTypes} />,
-        <BuildingFloorEl key={3} />,
-        <BulidingRoomCntEl key={4} />,
-        <BuildingAreaEl key={5} />,
-        <BuildingParkingEl key={6} />,
-        <ElevatorEl key={7} />,
-        <ValuesToDropDownForm key={8} name='strctCdNm' title='건축물 구조' values={structureTypes} />,
-        <UseAprDayEl key={9} />
-    ];
+    const entireBuilding = useWatch({ name: 'floors.entireBuilding' });
+
+    return (<>
+        <ValuesToDropDownForm
+            name='mainPurpose' title='건축물 주용도' 
+            values={buildingUsages} 
+            registerOptions={registerOptions} required={isAgent}/>
+        <ValuesToDropDownForm name='districtType' title='용도지역' values={districtTypes} />
+        <BuildingFloorEl />
+        <BulidingRoomCntEl />
+        {entireBuilding && <BuildingAreaEl />}
+        <BuildingParkingEl />
+        <ElevatorEl />
+        <ValuesToDropDownForm name='strctCdNm' title='건축물 구조' values={structureTypes} />
+        <UseAprDayEl />
+    </>);
 }
 
 export default ProductInfoContainer;

@@ -54,8 +54,8 @@ function MainNavigation() {
 	];
 
 	const rightItems = [
-		{ link: '/newidea', text: '블로그 작성' },
-		{ link: '/newSellPost', text: '매물 작성' },
+		{ link: '/newAgentPost', text: '중개사 매물 등록' },
+		{ link: '/newSellPost', text: '직거래 매물 등록' },
 		{ link: '/account', text: '내 계정'}
 	];
 

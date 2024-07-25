@@ -124,7 +124,8 @@
 .input-container {
     display: flex;
     flex-direction: row;
-    align-items: center;
+/*    align-items: center;*/
+    align-items: start;
 
     width: 100%;
     height: max(100%, 3rem);
@@ -132,6 +133,7 @@
 
 .input-subcontainer {
     display: flex;
+    flex-direction: column;
     align-items: start;
 
     width: 100%;
@@ -166,6 +168,8 @@
         border-radius: 5px;
         border: 0;
         background-color: transparent;
+
+        text-wrap: nowrap;
 
         & sup {
             font-size: calc(2/3*var(--input-font-size));

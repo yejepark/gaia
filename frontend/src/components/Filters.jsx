@@ -13,22 +13,7 @@ import MultipleChoiceForm from './MultipleChoiceForm';
 import RangeFilterForm from './RangeFilterForm';
 import SearchContainer from './SearchContainer';
 
-const tradeTypeMap = {
-    sell: '매매',
-    jeonse: '전세',
-    lease: '월세',
-    shortLease: '단기임대'
-}
-
-const spaceUseMap = {
-    office: '사무실',
-    coworking: '공유오피스',
-    industrial: '산업용',
-    retail: '소매업',
-    restaurant: '식당',
-    medical: '의료업',
-    land: '토지'
-};
+import { productTypeMap, tradeTypeMap } from './ProductTypeContainer';
 
 const rentValues = [...arrayRange(0, 300, 20), ...arrayRange(350, 600, 50), ...arrayRange(700, 1000, 100)];
 const areaValues = [...arrayRange(0, 20, 5), ...arrayRange(30, 100, 10), ...arrayRange(200, 400, 100)];
@@ -64,7 +49,7 @@ function Filters() {
                 </div>
 
                 <div className={classes['filter-container'] + ' ' + classes.removable}>
-                    <MultipleChoiceForm name='usage' choiceMap={spaceUseMap} defaultBtnLabel='용도' notActive={false}/>
+                    <MultipleChoiceForm name='productType' choiceMap={productTypeMap} defaultBtnLabel='용도' notActive={false}/>
                 </div>
 
                 <div className={classes['filter-container'] + ' ' + classes.removable}>

@@ -8,7 +8,7 @@
 .input-container {
     height: 2rem;
 
-    & * {
+    & *:not(span) {
         font-size: var(--input-font-size);
     }
 }

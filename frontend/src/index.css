@@ -288,6 +288,13 @@ input[type='checkbox'] {
     text-wrap: nowrap;
 }
 
+.required {
+    position: relative;
+    top: 2px;
+    left: 1px;
+
+    color: red;
+}
 
 /*
 .diamond-shape {

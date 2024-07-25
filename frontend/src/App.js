@@ -37,6 +37,12 @@ const router = createBrowserRouter([
         id: 'newSellPost',
         element: <NewSellPost />,
         action: newSellPostAction
+      },
+      { 
+        path: '/newAgentPost',
+        id: 'newAgentPost',
+        element: <NewSellPost />,
+        action: newSellPostAction
       }
     ],
   }

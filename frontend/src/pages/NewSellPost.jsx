@@ -1,5 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import { useForm, FormProvider, useFormContext, useWatch } from 'react-hook-form';
+import { useLocation } from 'react-router-dom';
 
 import classes from './NewSellPost.module.css';
 
@@ -10,11 +11,14 @@ import ProductInfoContainer from '../components/ProductInfoContainer';
 
 import DropDownInputForm from '../components/DropDownInputForm';
 
-export function ItemContainer({ children, title, isSubEl }) {
+export function ItemContainer({ children, title, isSubEl, required }) {
     const titleClass = isSubEl ? classes['input-subtitle'] : classes["input-title"];
     const containerClass = isSubEl ? classes['input-subcontainer'] : classes['input-container'];
     return [
-        <div key={1} className={titleClass}>{title}</div>,
+        <div key={1} className={titleClass}>
+            {title}
+            {required ? <span className='required'>*</span> : null}
+        </div>,
         <div key={2} className={containerClass}>{children}</div>
     ];
 }
@@ -51,6 +55,7 @@ const getDefaultValues = () => {
     const thisDay = today.getDate();
 
     return {
+        isAgent: false,
         tradeType: '',
         productType: '',
         productSubType: '',
@@ -67,16 +72,21 @@ const getDefaultValues = () => {
         useAprDay: { Y: thisYear, M: thisMonth, D: thisDay },
         area: { plat: 0, arch: 0, total: 0, platUnit: 'm2', archUnit: 'm2', totalUnit: 'm2' },
         price: { sale: 0, deposit: 0, monthlyRent: 0, saleUnit: '만원', depositUnit: '만원', monthlyRentUnit: '만원' },
-        premium: { operation: 0, facility: 0, location: 0, operationUnit: '만원', facilityUnit: '만원', locationUnit: '만원' },
+        premium: { 
+            operation: 0, facility: 0, location: 0, operationUnit: '만원', facilityUnit: '만원', locationUnit: '만원', 
+            exist: false, negotiable: false 
+        },
+        upkeep: { cost: 0, costUnit: '만원' },
         income: { revenue: 0, rent: 0, cogs: 0, wage: 0, utilityCost: 0, manageCost: 0, profit: 0,
             revenueUnit: '만원', rentUnit: '만원', cogsUnit: '만원', wageUnit: '만원', utilityCostUnit: '만원', manageCostUnit: '만원', profitUnit: '만원' },
         loan: { pct: 0, pctUnit: '%' },
-        moveInDay: { Y: thisYear, M: thisMonth, D: thisDay },
+        moveInDay: { Y: thisYear, M: thisMonth, D: thisDay, negotiable: false },
         prodArea: { use: 0, contract: 0, useUnit: '평', contractUnit: '평' },
-        parking: { count: 0, countUnit: '대' },
+        parking: { available: false, count: 0, countUnit: '대' },
         businessType: { current: '', recommend: '' },
         usageType: { current: '', recommend: '' },
         facility: { heatingMethod: '', coolingMethod: '', heatingFuel: '', electricCap: 0, electricCapUnit: 'kW' },
+        shortLease: { length: 12, negotiable: false, moreOrLess: 'more' },
         ...getSavedData(),
     };
 }
@@ -221,24 +231,22 @@ export function InputWithUnit({ name, options, onUnitClick }) {
         error = names.length === 1 ? errors[names[0]] : errors[names[0]][names[1]];
     }
     const unitElClass = classes.unit + (onUnitClick ? ' focusable alive-btn' : '');
-    return (
-        <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
-            <div className={classes['input-with-unit']}>
-                <input type='text'
-                    className={classes["input-value"] + ' focusable'} 
-                    autoComplete='off'
-                    {...register(name, options)} 
-                />
-                
-                <input type='hidden' {...register(name + 'Unit')} />
-                
-                <div className={unitElClass} onClick={onUnitClick}>
-                    {unit === 'm2' ? <>m<sup>2</sup></> : unit}
-                </div>
+    return (<>
+        <div className={classes['input-with-unit']}>
+            <input type='text'
+                className={classes["input-value"] + ' focusable'} 
+                autoComplete='off'
+                {...register(name, options)} 
+            />
+            
+            <input type='hidden' {...register(name + 'Unit')} />
+            
+            <div className={unitElClass} onClick={onUnitClick}>
+                {unit === 'm2' ? <>m<sup>2</sup></> : unit}
             </div>
-            {error && <span className={'error-message'}> {error.message} </span>}
         </div>
-    );
+        {error && <span className={'error-message'}> {error.message} </span>}
+    </>);
 }
 
 export function CalculatedInputWithUnit({ value, unit }) {
@@ -270,7 +278,12 @@ export function ValuesToElementsForm({ values }) {
 
     return values.map((item, idx) => {
         if (item.subtitle) {
-            return <div key={idx} className={classes['input-subtitle']}>{item.subtitle}</div>;
+            return (
+                <div key={idx} className={classes['input-subtitle']}>
+                    {item.subtitle}
+                    {item.required ? <span className='required'>*</span> : null}
+                </div>
+            );
         } else if (Object.keys(item).includes('calculated')) {
             return ( 
                 <div key={idx} className={classes['input-subcontainer']}>
@@ -290,14 +303,15 @@ export function ValuesToElementsForm({ values }) {
 }
 
 
-export function ValuesToDropDownForm({ title, values, isSubEl, name }) {
+export function ValuesToDropDownForm({ title, values, isSubEl, name, registerOptions, required }) {
     return (
-        <ItemContainer title={title} isSubEl={isSubEl}>
+        <ItemContainer title={title} isSubEl={isSubEl} required={required}>
             <DropDownInputForm
                 name={name}
                 values={values} 
                 options={{
                     placeholder: "직접입력",
+                    registerOptions
                 }}
             />
         </ItemContainer>
@@ -339,12 +353,18 @@ function NewSellPost() {
 
     usePersistForm({ value: JSON.stringify(getValues()), storageKey: FORM_DATA_KEY });
 
+    const { pathname } = useLocation();
+    useEffect(() => {
+        setValue('isAgent', pathname === '/newAgentPost');
+    }, [pathname]);
+
     renderCount++;
 
     return (
         <div className={classes["body-container"]}> 
         	<FormProvider {...methods}>
 	        	<form onSubmit={handleSubmit(onSubmit)} className={classes['main-container']}>
+                    <input type="hidden" {...register('isAgent')} />
                     <div> Render count: {renderCount} </div>
 	            	<fieldset className={classes['input-set']}>
 	            		<legend>매물 종류</legend>

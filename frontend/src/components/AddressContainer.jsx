@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import parentClasses from '../pages/NewSellPost.module.css';
@@ -8,6 +9,7 @@ import MultipleChoiceForm from './MultipleChoiceForm';
 
 import { ItemContainer } from '../pages/NewSellPost';
 
+const isRequired = {required: '필수 항목입니다.'};
 
 function TopEl({ register }) {
     return (<>
@@ -60,9 +62,16 @@ function DongEl({ addressState, dispatchAddress }) {
 
 
 function FloorEl({ addressState, dispatchAddress }) {
-    const { register, control } = useFormContext();
-    const entireBuliding = useWatch({ control, name: 'floors.entireBuilding' });
-    const pickedFloors = useWatch({ control, name: 'floors.picked' });
+    const { register, setValue } = useFormContext();
+    const entireBuilding = useWatch({ name: 'floors.entireBuilding' });
+    const pickedFloors = useWatch({ name: 'floors.picked' });
+    const productType = useWatch({ name: 'productType' });
+
+    useEffect(() => {
+        if (productType === 'building' || productType === 'industrial') {
+            setValue('floors.entireBuilding', true);
+        }
+    }, [productType]);
 
     const brTitle = addressState.data.brTitle[addressState.brTitleIdx]
 
@@ -74,6 +83,16 @@ function FloorEl({ addressState, dispatchAddress }) {
         return ['A' + `${k}`.padStart(3, '0'), `${k}층`];
     }));
 
+    const numFloors = flrKeys.length;
+    const numPickedFloors = pickedFloors.length;
+
+    useEffect(() => {
+        if (numFloors === numPickedFloors) {
+            setValue('floors.entireBuilding', true);
+            setValue('floors.picked', []);
+        }
+    }, [numFloors, numPickedFloors]);
+
     const oneOrLessFloor = pickedFloors.length === 1;
     return (
         <div className={parentClasses['input-subflex-row']}>
@@ -81,12 +100,12 @@ function FloorEl({ addressState, dispatchAddress }) {
                 <input type="checkbox" {...register('floors.entireBuilding')} />
                 <div>건물 전체</div>
             </label>
-            {brTitle && !entireBuliding &&
+            {brTitle && !entireBuilding &&
                 <div style={{height: '2rem'}}>
                     <MultipleChoiceForm name='floors.picked' choiceMap={floorMap} defaultBtnLabel='층 선택' notActive={true} />
                 </div>
             }
-            {brTitle && !entireBuliding && oneOrLessFloor &&
+            {brTitle && !entireBuilding && oneOrLessFloor &&
                 <div style={{width: '10rem'}}>
                     <div className={parentClasses['input-with-unit']}>
                         <input {...register('hoName')} type='text' className={parentClasses["input-value"] + ' focusable'} />
@@ -110,14 +129,14 @@ function AddressContainer({ addressState, dispatchAddress, register, watch }) {
     }
 
     const searchBtn = (
-        <ItemContainer title='주소'>
+        <ItemContainer title='주소' required={true}>
             <AddressInput addressState={addressState} dispatchAddress={dispatchAddress} />
         </ItemContainer>
     );
 
     const floorEl = (
         <ItemContainer title=''>
-            <FloorEl addressState={addressState} dispatchAddress={dispatchAddress} />
+            {brTitle && <FloorEl addressState={addressState} dispatchAddress={dispatchAddress} />}
         </ItemContainer>
     );
 
