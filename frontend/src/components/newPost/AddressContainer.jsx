@@ -9,19 +9,26 @@ import MultipleChoiceForm from '../menu/MultipleChoiceForm';
 
 import { ItemContainer } from '../../pages/NewSellPost';
 
-const isRequired = {required: '필수 항목입니다.'};
+const isRequired = {required: '필수 입력 항목입니다.'};
 
-function TopEl({ register }) {
+function TopEl() {
+    const { register, formState: { errors } } = useFormContext();
+    const error = errors.address?.top;
     return (<>
-        <div></div>
+        <div>
+            <input {...register('address.legal')} type='hidden' />
+            <input {...register('address.road')} type='hidden' />
+            <input {...register('latlng')} type='hidden'/>
+        </div>
         <div className={parentClasses['input-subcontainer']}>
             <input 
-                {...register('topAddress')}
+                {...register('address.top', isRequired)}
                 type="text"  
                 className={parentClasses["input-value"] + ' focusable'}
                 placeholder='직접입력' 
                 autoComplete="off"
             />
+            {error && <span className={'error-message'}> {error.message} </span>}
         </div>
     </>);
 }
@@ -43,16 +50,16 @@ function DongEl({ addressState, dispatchAddress }) {
     const dongEl = (
         <ItemContainer title='동 명칭'>
             <DropDownInputForm
-                name='dongName'
+                name='address.dongName'
                 values={dongNms}
                 options={{
                     placeholder: "직접입력",
+                    withoutPipe: true,
+                    setCustomValue: (bldAndDong) => {
+                        const [bldName, dongName] = bldAndDong.split('|');
+                        dispatchAddress({ type: 'UPDATE_DONGNAME', payload: {bldName, dongName} });
+                    },
                 }}
-                setCustomValue={(bldAndDong) => {
-                    const [bldName, dongName] = bldAndDong.split('|');
-                    dispatchAddress({ type: 'UPDATE_DONGNAME', payload: {bldName, dongName} });
-                }}
-                withoutPipe={true}
             />
         </ItemContainer>
     );
@@ -71,7 +78,7 @@ function FloorEl({ addressState, dispatchAddress }) {
         if (productType === 'building' || productType === 'industrial') {
             setValue('floors.entireBuilding', true);
         }
-    }, [productType]);
+    }, [productType, setValue]);
 
     const brTitle = addressState.data.brTitle[addressState.brTitleIdx]
 
@@ -83,17 +90,9 @@ function FloorEl({ addressState, dispatchAddress }) {
         return ['A' + `${k}`.padStart(3, '0'), `${k}층`];
     }));
 
-    const numFloors = flrKeys.length;
-    const numPickedFloors = pickedFloors.length;
-
-    useEffect(() => {
-        if (numFloors === numPickedFloors) {
-            setValue('floors.entireBuilding', true);
-            setValue('floors.picked', []);
-        }
-    }, [numFloors, numPickedFloors]);
-
     const oneOrLessFloor = pickedFloors.length === 1;
+
+    const rules = entireBuilding ? {} : {validate: val => val.length > 0 || '1개 이상의 층을 고르세요.'};
     return (
         <div className={parentClasses['input-subflex-row']}>
             <label className={parentClasses['input-checkbox']}>
@@ -102,13 +101,13 @@ function FloorEl({ addressState, dispatchAddress }) {
             </label>
             {brTitle && !entireBuilding &&
                 <div style={{height: '2rem'}}>
-                    <MultipleChoiceForm name='floors.picked' choiceMap={floorMap} defaultBtnLabel='층 선택' notActive={true} />
+                    <MultipleChoiceForm name='floors.picked' choiceMap={floorMap} defaultBtnLabel='층 선택' notActive={true} rules={rules}/>
                 </div>
             }
             {brTitle && !entireBuilding && oneOrLessFloor &&
                 <div style={{width: '10rem'}}>
                     <div className={parentClasses['input-with-unit']}>
-                        <input {...register('hoName')} type='text' className={parentClasses["input-value"] + ' focusable'} />
+                        <input {...register('address.hoName')} type='text' className={parentClasses["input-value"] + ' focusable'} />
                         <div className={parentClasses.unit}>호</div>
                     </div>
                 </div>
@@ -118,8 +117,10 @@ function FloorEl({ addressState, dispatchAddress }) {
 }
 
 
-function AddressContainer({ addressState, dispatchAddress, register, watch }) {
-    // console.log('in AddressContainer')
+function AddressContainer({ addressState, dispatchAddress }) {
+    const { register } = useFormContext();
+
+    console.log('in AddressContainer')
 
     const hasAddressData = addressState.data ? Object.keys(addressState.data).length > 0 : null;
 
@@ -142,7 +143,7 @@ function AddressContainer({ addressState, dispatchAddress, register, watch }) {
 
     const detailEl = (
         <ItemContainer title='상세주소'>
-            <input {...register('addressDetail')} 
+            <input {...register('address.detail')} 
                 type='text' 
                 className={parentClasses["input-value"] + ' focusable'} 
                 style={{width: '100%', fontSize: '.9rem'}}
@@ -152,7 +153,7 @@ function AddressContainer({ addressState, dispatchAddress, register, watch }) {
 
     return (<>
         {searchBtn}
-        {hasAddressData && <TopEl register={register} />}
+        {hasAddressData && <TopEl />}
         {hasAddressData && <DongEl addressState={addressState} dispatchAddress={dispatchAddress} />}
         {hasAddressData && floorEl}
         {hasAddressData && detailEl}

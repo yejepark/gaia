@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useController, useFormContext } from 'react-hook-form';
+import { useController, useFormContext, useFormState } from 'react-hook-form';
 
 import UpDown from '../simple/UpDown';
 import ApplyButton from '../simple/ApplyButton';
@@ -8,10 +8,11 @@ import parentClasses from '../Filters.module.css';
 import classes from './MultipleChoice.module.css';
 
 
-function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive }) {
+function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive, rules }) {
 
     const { control, setFocus } = useFormContext();
-    const { field } = useController({ control, name });
+    const { field } = useController({ control, name, rules: (rules ? rules : {}) });
+    const { errors } = useFormState({ control, name });
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -68,6 +69,12 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive }) {
         </li>);
     });
 
+    let error;
+    const names = name.split('.');
+    if (errors[names[0]]) {
+        error = names.length === 1 ? errors[names[0]] : errors[names[0]][names[1]];
+    }
+
     return (<div className={classes.container}>
         <button type='button' className={parentClasses.filter + ' alive-btn ' + btnClass} onClick={btnClickHandler}>
             <div className={classes.string}>{btnLabel}</div>
@@ -84,6 +91,8 @@ function MultipleChoiceForm({ choiceMap, defaultBtnLabel, name, notActive }) {
                 <ApplyButton clickHandler={btnClickHandler} />
             </div>
         </div>
+
+        {error && <span className={'error-message'}> {error.message} </span>}
     </div>)
 }
 

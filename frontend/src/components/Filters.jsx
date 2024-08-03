@@ -28,7 +28,7 @@ function Filters() {
         rentMin: '0', rentMax: '',
         areaMin: '0', areaMax: '',
     } });
-    const { register, watch, handleSubmit, getValues, setValue, reset, formState: { errors }, } = methods;
+    const { register, handleSubmit, getValues, setValue, reset, formState: { errors }, } = methods;
 
     const onSubmit = (data) => {
         console.log('(in onSubmit) data: ', data);

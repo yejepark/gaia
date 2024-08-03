@@ -91,7 +91,7 @@
     flex-direction: row;
     column-gap: 25px;
 
-    align-items: center;
+    align-items: flex-start;
 
     &>* {
         flex-shrink: 0;
@@ -149,6 +149,11 @@
 }
 
 /* ------------------------------- */
+
+.input-money-value {
+    display: none;
+}
+
 .input-with-unit {
     display: flex;
     align-items: center;
@@ -174,6 +179,16 @@
         & sup {
             font-size: calc(2/3*var(--input-font-size));
         }
+    }
+
+    &:focus-within~.input-money-value {
+        display: inline-block;
+
+        font-size: var(--input-font-size);
+        color: var(--focus-color);
+
+        padding-top: 0.2rem;
+        padding-left: 0.6rem;
     }
 }
 
@@ -226,6 +241,7 @@
     align-items: center;
     column-gap: 5px;
 
+    height: 2rem;
     width: fit-content;
 
     &>div {

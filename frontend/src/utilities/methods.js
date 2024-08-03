@@ -19,8 +19,15 @@ export function intToUnitStr(num) {
     let value = parseInt(num);
     let numDigit = value.toString().length;
 
+    let joValue = 0;
     let uckValue = 0;
     let manValue = 0;
+
+    if (numDigit > 12) {
+        joValue = Math.floor(value / 10**12);
+        value = value % 10**12;
+    }
+
     if (numDigit > 8) {
         uckValue = Math.floor(value / 10**8);
         value = value % 10**8;
@@ -33,6 +40,10 @@ export function intToUnitStr(num) {
 
     let unitStr = '';
 
+    if (joValue > 0) {
+        unitStr += joValue.toString() + '조';
+    }
+
     if (uckValue > 0) {
         unitStr += uckValue.toString() + '억';
     }
@@ -41,6 +52,10 @@ export function intToUnitStr(num) {
         unitStr += manValue.toString() + '만';
     }
 
+    if (value > 0) {
+        unitStr += value;    
+    }
+    
     if (!unitStr) {
         unitStr = '0';
     }

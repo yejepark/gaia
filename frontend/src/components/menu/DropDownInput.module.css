@@ -30,7 +30,7 @@
     position: absolute;
     top: 13px;
 
-    width: max(125px, 100%);
+    width: max(125px, 110%);
     max-height: 20rem;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -56,7 +56,7 @@
 
         display: flex;
         align-items: center;
-        justify-content: right;
+        justify-content: left;
 
         font-size: var(--input-font-size);
 

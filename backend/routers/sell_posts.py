@@ -8,12 +8,15 @@ import requests
 import json
 import asyncio
 import re
+from datetime import datetime
+import pytz
 from pymongo import ReturnDocument
 
 import cloudinary
 import cloudinary.uploader
 
-from models.data_models import SellPost, SellPosts, AddressData, BrTitle, BrJijigu
+from models.data_models import SellPost, SellPosts, AddressData, BrTitle, BrJijigu, NewAdPost, AdPostBase, AdPosts
+from models.enums import TradeType, ProductType, ProductSubType, UnitType
 
 CLOUD_NAME = config("CLOUD_NAME", cast=str)
 API_KEY = config("CLOUD_API_KEY", cast=str)
@@ -31,18 +34,56 @@ cloudinary.config(
     api_secret=API_SECRET,
 )
 
+address_to_pic_urls = {
+    '서울 강남구 대치동 989-10': [
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1718204324/Gaia/1690908210_7e688c4bea1ff30ffb8a778f74ae8e0a_rv7a7k.jpg'
+    ],
+    '서울 강남구 역삼동 779-9': [
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1718204029/Gaia/7351572e4256fa0e2a88d34ddebb83fc_tdfzoy.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1718204029/Gaia/232128f82749c8052b8df091c4649b04_krecgg.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1718204029/Gaia/0b212a4c6cb3ec90010e9bea3eb6a29b_vv7gdt.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1718204028/Gaia/7f61ebf72ae1392a4e66325ab23cf276_epcawm.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1718204028/Gaia/0e8d51d1ebcc149ef3eb606bd09a2d9f_rkwsll.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1718204028/Gaia/5fee434fb2f4f0129ccffdbd6df7f5fa_tp5grq.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1718204028/Gaia/f3885105443704cc922e74d6c83ed5dd_sstvep.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1718204028/Gaia/1bf3c0ba48abdfe9644f0c252f63b6fb_nya9j7.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1718204028/Gaia/ef96300cd48d70d4fb3910e7cb08dd44_lfbxct.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1718204028/Gaia/56340af1b741e118ac364d75c5e851f0_mrolsz.jpg',
+    ],
+    '서울 강남구 역삼동 785-22': [
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1722610074/Gaia/2024021311421604_19126_wt_k3fnbw.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1722610074/Gaia/2024021311414395_19126_wt_qlhndd.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1722610074/Gaia/2024021311421684_19126_wt_kpvbjk.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1722610074/Gaia/202402131142162_19126_wt_j5o953.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1722610074/Gaia/2024021311414373_19126_wt_zqd8zb.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1722610073/Gaia/2024021311421635_19126_wt_k9ydwm.jpg',
+    ],
+    '서울 강남구 도곡동 419-3': [
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1722610137/Gaia/1693753038_aa54aeb1dcf49f2f614d329531ce7318_ypdofx.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1722610137/Gaia/1693753038_aaec2009243e25d46f8dab25fdd13d7f_vb1pnw.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1722610136/Gaia/1693753038_60ad9232047b0e928b22102aa9e3f473_iwkegz.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1722610136/Gaia/1693753038_5ee452124f65bf77bd86ac72600bad9f_pupook.jpg',
+        'https://res.cloudinary.com/diq8xz8nn/image/upload/v1722610136/Gaia/1693753038_4eb8eecf806e95267870bb650278d6fb_uc22ox.jpg',
+    ]
+}
+
+PLACEHOLDER_URL = 'https://images.placeholders.dev/?'
+
 router = APIRouter()
 
 
 @router.get(
     "/list_all",
     response_description="List all sell posts",
-    response_model=SellPosts,
+    # response_model=SellPosts,
+    response_model=AdPosts,
     response_model_by_alias=False
 )
 async def list_sell_posts(request: Request):
-    data = await request.app.mongodb['sell_posts'].find().to_list(10)
-    return SellPosts(sell_posts=data)
+    # data = await request.app.mongodb['sell_posts'].find().to_list(10)
+    # return SellPosts(sell_posts=data)
+    data = await request.app.mongodb['ad_posts'].find().to_list(10)
+    return AdPosts(ad_posts=data)
 
 
 @router.get(
@@ -150,7 +191,7 @@ async def create_address_data(address_data: AddressData, request: Request):
             update_dict['brTitle'] = br_title
 
         br_jijigu_not_exist = (
-            'brJijigu' not in existing_data or 
+            'brJijigu' not in existing_data or
             len(existing_data['brJijigu']) == 0
         )
         if br_jijigu_not_exist:
@@ -183,16 +224,97 @@ async def create_address_data(address_data: AddressData, request: Request):
 
 @router.post(
     "/create",
-    response_description="Add a new sell post",
-    response_model=SellPost,
+    response_description="Add a new ad post",
+    response_model=AdPostBase,
     response_model_by_alias=False,
     status_code=status.HTTP_201_CREATED
 )
-async def create_sell_post(sell_post: SellPost, request: Request):
-    new_post = await request.app.mongodb['sell_posts'].insert_one(
-        sell_post.model_dump(by_alias=True, exclude=['id'])
+async def create_ad_post(ad_post: NewAdPost, request: Request):
+    data = ad_post.model_dump()
+
+    new_data = {}
+    for data_key in [
+        'isAgent', 'tradeType', 'productType', 'productSubType',
+        'direction', 'mainPurpose', 'districtType', 'strctCdNm', 'latlng'
+    ]:
+        new_data[data_key] = data[data_key]
+
+    new_data['floors'] = {'entireBuilding': data['floors']['entireBuilding']}
+    new_data['floors']['picked'] = []
+    for x in data['floors']['picked']:
+        if x[0] == 'A':
+            new_data['floors']['picked'].append(int(x[1:]))
+        else:
+            new_data['floors']['picked'].append(-int(x[1:]))
+
+    local_tz = pytz.timezone('Asia/Seoul')
+
+    moveInDay = data['moveInDay']
+    new_data['moveInDay'] = {
+        'date': local_tz.localize(
+            datetime(moveInDay['Y'], moveInDay['M'], moveInDay['D'])
+            ).astimezone(pytz.utc),
+        'negotiable': moveInDay['negotiable']
+    }
+
+    useAprDay = data['useAprDay']
+    new_data['useAprDay'] = local_tz.localize(
+            datetime(useAprDay['Y'], useAprDay['M'], useAprDay['D'])
+            ).astimezone(pytz.utc)
+
+    for data_key in [
+        'address', 'price', 'upkeep', 'income', 'premium', 'loan', 'prodArea',
+        'businessType', 'usageType', 'parking', 'facility', 'shortLease',
+        'flrCnt', 'roomCnt', 'area', 'parkingCnt', 'elvtCnt',
+    ]:
+        new_data[data_key] = {}
+
+        for value_key in data[data_key].keys():
+            if not value_key.endswith('Unit'):
+                new_data[data_key][value_key] = data[data_key][value_key]
+
+                unit_key = value_key + 'Unit'
+                if unit_key in data[data_key]:
+                    if data[data_key][unit_key] == UnitType.KRW4:
+                        new_data[data_key][value_key] *= 10**4
+
+                    elif data[data_key][unit_key] == UnitType.PCT:
+                        new_data[data_key][value_key] *= 0.01
+
+                    elif data[data_key][unit_key] == UnitType.PYUNG:
+                        new_data[data_key][value_key] *= 3.30579
+
+                    elif data[data_key][unit_key] == UnitType.kW:
+                        new_data[data_key][value_key] *= 10**3
+
+    # print(new_data)
+
+    address_legal = data['address']['legal']
+    address_road = data['address']['road']
+    if address_legal in address_to_pic_urls:
+        new_data['pic_urls'] = address_to_pic_urls[address_legal]
+    else:
+        new_data['pic_urls'] = [
+            PLACEHOLDER_URL + 'text=' + address_legal,
+            PLACEHOLDER_URL + 'text=' + address_road,
+        ]
+
+    new_post = await request.app.mongodb['ad_posts'].insert_one(
+        AdPostBase(**new_data).model_dump(by_alias=True, exclude=['id'])
     )
-    created_post = await request.app.mongodb['sell_posts'].find_one(
+
+    # print(json.dumps(
+    #     sell_post.model_dump(by_alias=True, exclude=['id']),
+    #     indent=2, default=str))
+
+    # new_post = await request.app.mongodb['sell_posts'].insert_one(
+    #     sell_post.model_dump(by_alias=True, exclude=['id'])
+    # )
+    created_post = await request.app.mongodb['ad_posts'].find_one(
         {"_id": new_post.inserted_id}
     )
     return created_post
+    
+    # return sell_post
+
+    # return SellPostBase(**new_data)

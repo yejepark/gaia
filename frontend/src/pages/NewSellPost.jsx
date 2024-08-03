@@ -2,6 +2,8 @@ import { useEffect, useReducer } from 'react';
 import { useForm, FormProvider, useFormContext, useWatch } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
 
+import { intToUnitStr } from '../utilities/methods';
+
 import classes from './NewSellPost.module.css';
 
 import ProductTypeContainer from '../components/newPost/ProductTypeContainer';
@@ -48,47 +50,44 @@ const getSavedData = () => {
     return {};
 }
 
-const getDefaultValues = () => {
-    const today = new Date();
-    const thisYear = today.getFullYear();
-    const thisMonth = today.getMonth() + 1;
-    const thisDay = today.getDate();
-
-    return {
-        isAgent: false,
-        tradeType: '',
-        productType: '',
-        productSubType: '',
-        topAddress: '',
-        addressDetail: '',
-        hoName: '',
-        floors: { picked: [], entireBuilding: false },
-        mainPurpose: '',
-        flrCnt: { ugrnd: 0, grnd: 1, ugrndUnit: '층', grndUnit: '층' },
-        roomCnt: { ho: 0, household: 0, family: 0, hoUnit: '개', householdUnit: '개', familyUnit: '개' },
-        parkingCnt: { indrAuto: 0, indrMech: 0, oudrAuto: 0, oudrMech: 0,  
-            indrAutoUnit: '대', indrMechUnit: '대', oudrAutoUnit: '대', oudrMechUnit: '대'},
-        elvtCnt: { rideUse: 0, emgenUse: 0, rideUseUnit: '대', emgenUseUnit: '대'},
-        useAprDay: { Y: thisYear, M: thisMonth, D: thisDay },
-        area: { plat: 0, arch: 0, total: 0, platUnit: 'm2', archUnit: 'm2', totalUnit: 'm2' },
-        price: { sale: 0, deposit: 0, monthlyRent: 0, saleUnit: '만원', depositUnit: '만원', monthlyRentUnit: '만원' },
-        premium: { 
-            operation: 0, facility: 0, location: 0, operationUnit: '만원', facilityUnit: '만원', locationUnit: '만원', 
-            exist: false, negotiable: false 
-        },
-        upkeep: { cost: 0, costUnit: '만원' },
-        income: { revenue: 0, rent: 0, cogs: 0, wage: 0, utilityCost: 0, manageCost: 0, profit: 0,
-            revenueUnit: '만원', rentUnit: '만원', cogsUnit: '만원', wageUnit: '만원', utilityCostUnit: '만원', manageCostUnit: '만원', profitUnit: '만원' },
-        loan: { pct: 0, pctUnit: '%' },
-        moveInDay: { Y: thisYear, M: thisMonth, D: thisDay, negotiable: false },
-        prodArea: { use: 0, contract: 0, useUnit: '평', contractUnit: '평' },
-        parking: { available: false, count: 0, countUnit: '대' },
-        businessType: { current: '', recommend: '' },
-        usageType: { current: '', recommend: '' },
-        facility: { heatingMethod: '', coolingMethod: '', heatingFuel: '', electricCap: 0, electricCapUnit: 'kW' },
-        shortLease: { length: 12, negotiable: false, moreOrLess: 'more' },
-        ...getSavedData(),
-    };
+const today = new Date();
+const thisYear = today.getFullYear();
+const thisMonth = today.getMonth() + 1;
+const thisDay = today.getDate();
+export const initialDefaultValues = {
+    isAgent: false,
+    tradeType: '',
+    productType: '',
+    productSubType: '',
+    address: { top: '', dongName: '', detail: '', hoName: '', legal: '', road: '' },
+    latlng: [],
+    floors: { picked: [], entireBuilding: false },
+    mainPurpose: '',
+    flrCnt: { ugrnd: 0, grnd: 1, ugrndUnit: '층', grndUnit: '층' },
+    roomCnt: { ho: 0, household: 0, family: 0, hoUnit: '개', householdUnit: '개', familyUnit: '개' },
+    parkingCnt: { indrAuto: 0, indrMech: 0, oudrAuto: 0, oudrMech: 0,  
+        indrAutoUnit: '대', indrMechUnit: '대', oudrAutoUnit: '대', oudrMechUnit: '대'},
+    elvtCnt: { rideUse: 0, emgenUse: 0, rideUseUnit: '대', emgenUseUnit: '대'},
+    useAprDay: { Y: thisYear, M: thisMonth, D: thisDay },
+    area: { plat: 0, arch: 0, total: 0, platUnit: 'm2', archUnit: 'm2', totalUnit: 'm2' },
+    price: { sale: 0, deposit: 0, monthlyRent: 0, saleUnit: '만원', depositUnit: '만원', monthlyRentUnit: '만원' },
+    premium: {
+        exist: false, negotiable: false,
+        operation: 0, facility: 0, location: 0, operationUnit: '만원', facilityUnit: '만원', locationUnit: '만원', 
+    },
+    upkeep: { cost: 0, costUnit: '원' },
+    income: { 
+        operating: 'empty', expose: false, mustAcquire: false,
+        revenue: 0, rent: 0, cogs: 0, wage: 0, utilityCost: 0, profit: 0,
+        revenueUnit: '만원', rentUnit: '만원', cogsUnit: '만원', wageUnit: '만원', utilityCostUnit: '만원', profitUnit: '만원' },
+    loan: {  exist: false, expose: false, pct: 0, pctUnit: '%' },
+    moveInDay: { negotiable: false, Y: thisYear, M: thisMonth, D: thisDay },
+    prodArea: { use: 0, contract: 0, useUnit: '평', contractUnit: '평' },
+    parking: { available: false, count: 0, countUnit: '대' },
+    businessType: { current: '', recommend: '', storeName: '' },
+    usageType: { current: '', recommend: '' },
+    facility: { heatingMethod: '', coolingMethod: '', heatingFuel: '', electricCap: 0, electricCapUnit: 'kW' },
+    shortLease: { length: 12, negotiable: false, moreOrLess: 'more' },
 }
 
 // Address State Reducer -------------------------------------------
@@ -222,8 +221,10 @@ function clickFillProductInfo(addressState, setValue) {
 
 // Common Components -----------------------------------------------------
 export function InputWithUnit({ name, options, onUnitClick }) {
+    // console.log('****in InputWithUnit', name, renderCount)
     const { register, formState: { errors }, control } = useFormContext();
     const unit = useWatch({ control, name: name + 'Unit' });
+    const value = useWatch({ control, name });
 
     let error;
     const names = name.split('.');
@@ -231,6 +232,10 @@ export function InputWithUnit({ name, options, onUnitClick }) {
         error = names.length === 1 ? errors[names[0]] : errors[names[0]][names[1]];
     }
     const unitElClass = classes.unit + (onUnitClick ? ' focusable alive-btn' : '');
+
+    const isMoneyUnit = ['원', '만원'].includes(unit);
+    const moneyUnitMult = (unit === '만원') ? 10000 : 1;
+
     return (<>
         <div className={classes['input-with-unit']}>
             <input type='text'
@@ -245,6 +250,11 @@ export function InputWithUnit({ name, options, onUnitClick }) {
                 {unit === 'm2' ? <>m<sup>2</sup></> : unit}
             </div>
         </div>
+
+        {isMoneyUnit && value > 0 && 
+            <span className={classes['input-money-value']}>{intToUnitStr(value * moneyUnitMult)}원</span>
+        }
+
         {error && <span className={'error-message'}> {error.message} </span>}
     </>);
 }
@@ -303,16 +313,13 @@ export function ValuesToElementsForm({ values }) {
 }
 
 
-export function ValuesToDropDownForm({ title, values, isSubEl, name, registerOptions, required }) {
+export function ValuesToDropDownForm({ title, values, isSubEl, required, name, options }) {
     return (
         <ItemContainer title={title} isSubEl={isSubEl} required={required}>
             <DropDownInputForm
                 name={name}
                 values={values} 
-                options={{
-                    placeholder: "직접입력",
-                    registerOptions
-                }}
+                options={options ? options : {}}
             />
         </ItemContainer>
     );
@@ -332,23 +339,36 @@ function NewSellPost() {
     }, [])
 
     // react hook form ----------------------------------------------
-    // console.log('savedValues : ', getSavedData());
-    // console.log('defaultValues :', getDefaultValues());
-    const methods = useForm({ defaultValues: getDefaultValues(), });
+    const methods = useForm({
+        mode: 'onSubmit',
+        reValidateMode: 'onSubmit',
+        defaultValues: {...initialDefaultValues, ...getSavedData()}, 
+    });
 
-    const { register, watch, handleSubmit, getValues, setValue, reset, formState: { errors }, } = methods;
+    const { register, handleSubmit, getValues, setValue, reset } = methods;
 
     // -------------------------------------------------------------    
     function resetAll(event) {
         dispatchAddress({ type: 'RESET' });
         sessionStorage.removeItem(FORM_DATA_KEY);
-        reset();
-        // sessionStorage.setItem('addressDetail', '');
-        // sessionStorage.setItem('hoName', '');
+        reset(initialDefaultValues);
     }
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         console.log('(in onSubmit) data: ', data);
+        
+        const res = await fetch(
+            "http://localhost:8000/sell_posts/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+                mode: "cors"
+            }
+        );
+
+        const recvData = await res.json();
+
+        console.log(recvData)
     }
 
     usePersistForm({ value: JSON.stringify(getValues()), storageKey: FORM_DATA_KEY });
@@ -356,7 +376,7 @@ function NewSellPost() {
     const { pathname } = useLocation();
     useEffect(() => {
         setValue('isAgent', pathname === '/newAgentPost');
-    }, [pathname]);
+    }, [pathname, setValue]);
 
     renderCount++;
 
@@ -374,38 +394,33 @@ function NewSellPost() {
 		            <fieldset className={classes['input-set']}>
 	            		<legend>주소 정보</legend>
 	            		<div className={classes["input-grid"]}>
-		                	<AddressContainer
-		                		addressState={addressState} dispatchAddress={dispatchAddress}
-		                		register={register} watch={watch} />
+		                	<AddressContainer addressState={addressState} dispatchAddress={dispatchAddress} />
 		                </div>
 	                </fieldset>
 
-                    { watch('tradeType') && 
-    	                <fieldset className={classes['input-set']}>
-    	            		<legend>매물 정보</legend>
-    	                	<ProductContainer addressState={addressState} />
-    	                </fieldset>
-                    }
+	                <fieldset className={classes['input-set']}>
+	            		<legend>매물 정보</legend>
+	                	<ProductContainer addressState={addressState} />
+	                </fieldset>
 
-	                { watch('topAddress') &&
-	                	<fieldset className={classes['input-set']}>
-		            		<legend>건물 정보</legend>
-		            		<div className={'positional-container'}>
-		            			<button 
-		            				type='button' 
-		            				className={'inverted-alive-btn ' + classes['floating-btn']}
-		            				onClick={(e) => clickFillProductInfo(addressState, setValue) }>
-		            				자동입력
-		            			</button>
-		            		</div>
-		            		<div className={classes["input-grid"] + ' ' + classes['hline']}>
-			                	<ProductInfoContainer addressState={addressState} />
-			                </div>
-		                </fieldset>
-		            }
+	                
+                	<fieldset className={classes['input-set']}>
+	            		<legend>건물 정보</legend>
+	            		<div className={'positional-container'}>
+	            			<button 
+	            				type='button' 
+	            				className={'inverted-alive-btn ' + classes['floating-btn']}
+	            				onClick={(e) => clickFillProductInfo(addressState, setValue) }>
+	            				자동입력
+	            			</button>
+	            		</div>
+	            		<div className={classes["input-grid"] + ' ' + classes['hline']}>
+		                	<ProductInfoContainer addressState={addressState} />
+		                </div>
+	                </fieldset>
 
 	                <div className={classes['button-container']}>
-	                	<button type='reset' onClick={resetAll}>모두 지우기</button>
+	                	<button type='button' onClick={resetAll}>모두 지우기</button>
 	                	<button type="submit">Create</button>
 	                </div>
 	            </form>
@@ -418,9 +433,9 @@ function NewSellPost() {
 export default NewSellPost;
 
 
-export async function action({ request }) {
-    const formData = await request.formData();
-    const postData = Object.fromEntries(formData);
-    console.log('form action: ', postData);
-    return postData
-}
+// export async function action({ request }) {
+//     const formData = await request.formData();
+//     const postData = Object.fromEntries(formData);
+//     console.log('form action: ', postData);
+//     return postData
+// }

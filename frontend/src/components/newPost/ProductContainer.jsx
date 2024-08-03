@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import SingleChoiceForm from '../menu/SingleChoiceForm';
 import DropDownInputForm from '../menu/DropDownInputForm';
 import ApplyButton from '../simple/ApplyButton';
 
-import { ItemContainer, ValuesToElementsForm, ValuesToDropDownForm, InputWithUnit, onAreaUnitClick } from '../../pages/NewSellPost';
+import { ItemContainer, ValuesToElementsForm, ValuesToDropDownForm, InputWithUnit, onAreaUnitClick, initialDefaultValues } from '../../pages/NewSellPost';
 import parentClasses from '../../pages/NewSellPost.module.css';
 import classes from './ProductContainer.module.css';
 
 // import BusinessTypes from './business_types.json';
 
-import CommerceTypes from '../commerce_types.json';
+import CommerceTypes from '../business_types.json';
+
+for (const [idx, ] of Object.entries(CommerceTypes)) {
+    CommerceTypes[idx]['text'] = '(' + CommerceTypes[idx].category + ') ' + CommerceTypes[idx].value;
+}
+
 const LodgingTypes = CommerceTypes.filter(x => x.key.startsWith('I1'));
 
 const checkIfNum = {
@@ -52,7 +56,7 @@ function PriceEl() {
 }
 
 function PremiumEl() {
-    const { register } = useFormContext();
+    const { register, setValue } = useFormContext();
 
     const [ pOp, pFac, pLoc, pExist ] = useWatch({ 
         name: [ 'premium.operation', 'premium.facility', 'premium.location', 'premium.exist' ]
@@ -67,6 +71,15 @@ function PremiumEl() {
         { subtitle: '바닥권리금' }, { name: 'premium.location', options },
         { subtitle: '권리금 총합' }, { unit: '만원', calculated: pTot }
     ];
+
+    useEffect(() => {
+        if (!pExist) {
+            setValue('premium.operation', initialDefaultValues.premium.operation);
+            setValue('premium.facility', initialDefaultValues.premium.facility);
+            setValue('premium.location', initialDefaultValues.premium.location);
+            setValue('premium.negotiable', initialDefaultValues.premium.negotiable);
+        }
+    }, [pExist, setValue]);
 
     return (
         <ItemContainer title='권리금 정보'>
@@ -111,13 +124,13 @@ function UpkeepEl() {
 
 
 function AcquireEl() {
-    const { register } = useFormContext();
+    const { register, setValue } = useFormContext();
 
-    const [ revenue, rent, cogs, wage, utilityCost, manageCost, profit, incomeExpose ] = useWatch({
+    const [ revenue, rent, cogs, wage, utilityCost, manageCost, profit, incomeExpose, operating ] = useWatch({
         name: [ 
             'income.revenue', 'income.rent', 'income.cogs', 'income.wage', 
             'income.utilityCost', 'upkeep.cost', 'income.profit',
-            'income.expose' 
+            'income.expose', 'income.operating'
         ]
     });
     const etc = revenue - rent - cogs - wage - utilityCost - manageCost - profit;
@@ -131,20 +144,38 @@ function AcquireEl() {
         { subtitle: '기타비용' }, { unit: '만원', calculated: etc },
         { subtitle: '월 순수익' }, { name: 'income.profit', options: checkIfNum },
     ];
-    
+
+    useEffect(() => {
+        if (operating === 'empty') {
+            setValue('income.expose', initialDefaultValues.income.expose);
+            setValue('income.mustAcquire', initialDefaultValues.income.mustAcquire);
+        }
+    }, [operating, setValue]);
 
     return (
         <ItemContainer title='영업 정보'>
             <div className={parentClasses['input-subflex-col']}>
+
                 <div className={parentClasses['input-subflex-row']}>
                     <label className={parentClasses['input-checkbox']}>
-                        <input type="checkbox" {...register('income.expose')} />
-                        <div>순수익 공개</div>
+                        <input type="radio" value='operating' {...register('income.operating')} />
+                        <div>영업중</div>
                     </label>
+
                     <label className={parentClasses['input-checkbox']}>
-                        <input type="checkbox" {...register('income.mustAquire')} />
-                        <div>영업 양도인수 필수</div>
+                        <input type="radio" value='empty' {...register('income.operating')} />
+                        <div>공실</div>
                     </label>
+                    {operating === 'operating' && <>
+                        <label className={parentClasses['input-checkbox']}>
+                            <input type="checkbox" {...register('income.expose')} />
+                            <div>순수익 공개</div>
+                        </label>
+                        <label className={parentClasses['input-checkbox']}>
+                            <input type="checkbox" {...register('income.mustAcquire')} />
+                            <div>영업 양도인수 필수</div>
+                        </label>
+                    </>}
                 </div>
                 {incomeExpose &&
                     <div className={parentClasses['input-subgrid']}>
@@ -159,11 +190,16 @@ function AcquireEl() {
 
 
 function LoanEl() {
-    const { register, formState: { errors } } = useFormContext();
+    const { register, setValue } = useFormContext();
 
-    const [ loanExist, loanExpose ] = useWatch({
-        name: [ 'loan.exist', 'loan.expose' ]
-    });
+    const loanExist = useWatch({ name: 'loan.exist' });
+
+    useEffect(()=>{
+        if (!loanExist) {
+            setValue('loan.pct', initialDefaultValues.loan.pct);
+            setValue('loan.expose', initialDefaultValues.loan.expose);
+        }
+    }, [loanExist, setValue]);
 
     return (
         <ItemContainer title='융자 정보'>
@@ -180,7 +216,7 @@ function LoanEl() {
                             </label>
                         }
                 </div>
-                {loanExpose &&
+                {loanExist &&
                     <div className={parentClasses['input-subflex-row']}>
                         <ItemContainer title="시세대비 융자비율" isSubEl={true}>
                             <div style={{width: '12rem'}}>
@@ -233,8 +269,10 @@ function MoveInDayEl() {
                         return (
                             <DropDownInputForm key={idx} name={item.name}
                                 values={item.values}
-                                options={{ customClass: item.inputClass }}
-                                readOnly={true}
+                                options={{
+                                    customClass: item.inputClass,
+                                    readOnly: true
+                                }}
                             />
                         );                        
                     } else if (item.unit) {
@@ -257,7 +295,6 @@ function AreaEl() {
     const options = {...checkIfNum, ...isRequired};
 
     const useArea = useWatch({ name: 'prodArea.use' });
-    const contractArea = useWatch({ name: 'prodArea.contract' });
 
     const inputAreaValues = [
         { subtitle: '전용면적' },
@@ -317,7 +354,7 @@ function DirectionEl() {
             <ItemContainer title='주된 출입구 기준' isSubEl={true}>
                 <input type='text' {...register('direction', options)} style={{height: '0', width: '0', border: 'none'}}/>
                 <button type="button" 
-                    className={classes['direction-opener'] + ' ' + 'alive-btn'}
+                    className={classes['direction-opener'] + ' alive-btn'}
                     onClick={btnClickHandler}>{btnLabel}</button>
             
                 <div className={'backdrop' + dropdownOpenClass} onClick={btnClickHandler}></div>
@@ -338,9 +375,15 @@ function DirectionEl() {
 
 
 function ParkingEl() {
-    const { register } = useFormContext();
+    const { register, setValue } = useFormContext();
 
     const parkingAvailable = useWatch({ name: 'parking.available' });
+
+    useEffect(() => {
+        if (!parkingAvailable) {
+            setValue('parking.count', initialDefaultValues.parking.count);
+        }
+    }, [parkingAvailable, setValue]);
     
     const isAgent = useWatch({ name: 'isAgent' });
     return (
@@ -369,6 +412,9 @@ function ParkingEl() {
 
 
 function BusinessTypeEl() {
+    // console.log('in BusinessTypeEl')
+
+    const { register } = useFormContext();
 
     const productType = useWatch({ name: 'productType' });
 
@@ -377,11 +423,16 @@ function BusinessTypeEl() {
     const [currentValues, setCurrentValues] = useState(values);
     const [recommendValues, setRecommendValues] = useState(values);
 
-    const currentType = useWatch({ name: 'businessType.current' })
-    const recommendType = useWatch({ name: 'businessType.recommend' })
+    const currentTypes = useWatch({ name: 'businessType.current' });
+    const currentTypeList = currentTypes.split(',');
+    const currentType = currentTypeList[currentTypeList.length - 1];
+
+    const recommendTypes = useWatch({ name: 'businessType.recommend' });
+    const recommendTypeList = recommendTypes.split(',');
+    const recommendType = recommendTypeList[recommendTypeList.length - 1];
 
     function addCustomClass(item, target, customClass) {
-        if (!item.value.includes(target.trim())) {
+        if (!item.text.includes(target.trim())) {
             return {...item, name: item.value, customClass: customClass};
         } else {
             return {...item, name: item.value};
@@ -392,26 +443,40 @@ function BusinessTypeEl() {
         let timer;
         timer = setTimeout(() => {
             setCurrentValues( values.map((item) => addCustomClass(item, currentType, 'not-show')) );
-        }, 200);
+        }, 250);
         return () => { clearTimeout(timer); };
-    }, [currentType]);
+    }, [currentType, values]);
 
     useEffect(() => {
         let timer;
         timer = setTimeout(() => {
             setRecommendValues( values.map((item) => addCustomClass(item, recommendType, 'not-show')) );
-        }, 200);
+        }, 250);
         return () => { clearTimeout(timer); };
-    }, [recommendType]);
+    }, [recommendType, values]);
 
     return (
         <ItemContainer title='업종 정보'>
             <div className={parentClasses['input-long-subgrid']}>
                 <ItemContainer title='상호명' isSubEl={true}>
-                    <input type='text' className={parentClasses['input-value'] + ' focusable'} placeholder='직접입력'/>
+                    <input {...register('businessType.storeName')}
+                        type='text' 
+                        className={parentClasses['input-value'] + ' focusable'}
+                        placeholder='직접입력'
+                    />
                 </ItemContainer>
-                <ValuesToDropDownForm title='현재 업종' values={currentValues} isSubEl={true} name='businessType.current' />
-                <ValuesToDropDownForm title='추천 업종' values={recommendValues} isSubEl={true} name='businessType.recommend' />
+                <ValuesToDropDownForm title='현재 업종' values={currentValues} isSubEl={true} name='businessType.current'
+                    options={{ 
+                        mode: 'append', 
+                        placeholder: '직접입력 또는 선택 (쉼표로 구분하여 복수 선택 가능).' 
+                    }} 
+                />
+                <ValuesToDropDownForm title='추천 업종' values={recommendValues} isSubEl={true} name='businessType.recommend' 
+                    options={{ 
+                        mode: 'append', 
+                        placeholder: '직접입력 또는 선택 (쉼표로 구분하여 복수 선택 가능).' 
+                    }}
+                />
             </div>
         </ItemContainer>
     );
@@ -482,8 +547,10 @@ function ShortLeaseEl() {
             <div className={parentClasses['input-subflex-date']}>
                 <DropDownInputForm name='shortLease.length' 
                     values={leaseLengthValues} 
-                    options={{ customClass: parentClasses['month-input'] }}
-                    readOnly={true}
+                    options={{
+                        customClass: parentClasses['month-input'],
+                        readOnly: true
+                    }}
                 />
                 <div className={parentClasses.unit}>개월</div>
             
@@ -509,6 +576,8 @@ function ShortLeaseEl() {
 }
 
 function ProductContainer({ addressState }) {
+    console.log('in ProductContainer');
+
     const tradeType = useWatch({ name: 'tradeType' });
     const productType = useWatch({ name: 'productType' });
     const entireBuilding = useWatch({ name: 'floors.entireBuilding' });

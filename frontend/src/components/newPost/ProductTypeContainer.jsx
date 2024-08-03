@@ -59,12 +59,13 @@ const buildingTypeMap = {
     other: "기타"
 };
 
-const lodgingTypeMap = {
-    motel: "여관/모텔", 
-    condo: "콘도", 
-    pension: "펜션", 
-    other: "기타"
-};
+// const lodgingTypeMap = {
+//     hotel: '호텔',
+//     motel: "여관/모텔", 
+//     condo: "콘도", 
+//     pension: "펜션", 
+//     other: "기타"
+// };
 
 const typeToSubTypeMap = {
     commercial: commercialTypeMap,
@@ -131,7 +132,7 @@ function ProductTypeContainer() {
         if (!typeToSubTypeMap[productType] || !Object.keys(typeToSubTypeMap[productType]).includes(productSubType)) {
             setValue('productSubType', '');    
         }
-    }, [productType]);
+    }, [productType, productSubType, setValue]);
         
     return (
         <div className={classes["input-grid"]}>

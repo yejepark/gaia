@@ -18,7 +18,7 @@ function SingleChoiceForm({ choiceMap, btnLabel, name, options }) {
 
     function enterStrokeHandler(e) {
         if (e.key === 'Enter') {
-            setDialogOpen((isOpen) => { return !isOpen; });    
+            setDialogOpen((isOpen) => { return !isOpen; });
         }
     }
     const chosen = useWatch({ control, name });

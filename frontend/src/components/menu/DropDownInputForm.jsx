@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import UpDown from '../simple/UpDown';
 
-import parentClasses from '../../pages/NewSellPost.module.css';
 import classes from './DropDownInput.module.css';
 
 
@@ -16,17 +15,20 @@ function ListItem({ value, text, unit, onClick, customClass }) {
 }
 
 
-function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe, readOnly }) {
+function DropDownInputForm({ values, name, options }) {
+    // console.log('----in DropDownInputForm', name)
+
     const { register, setValue, setFocus, formState: { errors } } = useFormContext();
+    const currentValue = useWatch({ name });
 
     function inputClickHandler(event) {
         event.stopPropagation();
         setFocus(name);
     }
 
-    const setValue1 = withoutPipe ? (name, v) => setValue(name, v.replace('|', ' ').trim()) : setValue;
-    const setValue2 = setCustomValue ? (name, v) => {
-        setCustomValue(v);
+    const setValue1 = options.withoutPipe ? (name, v) => setValue(name, v.replace('|', ' ').trim()) : setValue;
+    const setValue2 = options.setCustomValue ? (name, v) => {
+        options.setCustomValue(v);
         setValue1(name, v);
     } : setValue1;
 
@@ -47,7 +49,14 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
         const optionEl = event.currentTarget;
         const v = optionEl.getAttribute('value');
 
-        setValue2(name, v);
+        if (options.mode === 'append') {
+            let newValues = currentValue.split(',').slice(0,-1);
+            newValues.push(v);
+            setValue2(name, newValues.join(','));    
+        } else {
+            setValue2(name, v);    
+        }
+
         setDropdownOpen(false);
     }
 
@@ -83,8 +92,8 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
                 <input {...register(name, options.registerOptions)}
                     type='text' 
                     autoComplete="off"
-                    placeholder={options.placeholder}
-                    readOnly={readOnly}
+                    placeholder={options.placeholder ? options.placeholder : '직접입력 또는 선택'}
+                    readOnly={options.readOnly}
                 /> 
                 <UpDown up={dropdownOpen} />
             </div>
@@ -92,7 +101,7 @@ function DropDownInputForm({ values, name, options, setCustomValue, withoutPipe,
             <div className={'backdrop' + dropdownOpenClass} onClick={containerClickHandler}></div>
             
             <div className={'positional-container'}>
-                <ol className={classes['dropdown'] + dropdownOpenClass}>
+                <ol className={classes['dropdown'] + dropdownOpenClass} tabIndex='-1'>
                     {dropdownItems}
                 </ol>
             </div>

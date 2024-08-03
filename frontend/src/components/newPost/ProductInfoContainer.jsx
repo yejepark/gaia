@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+// import { memo } from 'react';
+
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import parentClasses from '../../pages/NewSellPost.module.css';
@@ -74,7 +75,7 @@ function BuildingFloorEl() {
 
 function BuildingAreaEl() {
 
-    const { setValue, register, getValues } = useFormContext();
+    const { setValue, getValues } = useFormContext();
 
     const platArea = useWatch({ name: 'area.plat' });
     const archArea = useWatch({ name: 'area.arch' });
@@ -219,8 +220,10 @@ function UseAprDayEl() {
                         return (
                             <DropDownInputForm key={idx} name={item.name}
                                 values={item.values}
-                                options={{ customClass: item.inputClass }}
-                                readOnly={true}
+                                options={{ 
+                                    customClass: item.inputClass,
+                                    readOnly: true
+                                }}
                             />
                         );                        
                     } else if (item.unit) {
@@ -235,17 +238,18 @@ function UseAprDayEl() {
 
 
 function ProductInfoContainer({ addressState }) {
-    // console.log('in ProductInfoContainer')
+    console.log('in ProductInfoContainer')
     const isAgent = useWatch({ name: 'isAgent' });
     const registerOptions = isAgent ? isRequired : {};
 
     const entireBuilding = useWatch({ name: 'floors.entireBuilding' });
 
     return (<>
-        <ValuesToDropDownForm
-            name='mainPurpose' title='건축물 주용도' 
-            values={buildingUsages} 
-            registerOptions={registerOptions} required={isAgent}/>
+        <ValuesToDropDownForm name='mainPurpose' title='건축물 주용도' required={isAgent} values={buildingUsages} 
+            options={{
+                registerOptions,
+                placeholder: '직접입력 또는 선택'
+            }} />
         <ValuesToDropDownForm name='districtType' title='용도지역' values={districtTypes} />
         <BuildingFloorEl />
         <BulidingRoomCntEl />

@@ -57,5 +57,6 @@ export async function loader() {
     let res = await fetch("http://localhost:8000/sell_posts/list_all")
     let data = await res.json();
     // return data;
-    return data['sell_posts'];
+    // return data['sell_posts'];
+    return data['ad_posts'];
 }

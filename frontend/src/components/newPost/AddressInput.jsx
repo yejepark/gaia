@@ -98,7 +98,13 @@ function AddressInput({ addressState, dispatchAddress }) {
                 // 우편번호 찾기 화면이 보이기 이전으로 scroll 위치를 되돌린다.
                 // document.body.scrollTop = currentScroll;
 
-                setValue('topAddress', selectedAddress);
+                setValue('address.top', selectedAddress);
+                setValue('address.legal', totData.jibunAddress);
+                setValue('address.road', totData.roadAddress);
+                setValue('address.hoName', '');
+                setValue('address.detail', '');
+                setValue('latlng', totData.latlng);
+                setValue('floors.picked', []);
 
                 let currentDongName = '';
                 if (totData?.brTitle && totData.brTitle[0]) {
@@ -109,13 +115,10 @@ function AddressInput({ addressState, dispatchAddress }) {
                         currentDongName = brTitle.dongNm.trim();    
                     }
                 }
-
-                if (currentDongName) {
-                    setValue('dongName', currentDongName);
-                }
+                setValue('address.dongName', currentDongName);
 
                 // 커서를 상세주소 필드로 이동한다.
-                setFocus('addressDetail');
+                setFocus('address.detail');
 
                 element_wrap.style.height = '100px';
             },
