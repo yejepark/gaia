@@ -95,13 +95,15 @@ function CardItem({ data }) {
         };
     }, [imgCarousel]);
 
-    let floors = data.floors.picked.map(flr => {
+    const floors = data.floors.entireBuilding ? '건물' : data.floors.picked.map(flr => {
         if (flr > 0) {
             return String(flr);
         } else {
             return 'B' + String(-flr);
         }
-    }).join(',');
+    }).join(',') + '층';
+
+    const area = data.floors.entireBuilding ? data.area.total : data.prodArea.use;
 
     if (imgElements.length > 0) return (
         <div id={cardId} tabIndex='0' className={classes['card-item']} onClick={cardClickHandler} onMouseOver={mouseOverHandler} onMouseOut={mouseOutHandler}>
@@ -115,13 +117,15 @@ function CardItem({ data }) {
                     <div className={classes['asset-deposit']}>보증금 <span id="deposit">{intToUnitStr(data.price.deposit)}</span>원</div>
                     <div className={classes['asset-rent-monthly']}>월세 <span id="rent">{intToUnitStr(data.price.monthlyRent)}</span>원</div>
                 </div>
-                <div className={classes['asset-premium']}>권리금 <span>{intToUnitStr(data.premium.total)}</span>원</div>
+                <div className={classes['asset-premium']}>
+                    {data.premium.total > 0 ? <>권리금 <span>{intToUnitStr(data.premium.total)}</span>원 </> :  '무권리' }
+                </div>
                 <div className={classes.geo}>
-                    <div className={classes['asset-address']}>{data.address.legal} ({floors}층)</div>
+                    <div className={classes['asset-address']}>{data.address.legal} ({floors})</div>
 
                     <div className={classes['asset-area']}>
-                        <div className={classes['m-area']}><span>{data.prodArea.use}</span>m<sup>2</sup></div>
-                        <div className={classes['default-area']}><span>{Math.round(data.prodArea.use/3.3*10) / 10}</span>평</div>
+                        <div className={classes['m-area']}><span>{Math.round(area*10)/10}</span>m<sup>2</sup></div>
+                        <div className={classes['default-area']}><span>{Math.round(area/3.3*10) / 10}</span>평</div>
                     </div>
                 </div>
             </div>

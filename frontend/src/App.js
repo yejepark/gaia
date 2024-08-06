@@ -17,33 +17,37 @@ const router = createBrowserRouter([{
     children: [
         { index: true, element: <Welcome /> },
         {
-            path: '/posts',
-            id: 'posts',
-            element: <PostsLayout />,
-            loader: postsLoader,
+            path: 'posts/',
+            children: [
+                {   
+                    index: true,
+                    id: 'postsRoot',
+                    loader: postsLoader, 
+                    element: <PostsLayout />,
+                },
+                { 
+                    path: ':queryState', 
+                    id: 'postsChild',
+                    loader: postsLoader,
+                    element: <PostsLayout />,
+                }
+            ],
+            // action: async ({ request }) => {
+            //     const formData = await request.formData();
+            //     const postData = Object.fromEntries(formData);
+            //     console.log('in action', postData)
+            //     console.log('in action', request)
+            //     return null;
+            // },
+            // shouldRevalidate: ({ currentUrl, formData }) => {
+            //     console.log('in shouldRevalidate', currentUrl, formData)
+            //     return true
+            // }
         },
-        {
-            path: '/account',
-            id: 'account',
-            element: <Account />,
-        },
-        {
-            path: '/login',
-            id: 'login',
-            element: <Login />,
-        },
-        {
-            path: '/newSellPost',
-            id: 'newSellPost',
-            element: <NewSellPost />,
-            // action: newSellPostAction
-        },
-        {
-            path: '/newAgentPost',
-            id: 'newAgentPost',
-            element: <NewSellPost />,
-            // action: newSellPostAction
-        }
+        { path: 'account', element: <Account /> },
+        { path: 'login', element: <Login /> },
+        { path: 'newSellPost', element: <NewSellPost /> },
+        { path: 'newAgentPost', element: <NewSellPost /> },
     ],
 }])
 

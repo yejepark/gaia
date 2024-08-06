@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useForm, FormProvider, useFormContext, useWatch } from 'react-hook-form';
-import { createPortal } from 'react-dom';
+import { useFormContext } from 'react-hook-form';
 
 import classes from './Filters.module.css';
 
@@ -21,52 +19,42 @@ const areaValues = [...arrayRange(0, 20, 5), ...arrayRange(30, 100, 10), ...arra
 let renderCount = 0;
 
 function Filters() {
-
-    const methods = useForm({ defaultValues: {
-        tradeType: 'lease',
-        productType: '',
-        rentMin: '0', rentMax: '',
-        areaMin: '0', areaMax: '',
-    } });
-    const { register, handleSubmit, getValues, setValue, reset, formState: { errors }, } = methods;
+    const { handleSubmit } = useFormContext();
 
     const onSubmit = (data) => {
         console.log('(in onSubmit) data: ', data);
     }
 
-    const { height, width } = useWindowDimensions();
-    // console.log(height, width);
+    const { width } = useWindowDimensions();
 
     renderCount++;
-    // console.log(renderCount);
+    console.log('filters renderCount: ', renderCount);
     return (
-        <FormProvider {...methods}>
-            <form className={classes.filters} onSubmit={handleSubmit(onSubmit)}>
-                { width > 900 && <SearchContainer /> }
+        <form className={classes.filters} onSubmit={handleSubmit(onSubmit)}>
+            { width > 900 && <SearchContainer /> }
 
-                <div className={classes['filter-container']}>
-                    <SingleChoiceForm name='tradeType' choiceMap={tradeTypeMap} btnLabel='거래' />
-                </div>
+            <div className={classes['filter-container']}>
+                <SingleChoiceForm name='tradeType' choiceMap={tradeTypeMap} btnLabel='거래' />
+            </div>
 
-                <div className={classes['filter-container'] + ' ' + classes.removable}>
-                    <MultipleChoiceForm name='productType' choiceMap={productTypeMap} defaultBtnLabel='용도' notActive={false}/>
-                </div>
+            <div className={classes['filter-container'] + ' ' + classes.removable}>
+                <MultipleChoiceForm name='productType' choiceMap={productTypeMap} defaultBtnLabel='용도' notActive={false}/>
+            </div>
 
-                <div className={classes['filter-container'] + ' ' + classes.removable}>
-                    <RangeFilterForm name='rent' unit='만원' values={rentValues} btnName={'월세'} />
-                </div>
+            <div className={classes['filter-container'] + ' ' + classes.removable}>
+                <RangeFilterForm name='rent' unit='만원' values={rentValues} btnName={'월세'} />
+            </div>
 
-                <div className={classes['filter-container'] + ' ' + classes.removable}>
-                    <RangeFilterForm name='area' unit='평' values={areaValues} btnName={'면적'} />
-                </div>
-                <div className={classes['filter-container']}>
-                    <button type='button' className={classes.filter + ' alive-btn'} id="all-filters">모든필터 <UpDown /></button>
-                </div>
-                <div className={classes['filter-container']}>
-                    <button type='submit' className={classes.filter + ' inverted-alive-btn'}>검색저장</button>
-                </div>
-            </form>
-        </FormProvider>
+            <div className={classes['filter-container'] + ' ' + classes.removable}>
+                <RangeFilterForm name='area' unit='평' values={areaValues} btnName={'면적'} />
+            </div>
+            <div className={classes['filter-container']}>
+                <button type='button' className={classes.filter + ' alive-btn'} id="all-filters">모든필터 <UpDown /></button>
+            </div>
+            <div className={classes['filter-container']}>
+                <button type='submit' className={classes.filter + ' inverted-alive-btn'}>검색저장</button>
+            </div>
+        </form>
     )
 }
 

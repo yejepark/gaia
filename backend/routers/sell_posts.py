@@ -15,8 +15,8 @@ from pymongo import ReturnDocument
 import cloudinary
 import cloudinary.uploader
 
-from models.data_models import SellPost, SellPosts, AddressData, BrTitle, BrJijigu, NewAdPost, AdPostBase, AdPosts
-from models.enums import TradeType, ProductType, ProductSubType, UnitType
+from models.data_models import AddressData, BrTitle, BrJijigu, NewAdPost, AdPostBase, AdPosts
+from models.enums import TradeType, ProductType, ProductSubType, UnitType, SortType
 
 CLOUD_NAME = config("CLOUD_NAME", cast=str)
 API_KEY = config("CLOUD_API_KEY", cast=str)
@@ -69,35 +69,129 @@ address_to_pic_urls = {
 
 PLACEHOLDER_URL = 'https://images.placeholders.dev/?'
 
+MAN_WON = 10**4
+M2_TO_PYUNG = 3.30579
+
 router = APIRouter()
 
 
 @router.get(
     "/list_all",
-    response_description="List all sell posts",
-    # response_model=SellPosts,
+    response_description="List all ad posts",
     response_model=AdPosts,
     response_model_by_alias=False
 )
-async def list_sell_posts(request: Request):
-    # data = await request.app.mongodb['sell_posts'].find().to_list(10)
-    # return SellPosts(sell_posts=data)
-    data = await request.app.mongodb['ad_posts'].find().to_list(10)
+async def list_ad_posts(request: Request, query_state: str = ''):
+
+    query_criteria = {}
+    if query_state:
+        query_criteria = {'$and': []}
+        query_data = json.loads(query_state)
+
+        query_criteria['$and'].append(
+            {'tradeType': query_data['tradeType']})
+
+        # -------------------------------------------------------------
+        product_types = query_data['productType']
+        if product_types:
+            query_criteria['$and'].append(
+                {'productType': {'$in': product_types}})
+
+        # -------------------------------------------------------------
+        rent_min = int(query_data['rentMin']) * MAN_WON
+        rent_max = None
+        if query_data['rentMax']:
+            rent_max = int(query_data['rentMax']) * MAN_WON
+
+        if (rent_min > 0) or (rent_max and rent_max > 0):
+            rent_criteria = {}
+            if rent_min > 0:
+                rent_criteria['$gte'] = rent_min
+            if rent_max and rent_max > 0:
+                rent_criteria['$lte'] = rent_max
+
+            query_criteria['$and'].append(
+                {'price.monthlyRent': rent_criteria})
+
+        # -------------------------------------------------------------
+        area_min = int(query_data['areaMin']) * M2_TO_PYUNG
+        if area_min > 0:
+            query_criteria['$and'].append(
+                {'$or': [
+                    {
+                        'prodArea.use': {'$gte': area_min},
+                        'floors.entireBuilding': False
+                    },
+                    {
+                        'area.total': {'$gte': area_min},
+                        'floors.entireBuilding': True
+                    },
+                ]}
+            )
+
+        # -------------------------------------------------------------
+        area_max = None
+        if query_data['areaMax']:
+            area_max = int(query_data['areaMax']) * M2_TO_PYUNG
+
+        if area_max and area_max > 0:
+            query_criteria['$and'].append(
+                {'$or': [
+                    {
+                        'prodArea.use': {'$lte': area_max},
+                        'floors.entireBuilding': False
+                    },
+                    {
+                        'area.total': {'lte': area_max},
+                        'floors.entireBuilding': True
+                    },
+                ]}
+            )
+
+        # print(query_data, '\n', query_criteria)
+
+    find_query = request.app.mongodb['ad_posts'].find(query_criteria)
+
+    if not query_state:
+        find_query = find_query.sort({'date_created': -1})
+    else:
+        sort_type = SortType(query_data['sort'])
+        if sort_type is SortType.OLDEST:
+            find_query = find_query.sort({'date_created': 1})
+        elif sort_type is SortType.RENT:
+            find_query = find_query.sort({'price.monthlyRent': 1})
+        elif sort_type is SortType.RENT_REV:
+            find_query = find_query.sort({'price.monthlyRent': -1})
+        elif sort_type is SortType.SALE:
+            find_query = find_query.sort({'price.sale': 1})
+        elif sort_type is SortType.SALE_REV:
+            find_query = find_query.sort({'price.sale': -1})
+        elif sort_type is SortType.PREMIUM:
+            find_query = find_query.sort({'premium.total': 1})
+        elif sort_type is SortType.PREMIUM_REV:
+            find_query = find_query.sort({'premium.total': -1})
+        else:
+            find_query = find_query.sort({'date_created': -1})
+
+    data = await find_query.to_list(10)
+
+    # print('-'*30, len(data))
+
     return AdPosts(ad_posts=data)
 
 
-@router.get(
+@ router.get(
     "/{id}",
-    response_description="Get a single sell post",
-    response_model=SellPost,
+    response_description="Get a single ad post",
+    response_model=AdPostBase,
     response_model_by_alias=False
 )
-async def show_sell_post(id: str, request: Request):
-    post = await request.app.mongodb['sell_posts'].find_one(
+async def show_ad_post(id: str, request: Request):
+    post = await request.app.mongodb['ad_posts'].find_one(
         {"_id": ObjectId(id)})
     if post is not None:
         return post
-    raise HTTPException(status_code=404, detail=f"sell post {id} not found")
+    raise HTTPException(status_code=404, detail=f"ad post {id} not found")
 
 
 async def get_gov_data(address_data, target_url, numOfRows=100):
@@ -253,14 +347,14 @@ async def create_ad_post(ad_post: NewAdPost, request: Request):
     new_data['moveInDay'] = {
         'date': local_tz.localize(
             datetime(moveInDay['Y'], moveInDay['M'], moveInDay['D'])
-            ).astimezone(pytz.utc),
+        ).astimezone(pytz.utc),
         'negotiable': moveInDay['negotiable']
     }
 
     useAprDay = data['useAprDay']
     new_data['useAprDay'] = local_tz.localize(
-            datetime(useAprDay['Y'], useAprDay['M'], useAprDay['D'])
-            ).astimezone(pytz.utc)
+        datetime(useAprDay['Y'], useAprDay['M'], useAprDay['D'])
+    ).astimezone(pytz.utc)
 
     for data_key in [
         'address', 'price', 'upkeep', 'income', 'premium', 'loan', 'prodArea',
@@ -287,8 +381,6 @@ async def create_ad_post(ad_post: NewAdPost, request: Request):
                     elif data[data_key][unit_key] == UnitType.kW:
                         new_data[data_key][value_key] *= 10**3
 
-    # print(new_data)
-
     address_legal = data['address']['legal']
     address_road = data['address']['road']
     if address_legal in address_to_pic_urls:
@@ -303,18 +395,7 @@ async def create_ad_post(ad_post: NewAdPost, request: Request):
         AdPostBase(**new_data).model_dump(by_alias=True, exclude=['id'])
     )
 
-    # print(json.dumps(
-    #     sell_post.model_dump(by_alias=True, exclude=['id']),
-    #     indent=2, default=str))
-
-    # new_post = await request.app.mongodb['sell_posts'].insert_one(
-    #     sell_post.model_dump(by_alias=True, exclude=['id'])
-    # )
     created_post = await request.app.mongodb['ad_posts'].find_one(
         {"_id": new_post.inserted_id}
     )
     return created_post
-    
-    # return sell_post
-
-    # return SellPostBase(**new_data)

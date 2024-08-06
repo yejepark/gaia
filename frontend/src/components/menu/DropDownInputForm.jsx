@@ -26,7 +26,10 @@ function DropDownInputForm({ values, name, options }) {
         setFocus(name);
     }
 
-    const setValue1 = options.withoutPipe ? (name, v) => setValue(name, v.replace('|', ' ').trim()) : setValue;
+    const setValue1 = options.withoutPipe ? 
+        (name, v) => setValue(name, v.replace('|', ' ').trim(), { shouldDirty: true }) : 
+        (name, v) => setValue(name, v, { shouldDirty: true });
+
     const setValue2 = options.setCustomValue ? (name, v) => {
         options.setCustomValue(v);
         setValue1(name, v);

@@ -69,6 +69,11 @@
     }
 }
 
+.sort-button {
+    width: 6.75rem;
+    padding-right: 0.35rem;
+}
+
 
 .arrow-container {
     position: relative;

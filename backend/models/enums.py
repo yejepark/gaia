@@ -7,14 +7,6 @@ class TradeType(str, Enum):
     SHORTLEASE = 'shortLease'
 
 
-class TradeTypeOld(IntEnum):
-    SELL = 1
-    JEONSE = 2
-    RENT = 3
-    SHORTTERM = 4
-    GAP = 5
-
-
 class ProductType(str, Enum):
     COMMERCIAL = 'commercial'
     OFFICE = 'office'
@@ -63,15 +55,27 @@ class DirectionType(str, Enum):
     UNKNOWN = ''
 
 
-class AssetType(IntEnum):
-    APARTMENT = 1
-    STUDIO = 2  # 원룸
-    OFFICETEL = 3
-    MULTIPLEX = 4  # 다세대
-    TOWNHOUSE = 5  # 연립
-    MULTIFAMILY = 6  # 다가구
-    DETACHED = 7  # 단독
-    LAND = 8
-    COMMERCIAL = 9
-    OFFICE = 10
-    BUILDING = 11
+class SortType(str, Enum):
+    NEWEST = '최신순'
+    OLDEST = '오래된순'
+    RENT = '월세순'
+    RENT_REV = '월세역순'
+    PREMIUM = '권리금순'
+    PREMIUM_REV = '권리금역순'
+    SALE = '가격순'
+    SALE_REV = '가격역순'
+    SMALL = '면적순'
+    BIG = '면적역순'
+
+# class AssetType(IntEnum):
+#     APARTMENT = 1
+#     STUDIO = 2  # 원룸
+#     OFFICETEL = 3
+#     MULTIPLEX = 4  # 다세대
+#     TOWNHOUSE = 5  # 연립
+#     MULTIFAMILY = 6  # 다가구
+#     DETACHED = 7  # 단독
+#     LAND = 8
+#     COMMERCIAL = 9
+#     OFFICE = 10
+#     BUILDING = 11

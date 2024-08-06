@@ -6,8 +6,8 @@ import classes from './ProductTypeContainer.module.css';
 import SingleChoiceForm from '../menu/SingleChoiceForm';
 
 export const tradeTypeMap = {
-    sale: '매매',
     lease: '임대',
+    sale: '매매',
     shortLease: '단기임대'
 }
 

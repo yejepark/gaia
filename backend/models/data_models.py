@@ -6,7 +6,7 @@ from typing_extensions import Annotated
 
 from bson import ObjectId
 from datetime import datetime
-from models.enums import TradeType, ProductType, ProductSubType, UnitType, AssetType, TradeTypeOld, DirectionType
+from models.enums import TradeType, ProductType, ProductSubType, UnitType, DirectionType
 
 
 # Represents an ObjectId field in the database.
@@ -287,6 +287,8 @@ class AdPostBase(BaseModel):
     date_created: datetime = Field(default_factory=datetime.utcnow)
     date_updated: datetime = Field(default_factory=datetime.utcnow)
 
+    user_id: Optional[str] = None
+
     model_config = ConfigDict(
         populate_by_name=True,
         arbitrary_types_allowed=True
@@ -319,68 +321,6 @@ class NewAdPost(AdPostBase):
 class AdPosts(BaseModel):
 
     ad_posts: List[AdPostBase]
-
-
-class SellPost(BaseModel):
-    id: Optional[PyObjectId] = Field(alias="_id", default=None)
-
-    address_road: Optional[str] = None
-    address_legal: Optional[str] = None
-
-    area_usage: Optional[float] = None
-    area_contract: Optional[float] = None
-
-    floor: Optional[Union[float, str]] = None
-    floor_total: Optional[int] = None
-    direction: Optional[str] = None
-
-    date_available: Optional[Union[str, datetime]] = None
-
-    premium: Optional[ForcedInt] = None
-    maintenance_cost: Optional[ForcedInt] = None
-    deposit: Optional[ForcedInt] = None
-    rent_monthly: Optional[ForcedInt] = None
-
-    business_type: Optional[str] = None
-    business_subtype: Optional[str] = None
-    business_recommended: Optional[str] = None
-
-    parking: Optional[Union[str, int]] = None
-    parking_total: Optional[ForcedInt] = None
-
-    heat_type: Optional[str] = None
-    heat_fuel: Optional[str] = None
-
-    use_area: Optional[str] = None
-    building_usage: Optional[str] = None
-    main_structure: Optional[str] = None
-
-    date_of_usage_approval: Optional[datetime] = None
-
-    features: Optional[List[str]] = []
-    facilities: Optional[List[str]] = []
-    detail: Optional[str] = None
-
-    broker_id: Optional[str] = None
-
-    date_created: datetime = Field(default_factory=datetime.utcnow)
-    date_updated: datetime = Field(default_factory=datetime.utcnow)
-
-    asset_type: AssetType = Field(default=AssetType.COMMERCIAL)
-    trade_type: TradeTypeOld = Field(default=TradeTypeOld.RENT)
-
-    pic_urls: Optional[List[str]] = []
-    latlng: List[float] = []
-
-    model_config = ConfigDict(
-        populate_by_name=True,
-        arbitrary_types_allowed=True
-    )
-
-
-class SellPosts(BaseModel):
-
-    sell_posts: List[SellPost]
 
 
 class BrTitle(BaseModel):
