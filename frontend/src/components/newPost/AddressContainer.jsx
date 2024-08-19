@@ -18,7 +18,7 @@ function TopEl() {
         <div>
             <input {...register('address.legal')} type='hidden' />
             <input {...register('address.road')} type='hidden' />
-            <input {...register('latlng')} type='hidden'/>
+            <input {...register('lnglat')} type='hidden'/>
         </div>
         <div className={parentClasses['input-subcontainer']}>
             <input 

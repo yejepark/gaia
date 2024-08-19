@@ -38,7 +38,7 @@ function MainNavigation() {
     const dialogOpenClass = dialogOpen ? '' : 'hidden';
 
 	const currentRoute = useLocation();
-	const showSearch = currentRoute.pathname === '/posts';
+	const showSearch = currentRoute.pathname.startsWith('/posts');
 
 	const { height, width } = useWindowDimensions();
 

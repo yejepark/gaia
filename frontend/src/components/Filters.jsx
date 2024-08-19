@@ -18,20 +18,19 @@ const areaValues = [...arrayRange(0, 20, 5), ...arrayRange(30, 100, 10), ...arra
 
 let renderCount = 0;
 
-function Filters() {
-    const { handleSubmit } = useFormContext();
-
-    const onSubmit = (data) => {
-        console.log('(in onSubmit) data: ', data);
-    }
-
+function HidableSearchContainer() {
     const { width } = useWindowDimensions();
+    return <>
+        { width > 900 && <SearchContainer /> }
+    </>
+}
 
+function Filters() {
     renderCount++;
-    console.log('filters renderCount: ', renderCount);
+    // console.log('filters renderCount: ', renderCount);
     return (
-        <form className={classes.filters} onSubmit={handleSubmit(onSubmit)}>
-            { width > 900 && <SearchContainer /> }
+        <div className={classes.filters}>
+            <HidableSearchContainer />
 
             <div className={classes['filter-container']}>
                 <SingleChoiceForm name='tradeType' choiceMap={tradeTypeMap} btnLabel='거래' />
@@ -54,7 +53,7 @@ function Filters() {
             <div className={classes['filter-container']}>
                 <button type='submit' className={classes.filter + ' inverted-alive-btn'}>검색저장</button>
             </div>
-        </form>
+        </div>
     )
 }
 

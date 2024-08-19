@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator, computed_field
 from pydantic.functional_validators import BeforeValidator
+from geojson_pydantic import Polygon, MultiPolygon
 
 from typing import List, Optional, Dict, Union, Any
 from typing_extensions import Annotated
@@ -254,7 +255,7 @@ class AdPostBase(BaseModel):
     # Address Information
     address: Address
     floors: FloorsBase
-    latlng: List[float]
+    lnglat: List[float]
 
     # Product Information
     price: PriceBase
@@ -288,6 +289,13 @@ class AdPostBase(BaseModel):
     date_updated: datetime = Field(default_factory=datetime.utcnow)
 
     user_id: Optional[str] = None
+
+    @computed_field(return_type=float)
+    def sortArea(self):
+        if self.floors.entireBuilding:
+            return self.area.total
+        else:
+            return self.prodArea.use
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -412,3 +420,36 @@ class AddressData(BaseModel):
         populate_by_name=True,
         arbitrary_types_allowed=True
     )
+
+
+class Coordinates(BaseModel):
+    coordinates: List[float]
+
+
+class Region(BaseModel):
+
+    id: Optional[PyObjectId] = Field(alias="_id", default=None)
+
+    CTP_CD: str
+    CTP_NM: str
+    SIG_CD: Optional[str] = ''
+    SIG_NM: Optional[str] = ''
+    EMD_CD: Optional[str] = ''
+    EMD_NM: Optional[str] = ''
+    BD_CD: Optional[str] = ''
+    BD_NM_H: Optional[str] = ''
+    BD_NM_IDX: Optional[int] = 0
+    BD_NM_CNT: Optional[int] = 0
+    FULL_NM: str
+    center: Coordinates
+    sw: Coordinates
+    ne: Coordinates
+    area: float
+
+
+class Regions(BaseModel):
+    regions: List[Region]
+
+
+class RegionGeometry(Region):
+    geometry: Polygon | MultiPolygon

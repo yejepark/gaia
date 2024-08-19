@@ -11,11 +11,12 @@ import re
 from datetime import datetime
 import pytz
 from pymongo import ReturnDocument
+import copy
 
 import cloudinary
 import cloudinary.uploader
 
-from models.data_models import AddressData, BrTitle, BrJijigu, NewAdPost, AdPostBase, AdPosts
+from models.data_models import AddressData, BrTitle, BrJijigu, NewAdPost, AdPostBase, AdPosts, Regions, Region, RegionGeometry
 from models.enums import TradeType, ProductType, ProductSubType, UnitType, SortType
 
 CLOUD_NAME = config("CLOUD_NAME", cast=str)
@@ -72,7 +73,131 @@ PLACEHOLDER_URL = 'https://images.placeholders.dev/?'
 MAN_WON = 10**4
 M2_TO_PYUNG = 3.30579
 
+allowed_letters = re.compile('[\uAC00-\uD7AFa-zA-Z0-9]+')
+
 router = APIRouter()
+
+
+@router.get(
+    "/get_region",
+    response_description="Get one region with matching id",
+    response_model=RegionGeometry,
+    response_model_by_alias=False
+)
+async def get_region(request: Request, id_str: str):
+    [_id, bd_nm_idx] = id_str.split('_')
+
+    if bd_nm_idx == '0':
+        collection_name = 'region_data'
+    else:
+        collection_name = 'sangkwon_data'
+
+    region = await request.app.mongodb[collection_name].find_one(
+        {"_id": ObjectId(_id)})
+
+    if region is not None:
+        return region
+
+    raise HTTPException(
+        status_code=404, 
+        detail=f"id {_id} not found in {collection_name}"
+    )
+
+
+@router.get(
+    "/search_regions",
+    response_description="List regions with matching names",
+    response_model=Regions,
+    response_model_by_alias=False
+)
+async def search_regions(request: Request, search_str: str = '', limit=10):
+    strs = allowed_letters.findall(search_str)
+
+    ctp_nm_h = ''
+    sig_nm_h = ''
+    ctp_sig_nm_h = ''
+    emd_nm_h = ''
+
+    matched = []
+    matched_sk = []
+    for idx, s in enumerate(strs):
+        if len(s) == 1:
+            continue
+
+        if s.endswith('도'):
+            ctp_nm_h = s[:-1]
+            matched.append(s)
+            matched_sk.append(s)
+
+        elif s.endswith('군') or s.endswith('구'):
+            sig_nm_h = s[:-1]
+            matched.append(s)
+            matched_sk.append(s)
+
+        elif s.endswith('시'):
+            ctp_sig_nm_h = s[:-1]
+            matched.append(s)
+            matched_sk.append(s)
+
+        elif (s.endswith('동') or s.endswith('로') or
+              s.endswith('가') or s.endswith('읍') or s.endswith('면')):
+            emd_nm_h = s[:-1]
+            matched.append(s)
+
+    query_criteria = {'$and': []}
+
+    if ctp_nm_h:
+        query_criteria['$and'].append(
+            {"CTP_NM": {"$regex": "^" + ctp_nm_h}})
+
+    if sig_nm_h:
+        query_criteria['$and'].append(
+            {"SIG_NM": {"$regex": "^" + sig_nm_h}})
+
+    if ctp_sig_nm_h:
+        query_criteria['$and'].append({
+            '$or': [
+                {"CTP_NM": {"$regex": "^" + ctp_sig_nm_h}},
+                {"SIG_NM": {"$regex": "^" + ctp_sig_nm_h}},
+            ]
+        })
+
+    query_criteria_sk = copy.deepcopy(query_criteria)
+
+    if emd_nm_h:
+        query_criteria['$and'].append(
+            {"EMD_NM": {"$regex": "^" + emd_nm_h}})
+
+    unmatched = sorted(set(strs) - set(matched))
+    unmatched_sk = sorted(set(strs) - set(matched_sk))
+
+    for s in unmatched:
+        query_criteria['$and'].append(
+            {"FULL_NM": {"$regex": s}}
+        )
+
+    for s in unmatched_sk:
+        query_criteria_sk['$and'].append(
+            {"FULL_NM": {"$regex": s}}
+        )
+
+    find_query = request.app.mongodb['region_data'].find(
+        query_criteria).sort({'area': -1})
+
+    region_data = await find_query.to_list(limit)
+    print('-'*30, len(region_data))
+
+    regions = [Region(**item) for item in region_data]
+
+    find_query = request.app.mongodb['sangkwon_data'].find(
+        query_criteria_sk).sort({'area': -1})
+
+    sangkwon_data = await find_query.to_list(limit)
+    print('-'*30, len(sangkwon_data))
+
+    sangkwons = [Region(**item) for item in sangkwon_data]
+
+    return Regions(regions=(regions + sangkwons))
 
 
 @router.get(
@@ -87,9 +212,33 @@ async def list_ad_posts(request: Request, query_state: str = ''):
     if query_state:
         query_criteria = {'$and': []}
         query_data = json.loads(query_state)
+        print(query_data)
 
         query_criteria['$and'].append(
             {'tradeType': query_data['tradeType']})
+
+        # -------------------------------------------------------------        
+        if 'boundingRectStr' in query_data and query_data['boundingRectStr']:
+            bounding_rect_str = query_data['boundingRectStr']
+
+            sw_lat, sw_lng, ne_lat, ne_lng = [
+                float(x.strip('() ')) for x in bounding_rect_str.split(',')
+            ]
+            query_criteria['$and'].append(
+                {'lnglat': {'$geoWithin': {'$geometry': {
+                    'type': "Polygon",
+                    'coordinates': [[
+                        [sw_lng, sw_lat], [ne_lng, sw_lat],
+                        [ne_lng, ne_lat], [sw_lng, ne_lat],
+                        [sw_lng, sw_lat]
+                    ]]
+                }}}}
+            )
+
+        # if not query_data.showMap and query_data.LOC_CD:
+        #     query_criteria['$and'].append(
+        #         {"EMD_NM": {"$regex": "^" + emd_nm_h}}
+        #     )
 
         # -------------------------------------------------------------
         product_types = query_data['productType']
@@ -115,40 +264,21 @@ async def list_ad_posts(request: Request, query_state: str = ''):
 
         # -------------------------------------------------------------
         area_min = int(query_data['areaMin']) * M2_TO_PYUNG
-        if area_min > 0:
-            query_criteria['$and'].append(
-                {'$or': [
-                    {
-                        'prodArea.use': {'$gte': area_min},
-                        'floors.entireBuilding': False
-                    },
-                    {
-                        'area.total': {'$gte': area_min},
-                        'floors.entireBuilding': True
-                    },
-                ]}
-            )
-
-        # -------------------------------------------------------------
         area_max = None
         if query_data['areaMax']:
             area_max = int(query_data['areaMax']) * M2_TO_PYUNG
 
-        if area_max and area_max > 0:
-            query_criteria['$and'].append(
-                {'$or': [
-                    {
-                        'prodArea.use': {'$lte': area_max},
-                        'floors.entireBuilding': False
-                    },
-                    {
-                        'area.total': {'lte': area_max},
-                        'floors.entireBuilding': True
-                    },
-                ]}
-            )
+        if (area_min > 0) or (area_max and area_max > 0):
+            area_criteria = {}
+            if area_min > 0:
+                area_criteria['$gte'] = area_min
+            if area_max and area_max > 0:
+                area_criteria['$lte'] = area_max
 
-        # print(query_data, '\n', query_criteria)
+            query_criteria['$and'].append(
+                {'sortArea': area_criteria})
+
+        print(query_data, '\n', query_criteria)
 
     find_query = request.app.mongodb['ad_posts'].find(query_criteria)
 
@@ -170,12 +300,16 @@ async def list_ad_posts(request: Request, query_state: str = ''):
             find_query = find_query.sort({'premium.total': 1})
         elif sort_type is SortType.PREMIUM_REV:
             find_query = find_query.sort({'premium.total': -1})
+        elif sort_type is SortType.SMALL:
+            find_query = find_query.sort({'sortArea': 1})
+        elif sort_type is SortType.BIG:
+            find_query = find_query.sort({'sortArea': -1})
         else:
             find_query = find_query.sort({'date_created': -1})
 
     data = await find_query.to_list(10)
 
-    # print('-'*30, len(data))
+    print('-'*30, len(data))
 
     return AdPosts(ad_posts=data)
 
@@ -261,7 +395,7 @@ async def get_br_jijigu_data(address_data, jiyukOnly=True):
     status_code=status.HTTP_201_CREATED
 )
 async def create_address_data(address_data: AddressData, request: Request):
-
+    print('in create address data')
     # print(address_data)
 
     id_dict = {
@@ -270,7 +404,7 @@ async def create_address_data(address_data: AddressData, request: Request):
     }
 
     existing_data = await request.app.mongodb['address_data'].find_one(id_dict)
-    # print(existing_data)
+    print(existing_data)
 
     if existing_data is not None:
         print('-'*10, 1)
@@ -329,7 +463,7 @@ async def create_ad_post(ad_post: NewAdPost, request: Request):
     new_data = {}
     for data_key in [
         'isAgent', 'tradeType', 'productType', 'productSubType',
-        'direction', 'mainPurpose', 'districtType', 'strctCdNm', 'latlng'
+        'direction', 'mainPurpose', 'districtType', 'strctCdNm', 'lnglat'
     ]:
         new_data[data_key] = data[data_key]
 

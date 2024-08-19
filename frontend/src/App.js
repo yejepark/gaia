@@ -26,11 +26,17 @@ const router = createBrowserRouter([{
                     element: <PostsLayout />,
                 },
                 { 
+                    path: 'location/:location/:queryState?', 
+                    id: 'postsLocatedChild',
+                    loader: postsLoader,
+                    element: <PostsLayout />,
+                },
+                { 
                     path: ':queryState', 
                     id: 'postsChild',
                     loader: postsLoader,
                     element: <PostsLayout />,
-                }
+                },
             ],
             // action: async ({ request }) => {
             //     const formData = await request.formData();

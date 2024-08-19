@@ -60,7 +60,7 @@ export const initialDefaultValues = {
     productType: '',
     productSubType: '',
     address: { top: '', dongName: '', detail: '', hoName: '', legal: '', road: '' },
-    latlng: [],
+    lnglat: [],
     floors: { picked: [], entireBuilding: false },
     mainPurpose: '',
     flrCnt: { ugrnd: 0, grnd: 1, ugrndUnit: '층', grndUnit: '층' },
@@ -113,7 +113,7 @@ function addressStateReducer(state, action) {
 
         let districtType = '';
         let brJijigu = [];
-        if (data.brJijigu.length > 0) {
+        if (data.brJijigu && data.brJijigu.length > 0) {
             brJijigu = data.brJijigu.filter(item => item['jijiguGbCd'] === '1');
             brJijigu.sort(function(a, b) { return a.jijiguCd.localeCompare(b.jijiguCd); });
             districtType = [...(new Set(brJijigu.map(item => item.jijiguCdNm)))].join(', ');
@@ -376,7 +376,7 @@ function NewSellPost() {
     const { pathname } = useLocation();
     useEffect(() => {
         setValue('isAgent', pathname === '/newAgentPost');
-    }, [pathname, setValue]);
+    }, [pathname]);
 
     renderCount++;
 

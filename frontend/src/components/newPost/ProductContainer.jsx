@@ -79,7 +79,7 @@ function PremiumEl() {
             setValue('premium.location', initialDefaultValues.premium.location);
             setValue('premium.negotiable', initialDefaultValues.premium.negotiable);
         }
-    }, [pExist, setValue]);
+    }, [pExist]);
 
     return (
         <ItemContainer title='권리금 정보'>
@@ -150,7 +150,7 @@ function AcquireEl() {
             setValue('income.expose', initialDefaultValues.income.expose);
             setValue('income.mustAcquire', initialDefaultValues.income.mustAcquire);
         }
-    }, [operating, setValue]);
+    }, [operating]);
 
     return (
         <ItemContainer title='영업 정보'>
@@ -199,7 +199,7 @@ function LoanEl() {
             setValue('loan.pct', initialDefaultValues.loan.pct);
             setValue('loan.expose', initialDefaultValues.loan.expose);
         }
-    }, [loanExist, setValue]);
+    }, [loanExist]);
 
     return (
         <ItemContainer title='융자 정보'>
@@ -383,7 +383,7 @@ function ParkingEl() {
         if (!parkingAvailable) {
             setValue('parking.count', initialDefaultValues.parking.count);
         }
-    }, [parkingAvailable, setValue]);
+    }, [parkingAvailable]);
     
     const isAgent = useWatch({ name: 'isAgent' });
     return (
@@ -445,7 +445,7 @@ function BusinessTypeEl() {
             setCurrentValues( values.map((item) => addCustomClass(item, currentType, 'not-show')) );
         }, 250);
         return () => { clearTimeout(timer); };
-    }, [currentType, values]);
+    }, [currentType, productType]);
 
     useEffect(() => {
         let timer;
@@ -453,7 +453,7 @@ function BusinessTypeEl() {
             setRecommendValues( values.map((item) => addCustomClass(item, recommendType, 'not-show')) );
         }, 250);
         return () => { clearTimeout(timer); };
-    }, [recommendType, values]);
+    }, [recommendType, productType]);
 
     return (
         <ItemContainer title='업종 정보'>

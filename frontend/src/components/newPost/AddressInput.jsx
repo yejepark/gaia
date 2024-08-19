@@ -78,13 +78,15 @@ function AddressInput({ addressState, dispatchAddress }) {
 
                 try {
                     const { lat, lng } = await addressSearch(newData.roadAddress);
+                    newData['lnglat'] = [lng, lat];
                     newData['latlng'] = [lat, lng];
                 } catch (error) {
+                    newData['lnglat'] = [];
                     newData['latlng'] = [];
                     console.log(error);
                 }
 
-                // console.log('in execDaumPostcode 1:', data);
+                console.log('in execDaumPostcode 1:', data);
                 // console.log('in execDaumPostcode 2:', newData);
 
                 const totData = await postAddressData(newData)
@@ -103,7 +105,7 @@ function AddressInput({ addressState, dispatchAddress }) {
                 setValue('address.road', totData.roadAddress);
                 setValue('address.hoName', '');
                 setValue('address.detail', '');
-                setValue('latlng', totData.latlng);
+                setValue('lnglat', totData.lnglat);
                 setValue('floors.picked', []);
 
                 let currentDongName = '';
